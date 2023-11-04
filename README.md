@@ -2,6 +2,7 @@
 
 React Native + Expo
 
+- React - https://react.dev/
 - React Native - https://reactnative.dev/
 - Expo - https://expo.dev/
 - Expo Router - https://docs.expo.dev/routing/introduction/
