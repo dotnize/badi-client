@@ -1,6 +1,6 @@
 # Badi Client
 
-React Native + Expo
+Tech stack:
 
 - React - https://react.dev/
 - React Native - https://reactnative.dev/
