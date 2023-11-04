@@ -6,7 +6,7 @@ import { Button, PaperProvider } from "react-native-paper";
 // mobalhin guro tas StyleSheet kay basin mas limpyo
 // https://reactnative.dev/docs/stylesheet
 
-// Defining routes:
+// Defining routes: <<--- START HERE!
 // https://docs.expo.dev/routing/create-pages/
 
 // Linking/navigating:
