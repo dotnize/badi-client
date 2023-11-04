@@ -26,6 +26,10 @@ Tech stack:
    ```sh
    git clone git@github.com:Mugnavo/badi-client.git
    ```
+   if it doesn't work, try the https url:
+   ```sh
+   git clone https://github.com/Mugnavo/badi-client.git
+   ```
 2. Install dependencies:
    ```sh
    npm install
