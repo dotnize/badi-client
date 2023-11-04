@@ -2,12 +2,12 @@
 
 Tech stack:
 
-- React - https://react.dev/
-- React Native - https://reactnative.dev/
-- Expo - https://expo.dev/
-- Expo Router - https://docs.expo.dev/routing/introduction/
-- React Native Paper - https://callstack.github.io/react-native-paper/
-- TypeScript - https://www.typescriptlang.org/
+- React 18 - https://react.dev/
+- React Native 0.72 - https://reactnative.dev/
+- Expo 49 - https://expo.dev/
+- Expo Router 2 - https://docs.expo.dev/routing/introduction/
+- React Native Paper 5 - https://callstack.github.io/react-native-paper/
+- TypeScript 5 - https://www.typescriptlang.org/
 - ESLint & Prettier
 
 ## Required setup
