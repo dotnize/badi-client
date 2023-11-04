@@ -27,7 +27,7 @@ export default function RootLayout() {
 
         <View style={{ borderWidth: 4, borderColor: "black", padding: 4 }}>
           {/* Slot is like {children}, but renders the current page file/component */}
-          <Slot />{" "}
+          <Slot />
         </View>
 
         <Text style={{ marginTop: 64 }}>
