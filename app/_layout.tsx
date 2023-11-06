@@ -1,4 +1,5 @@
 import { Stack } from "expo-router";
+import { Appearance } from "react-native";
 import { PaperProvider } from "react-native-paper";
 
 // Temporary ra ang style props diri,
@@ -19,6 +20,9 @@ import { PaperProvider } from "react-native-paper";
 export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
+
+// Force light theme
+Appearance.setColorScheme("light");
 
 export default function RootLayout() {
   return (

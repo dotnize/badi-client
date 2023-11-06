@@ -1,20 +1,15 @@
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Link, Tabs } from "expo-router";
-import { IconButton } from "react-native-paper";
+
+import Tabs from "~/components/bottom-tabs";
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ tabBarLabelPosition: "below-icon" }}>
+    <Tabs shifting>
       <Tabs.Screen
         name="index"
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => <MaterialCommunityIcons name="home" size={24} color={color} />,
-          headerRight: () => (
-            <Link href="/search" asChild>
-              <IconButton icon="magnify" size={24} iconColor="black" />
-            </Link>
-          ),
         }}
       />
       <Tabs.Screen
@@ -30,7 +25,6 @@ export default function TabLayout() {
         name="new"
         options={{
           title: "New Listing",
-          tabBarLabel: "",
           tabBarIcon: ({ color }) => <AntDesign name="plus" size={24} color={color} />,
         }}
       />
