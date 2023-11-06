@@ -59,7 +59,7 @@ export default function TabLayout() {
         </Link>
       </View>
 
-      <View style={{ width: 768 }}>
+      <View style={{ maxWidth: 768, flex: 1 }}>
         <Slot />
       </View>
     </View>
