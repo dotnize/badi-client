@@ -1,4 +1,4 @@
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link, Slot, usePathname } from "expo-router";
 import { View, useWindowDimensions } from "react-native";
 import { Button } from "react-native-paper";
@@ -69,15 +69,25 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="home" size={24} color={color} />,
+          tabBarIcon: ({ focused, color }) => (
+            <MaterialCommunityIcons
+              name={focused ? "home" : "home-outline"}
+              size={24}
+              color={color}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="messages"
         options={{
           title: "Messages",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="message" size={24} color={color} />
+          tabBarIcon: ({ focused, color }) => (
+            <MaterialCommunityIcons
+              name={focused ? "message" : "message-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -85,14 +95,20 @@ export default function TabLayout() {
         name="new"
         options={{
           title: "New Listing",
-          tabBarIcon: ({ color }) => <AntDesign name="plus" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="plus" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="activity"
         options={{
           title: "Activity",
-          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="bell" size={24} color={color} />,
+          tabBarIcon: ({ focused, color }) => (
+            <MaterialCommunityIcons
+              name={focused ? "bell" : "bell-outline"}
+              size={24}
+              color={color}
+            />
+          ),
         }}
       />
       <Tabs.Screen
@@ -100,7 +116,13 @@ export default function TabLayout() {
         options={{
           title: "My Profile",
           tabBarLabel: "Me",
-          tabBarIcon: ({ color }) => <AntDesign name="user" size={24} color={color} />,
+          tabBarIcon: ({ focused, color }) => (
+            <MaterialCommunityIcons
+              name={focused ? "account" : "account-outline"}
+              size={24}
+              color={color}
+            />
+          ),
         }}
       />
     </Tabs>
