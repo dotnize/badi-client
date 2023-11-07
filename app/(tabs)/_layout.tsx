@@ -68,7 +68,7 @@ export default function TabLayout() {
       </View>
     </View>
   ) : (
-    <Tabs shifting>
+    <Tabs theme={{ colors: { secondaryContainer: "transparent" } }} shifting>
       <Tabs.Screen
         name="index"
         options={{
