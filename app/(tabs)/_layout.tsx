@@ -9,10 +9,12 @@ export default function TabLayout() {
   const { height, width } = useWindowDimensions();
   const pathname = usePathname();
 
-  return width > height * 1.2 ? (
+  const isLandscape = width > height * 1.2;
+
+  return isLandscape ? (
     <View style={{ flexDirection: "row", flex: 1, justifyContent: "center", gap: 32 }}>
       <View style={{ justifyContent: "center", gap: 8, width: 180 }}>
-        <Link asChild href="/">
+        <Link replace asChild href="/">
           <Button
             icon={pathname === "/" ? "home" : "home-outline"}
             mode={pathname === "/" ? "outlined" : "text"}
@@ -21,7 +23,7 @@ export default function TabLayout() {
             Home
           </Button>
         </Link>
-        <Link asChild href="/messages">
+        <Link replace asChild href="/messages">
           <Button
             icon={pathname.startsWith("/messages") ? "message" : "message-outline"}
             mode={pathname.startsWith("/messages") ? "outlined" : "text"}
@@ -30,7 +32,7 @@ export default function TabLayout() {
             Messages
           </Button>
         </Link>
-        <Link asChild href="/new">
+        <Link replace asChild href="/new">
           <Button
             icon="plus"
             mode={pathname === "/new" ? "outlined" : "text"}
@@ -39,7 +41,7 @@ export default function TabLayout() {
             New Listing
           </Button>
         </Link>
-        <Link asChild href="/activity">
+        <Link replace asChild href="/activity">
           <Button
             icon={pathname.startsWith("/activity") ? "bell" : "bell-outline"}
             mode={pathname.startsWith("/activity") ? "outlined" : "text"}
@@ -48,7 +50,7 @@ export default function TabLayout() {
             Activity
           </Button>
         </Link>
-        <Link asChild href="/me">
+        <Link replace asChild href="/me">
           <Button
             icon={pathname === "/me" ? "account" : "account-outline"}
             mode={pathname === "/me" ? "outlined" : "text"}
