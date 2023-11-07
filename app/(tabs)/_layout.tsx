@@ -5,6 +5,8 @@ import { Button } from "react-native-paper";
 
 import Tabs from "~/components/bottom-tabs";
 
+// TODO: keep route when switching from landscape to portrait
+
 export default function TabLayout() {
   const { height, width } = useWindowDimensions();
   const pathname = usePathname();
