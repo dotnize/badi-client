@@ -5,7 +5,7 @@ import { Button } from "react-native-paper";
 
 import Tabs from "~/components/bottom-tabs";
 
-// TODO: keep route when switching from landscape to portrait
+// TODO: minor issue, keep route state when switching navigation modes
 
 export default function TabLayout() {
   const { height, width } = useWindowDimensions();
