@@ -26,6 +26,9 @@
       "bundler": "metro"
     },
     "plugins": ["expo-router"],
-    "scheme": "badi"
+    "scheme": "badi",
+    "experiments": {
+      "tsconfigPaths": true
+    }
   }
 }
