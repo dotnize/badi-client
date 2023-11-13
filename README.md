@@ -71,7 +71,7 @@ When working on a new screen, feature, or bugfix, create a new branch from `main
    ```sh
    npm install
    ```
-   Optional, but after this, you can perform a fresh reinstall to clean up cache:
+   _Optional_, but after this, you can perform a fresh reinstall to clean up cache:
    ```sh
    npm run freshinstall
    ```
@@ -98,7 +98,7 @@ If you're already working on a branch and you want to grab the latest changes fr
    git merge main
    ```
    If naay conflicts, chat nalang sa server hehe
-5. Fresh install to avoid cache issues:
+5. _OPTIONAL_, fresh install to avoid cache issues:
    ```sh
    npm run freshinstall
    ```
