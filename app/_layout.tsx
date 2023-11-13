@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
-import { Appearance } from "react-native";
-import { PaperProvider } from "react-native-paper";
+import { MD3LightTheme as DefaultTheme, PaperProvider } from "react-native-paper";
+
+import { COLORS } from "~/lib/theme";
 
 // Temporary ra ang style props diri,
 // mobalhin guro tas StyleSheet kay basin mas limpyo
@@ -17,16 +18,18 @@ import { PaperProvider } from "react-native-paper";
 
 // ^ All OPTIONAL to read, iexplain ra nako tanan ig meet
 
+const theme = {
+  ...DefaultTheme,
+  colors: COLORS,
+};
+
 export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
 
-// Force light theme
-Appearance.setColorScheme("light");
-
 export default function RootLayout() {
   return (
-    <PaperProvider>
+    <PaperProvider theme={theme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
