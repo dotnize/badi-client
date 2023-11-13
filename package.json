@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "ts:check": "tsc",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "cleaninstall": "rimraf .expo node_modules && npm install"
   },
   "dependencies": {
     "expo": "~49.0.18",
@@ -32,6 +33,7 @@
     "eslint": "^8.53.0",
     "eslint-config-universe": "^12.0.0",
     "prettier": "^3.1.0",
+    "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
   },
   "private": true
