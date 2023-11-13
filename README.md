@@ -67,7 +67,15 @@ When working on a new screen, feature, or bugfix, create a new branch from `main
    ```sh
    git push -u origin lastname/branchname # replace with the created branch name
    ```
-5. Start working on your branch, commit, and push freely :) just dont commit to `main` or other member's branches
+5. Install dependencies
+   ```sh
+   npm install
+   ```
+   Optional, but after this, you can perform a fresh reinstall to clean up cache:
+   ```sh
+   npm run freshinstall
+   ```
+6. Start working on your branch, commit, and push freely :) just dont commit to `main` or other member's branches
 
 ### Grabbing changes from main
 
@@ -90,6 +98,10 @@ If you're already working on a branch and you want to grab the latest changes fr
    git merge main
    ```
    If naay conflicts, chat nalang sa server hehe
+5. Fresh install to avoid cache issues:
+   ```sh
+   npm run freshinstall
+   ```
 
 ### Extras
 
@@ -101,3 +113,5 @@ If you're already working on a branch and you want to grab the latest changes fr
   - Make sure to `git pull` from the source branch first!
 - Make sure to always pull the latest commits from `main` branch before merging or creating a new branch
   - `git switch main` then `git pull`
+- When pulling new commits with possible updated dependencies, do a fresh install to avoid cache & versioning issues:
+  - `npm run freshinstall`
