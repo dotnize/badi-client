@@ -10,7 +10,7 @@
     "ts:check": "tsc",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "freshinstall": "rimraf .expo node_modules && npm install"
+    "freshinstall": "rimraf .expo && npm install"
   },
   "dependencies": {
     "expo": "~49.0.18",
