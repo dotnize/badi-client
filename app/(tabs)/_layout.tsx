@@ -4,6 +4,7 @@ import { View, useWindowDimensions } from "react-native";
 import { Button } from "react-native-paper";
 
 import Tabs from "~/components/bottom-tabs";
+import { COLORS, SIZES } from "~/lib/theme";
 
 // TODO: minor issue, keep route state when switching navigation modes
 
@@ -14,8 +15,8 @@ export default function TabLayout() {
   const isLandscape = width > height * 1.2;
 
   return isLandscape ? (
-    <View style={{ flexDirection: "row", flex: 1, justifyContent: "center", gap: 32 }}>
-      <View style={{ justifyContent: "center", gap: 8, width: 180 }}>
+    <View style={{ flexDirection: "row", flex: 1, justifyContent: "center", gap: SIZES[8] }}>
+      <View style={{ justifyContent: "center", gap: SIZES[2], width: 180 }}>
         <Link replace asChild href="/">
           <Button
             icon={pathname === "/" ? "home" : "home-outline"}
@@ -68,7 +69,11 @@ export default function TabLayout() {
       </View>
     </View>
   ) : (
-    <Tabs theme={{ colors: { secondaryContainer: "transparent" } }} shifting>
+    <Tabs
+      activeColor={COLORS.primary}
+      theme={{ colors: { secondaryContainer: "transparent" } }}
+      shifting
+    >
       <Tabs.Screen
         name="index"
         options={{
@@ -76,7 +81,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused, color }) => (
             <MaterialCommunityIcons
               name={focused ? "home" : "home-outline"}
-              size={24}
+              size={SIZES[6]}
               color={color}
             />
           ),
@@ -89,7 +94,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused, color }) => (
             <MaterialCommunityIcons
               name={focused ? "message" : "message-outline"}
-              size={24}
+              size={SIZES[6]}
               color={color}
             />
           ),
@@ -109,7 +114,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused, color }) => (
             <MaterialCommunityIcons
               name={focused ? "bell" : "bell-outline"}
-              size={24}
+              size={SIZES[6]}
               color={color}
             />
           ),
@@ -123,7 +128,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused, color }) => (
             <MaterialCommunityIcons
               name={focused ? "account" : "account-outline"}
-              size={24}
+              size={SIZES[6]}
               color={color}
             />
           ),
