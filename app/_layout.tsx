@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import { MD3LightTheme as DefaultTheme, PaperProvider } from "react-native-paper";
 
 import { COLORS } from "~/lib/theme";
@@ -27,11 +27,15 @@ export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
 
+const user = undefined; // TEMPORARY
+
 export default function RootLayout() {
   return (
     <PaperProvider theme={theme}>
+      {!user && <Redirect href="/welcome" />}
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="welcome" options={{ headerShown: false }} />
       </Stack>
     </PaperProvider>
   );
