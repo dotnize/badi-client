@@ -81,24 +81,16 @@ When working on a new screen, feature, or bugfix, create a new branch from `main
 
 If you're already working on a branch and you want to grab the latest changes from `main` branch, do the following:
 
-1. Switch to `main` branch:
-   ```sh
-   git switch main
-   ```
-2. Pull the latest changes:
+1. Pull the latest changes:
    ```sh
    git pull
    ```
-3. Switch back to your branch:
-   ```sh
-   git switch lastname/branchname # replace with ur names
-   ```
-4. Merge the changes from the `main` branch to your branch:
+2. Merge the changes from the `main` branch to your branch:
    ```sh
    git merge main
    ```
    If naay conflicts, chat nalang sa server hehe
-5. _OPTIONAL_, fresh install to avoid cache issues:
+3. _OPTIONAL_, fresh install to avoid cache issues:
    ```sh
    npm run freshinstall
    ```
