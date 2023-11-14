@@ -46,3 +46,5 @@ Tech stack:
 ## Contributing
 
 TODO: unya nalang nako suwatan ig sugod najud nato
+
+Quamck!
