@@ -1,10 +1,24 @@
 import { View } from "react-native";
-import { Text } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
+import { SIZES } from "~/lib/theme";
 
 export default function login() {
   return (
-    <View>
-      <Text>login page</Text>
+    <View style={{ height: "100%", justifyContent: "center", alignItems: "center"}}>
+      <View>
+        <Text variant="displayMedium" style={{ textAlign: "center" }}>
+          LOGIN
+        </Text>
+      </View>
+      <View style={{ padding: SIZES[20], gap: SIZES[5] }}>
+        <TextInput mode="outlined" label="Email" />
+        <TextInput mode="outlined" label="Password" />
+      </View>
+      <View>
+        <Button mode="contained">
+          Login
+        </Button>
+      </View>
     </View>
   );
 }
