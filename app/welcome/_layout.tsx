@@ -1,7 +1,5 @@
-import Tabs from "~/components/bottom-tabs";
-
-// TODO: temporary, don't use tabs after implementing proper context
+import { Slot } from "expo-router";
 
 export default function IntroLayout() {
-  return <Tabs />;
+  return <Slot />;
 }
