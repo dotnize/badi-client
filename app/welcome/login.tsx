@@ -1,10 +1,11 @@
 import { View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
+
 import { SIZES } from "~/lib/theme";
 
-export default function login() {
+export default function Login() {
   return (
-    <View style={{ height: "100%", justifyContent: "center", alignItems: "center"}}>
+    <View style={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
       <View>
         <Text variant="displayMedium" style={{ textAlign: "center" }}>
           LOGIN
@@ -15,7 +16,7 @@ export default function login() {
         <TextInput mode="outlined" label="Password" />
       </View>
       <View>
-        <Button mode="contained">
+        <Button style={{ width: 128 }} mode="contained">
           Login
         </Button>
       </View>

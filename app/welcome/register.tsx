@@ -5,7 +5,7 @@ import { Button, IconButton, ProgressBar, Text, TextInput } from "react-native-p
 import { DatePickerInput } from "react-native-paper-dates";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-export default function register() {
+export default function Register() {
   const router = useRouter();
   const [counter, setCounter] = useState(0);
   const [inputDate, setInputDate] = useState<Date | undefined>(undefined);
@@ -24,7 +24,7 @@ export default function register() {
   };
 
   const backScreen = () => {
-    if (counter == 0) {
+    if (counter === 0) {
       router.back();
     } else {
       setCounter(counter - 1);
