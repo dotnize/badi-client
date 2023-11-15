@@ -2,10 +2,14 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { Button, IconButton, ProgressBar, Text, TextInput } from "react-native-paper";
+import { DatePickerInput } from "react-native-paper-dates";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function register() {
   const router = useRouter();
   const [counter, setCounter] = useState(0);
+  const [inputDate, setInputDate] = useState<Date | undefined>(undefined);
+
   const birthScreen = 0;
   const mobileNumScreen = 1;
   const locationScreen = 2;
@@ -53,7 +57,18 @@ export default function register() {
       <View style={{ flex: 1 }}>
         {counter === birthScreen ? (
           <View style={{ flex: 1 }}>
-            <View style={{ borderWidth: 1, borderColor: "red", height: "50%", margin: 10 }}></View>
+            <SafeAreaProvider>
+              <View style={{ justifyContent: "center", alignItems: "center", padding: 8 }}>
+                <DatePickerInput
+                  locale="en"
+                  label="Birthdate"
+                  value={inputDate}
+                  onChange={(d) => setInputDate(d)}
+                  inputMode="start"
+                  presentationStyle="pageSheet"
+                />
+              </View>
+            </SafeAreaProvider>{" "}
           </View>
         ) : counter === mobileNumScreen ? (
           <View style={{ flex: 1 }}>
