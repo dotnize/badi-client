@@ -1,10 +1,10 @@
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
 function CardComponent() {
   return (
-    <Card style={{ height: 200 }}>
+    <Card style={{ height: 200, margin: 8 }}>
       <Card.Content>
         <Text>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
@@ -17,7 +17,7 @@ function CardComponent() {
 
 export default function activity() {
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <View style={{ flex: 1, alignItems: "center", padding: 8 }}>
           <Text variant="titleLarge">Trade Activities</Text>
@@ -38,16 +38,27 @@ export default function activity() {
         >
           <TabScreen label="Active">
             <View style={{ flex: 1 }}>
-              <View style={{ gap: 8, padding: 8, flex: 1 }}>
+              <ScrollView style={{ flex: 1, padding: 8 }} showsVerticalScrollIndicator={false}>
                 <CardComponent />
                 <CardComponent />
-              </View>
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+              </ScrollView>
             </View>
           </TabScreen>
 
           <TabScreen label="Pending">
-            <View style={{ gap: 8, padding: 8, flex: 1 }}>
-              <CardComponent />
+            <View style={{ flex: 1 }}>
+              <ScrollView style={{ flex: 1, padding: 8 }}>
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+              </ScrollView>
             </View>
           </TabScreen>
         </Tabs>
