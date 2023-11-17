@@ -3,7 +3,6 @@ import { useState } from "react";
 import { View } from "react-native";
 import { Button, IconButton, ProgressBar, Text, TextInput } from "react-native-paper";
 import { DatePickerInput } from "react-native-paper-dates";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function Register() {
   const router = useRouter();
@@ -57,18 +56,16 @@ export default function Register() {
       <View style={{ flex: 1 }}>
         {counter === birthScreen ? (
           <View style={{ flex: 1 }}>
-            <SafeAreaProvider>
-              <View style={{ justifyContent: "center", alignItems: "center", padding: 8 }}>
-                <DatePickerInput
-                  locale="en"
-                  label="Birthdate"
-                  value={inputDate}
-                  onChange={(d) => setInputDate(d)}
-                  inputMode="start"
-                  presentationStyle="pageSheet"
-                />
-              </View>
-            </SafeAreaProvider>{" "}
+            <View style={{ justifyContent: "center", alignItems: "center", padding: 8 }}>
+              <DatePickerInput
+                locale="en"
+                label="Birthdate"
+                value={inputDate}
+                onChange={(d) => setInputDate(d)}
+                inputMode="start"
+                presentationStyle="pageSheet"
+              />
+            </View>
           </View>
         ) : counter === mobileNumScreen ? (
           <View style={{ flex: 1 }}>

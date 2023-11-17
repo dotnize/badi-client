@@ -15,14 +15,12 @@ function CardComponent() {
   );
 }
 
-export default function activity() {
+export default function Activity() {
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <View style={{ flex: 1, alignItems: "center", padding: 8 }}>
-          <Text variant="titleLarge">Trade Activities</Text>
-        </View>
-        <IconButton size={20} icon="bell" />
+      <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
+        <Text variant="titleMedium">Trade Activities</Text>
+        <IconButton style={{ position: "absolute", right: 0 }} icon="bell" />
       </View>
       <TabsProvider defaultIndex={0}>
         <Tabs
