@@ -1,10 +1,10 @@
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
 function CardComponent() {
   return (
-    <Card style={{ height: 200 }}>
+    <Card style={{ height: 200, margin: 8 }}>
       <Card.Content>
         <Text>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
@@ -15,14 +15,12 @@ function CardComponent() {
   );
 }
 
-export default function activity() {
+export default function Activity() {
   return (
-    <View>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <View style={{ flex: 1, alignItems: "center", padding: 8 }}>
-          <Text variant="titleLarge">Trade Activities</Text>
-        </View>
-        <IconButton size={20} icon="bell" />
+    <View style={{ flex: 1 }}>
+      <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
+        <Text variant="titleMedium">Trade Activities</Text>
+        <IconButton style={{ position: "absolute", right: 0 }} icon="bell" />
       </View>
       <TabsProvider defaultIndex={0}>
         <Tabs
@@ -38,16 +36,27 @@ export default function activity() {
         >
           <TabScreen label="Active">
             <View style={{ flex: 1 }}>
-              <View style={{ gap: 8, padding: 8, flex: 1 }}>
+              <ScrollView style={{ flex: 1, padding: 8 }} showsVerticalScrollIndicator={false}>
                 <CardComponent />
                 <CardComponent />
-              </View>
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+              </ScrollView>
             </View>
           </TabScreen>
 
           <TabScreen label="Pending">
-            <View style={{ gap: 8, padding: 8, flex: 1 }}>
-              <CardComponent />
+            <View style={{ flex: 1 }}>
+              <ScrollView style={{ flex: 1, padding: 8 }}>
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+                <CardComponent />
+              </ScrollView>
             </View>
           </TabScreen>
         </Tabs>
