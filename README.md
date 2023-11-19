@@ -71,7 +71,7 @@ When working on a new screen, feature, or bugfix, create a new branch from `main
    ```sh
    npm install
    ```
-   _Optional_, but after this, you can perform a fresh reinstall to clean up cache:
+   _Optional_, but after this, you can perform a fresh reinstall to avoid cache & dependency issues:
    ```sh
    npm run freshinstall
    ```
@@ -81,7 +81,7 @@ When working on a new screen, feature, or bugfix, create a new branch from `main
 
 If you're already working on a branch and you want to grab the latest changes from `main` branch, do the following:
 
-1. Switch to `main` branch:
+1. Switch to `main` branch (or the branch you want to grab commits from):
    ```sh
    git switch main
    ```
@@ -98,7 +98,7 @@ If you're already working on a branch and you want to grab the latest changes fr
    git merge main
    ```
    If naay conflicts, chat nalang sa server hehe
-5. _OPTIONAL_, fresh install to avoid cache issues:
+5. _OPTIONAL_, fresh install if dependencies were updated:
    ```sh
    npm run freshinstall
    ```
