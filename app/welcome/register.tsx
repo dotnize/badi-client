@@ -15,7 +15,7 @@ export default function Register() {
 
   const continueScreen = () => {
     if (counter === locationScreen) {
-      router.push("/welcome/login");
+      router.push("/");
     } else {
       setCounter(counter + 1);
     }
