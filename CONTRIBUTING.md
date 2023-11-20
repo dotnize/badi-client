@@ -40,7 +40,7 @@ When working on a new screen, feature, or bugfix, create a new branch from `main
 
 ## Grabbing changes from main
 
-If you're already working on a branch and you want to grab the latest changes `main` or any other branch, do the following:
+If you're already working on a branch and you want to grab the latest changes from `main` or any other branch, do the following:
 
 1. Switch to `main` branch (or the branch you want to grab commits from):
    ```sh
