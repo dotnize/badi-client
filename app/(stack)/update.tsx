@@ -35,11 +35,14 @@ export default function Update() {
       </View>
 
       <View style={{ width: "100%" }}>
-        <Text variant="titleMedium">Photos</Text>
+        <Text>Photos</Text>
         <Image
           source={require("~/assets/adaptive-icon.png")}
           style={{ width: 256, height: 256, alignSelf: "center" }}
         />
+      </View>
+      <View style={{ width: "100%" }}>
+        <Text>Details (optional)</Text>
       </View>
     </View>
   );
