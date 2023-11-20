@@ -1,4 +1,4 @@
-## Contributing
+# Contributing
 
 Table of Contents:
 
@@ -6,7 +6,7 @@ Table of Contents:
 - [Grabbing changes from main](#grabbing-changes-from-main) (may also be applied to other branches)
 - [Extras](#extras)
 
-### Creating a new branch
+## Creating a new branch
 
 When working on a new screen, feature, or bugfix, create a new branch from `main` with the following naming convention: `lastname/branchame`
 
@@ -38,7 +38,7 @@ When working on a new screen, feature, or bugfix, create a new branch from `main
    ```
 6. Start working on your branch, commit, and push freely :) just dont commit to `main` or other member's branches
 
-### Grabbing changes from main
+## Grabbing changes from main
 
 If you're already working on a branch and you want to grab the latest changes `main` or any other branch, do the following:
 
@@ -64,7 +64,7 @@ If you're already working on a branch and you want to grab the latest changes `m
    npm run freshinstall
    ```
 
-### Extras
+## Extras
 
 - Use `git switch` to switch to an existing branch, and add the `-c` flag when creating a new one.
   - e.g `git switch -c lastname/newbranchname`
