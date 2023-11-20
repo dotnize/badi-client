@@ -172,7 +172,7 @@ function ProfileContent({
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <PaperProvider>
         <Portal>
           <Modal
@@ -288,7 +288,7 @@ function ProfileContent({
           </Text>
         </View> */}
 
-          <IconButton onPress={() => navigation.goBack()} icon="arrow-left" />
+          <IconButton onPress={() => navigation.goBack()} icon="arrow-left" iconColor="black" />
           <TouchableOpacity onPress={() => navigation.navigate("Cover Photo")}>
             <Image
               style={styles.backgroundPic}
@@ -405,6 +405,7 @@ function CardComponent(props: CardProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#FBF9F1",
   },
   photoPreview: {
     resizeMode: "contain",
@@ -413,7 +414,7 @@ const styles = StyleSheet.create({
   },
   backgroundPic: {
     resizeMode: "contain",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#e0e0e0",
     height: 200,
   },
   profilePic: {
