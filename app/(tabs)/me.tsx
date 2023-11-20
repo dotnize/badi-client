@@ -1,3 +1,5 @@
+// hello guyss
+
 import "react-native-gesture-handler";
 
 import { AntDesign, Feather } from "@expo/vector-icons";
