@@ -1,17 +1,32 @@
-import "react-native-gesture-handler";
-
+import { useState } from "react";
 import { View } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+import { Card, IconButton, Searchbar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
-import { CardComponent } from "./activity";
 
-export default function index() {
+function CardComponent() {
+  return (
+    <Card style={{ height: 200 }}>
+      <Card.Content>
+        <Text>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+          ut labore et dolore magna aliqua.
+        </Text>
+      </Card.Content>
+    </Card>
+  );
+}
+
+export default function Index() {
+  const [searchValue, setSearchValue] = useState("");
   return (
     <View>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <View style={{ flex: 1, alignItems: "center", padding: 8 }}>
-          <Text variant="titleLarge">Home</Text>
-        </View>
+      <View style={{ flexDirection: "row", alignItems: "center", padding: 16 }}>
+        <Searchbar
+          placeholder="Search..."
+          value={searchValue}
+          onChangeText={(query) => setSearchValue(query)}
+          style={{ flex: 1 }}
+        />
         <IconButton size={20} icon="bell" />
       </View>
       <TabsProvider defaultIndex={0}>
@@ -37,6 +52,12 @@ export default function index() {
 
           <TabScreen label="Services">
             <View style={{ gap: 8, padding: 8, flex: 1 }}>
+              <CardComponent />
+            </View>
+          </TabScreen>
+          <TabScreen label="Wishes">
+            <View style={{ gap: 8, padding: 8, flex: 1 }}>
+              <CardComponent />
               <CardComponent />
             </View>
           </TabScreen>
