@@ -159,12 +159,12 @@ function ProfileContent({
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentOffsetY = event.nativeEvent.contentOffset.y;
-    const scrollThreshold = 370;
+    const scrollThreshold = 390;
 
     if (currentOffsetY >= scrollThreshold) {
       setScrollEnabled(false);
       // If the user tries to scroll beyond the threshold, prevent further scrolling
-      scrollViewRef.current?.scrollTo({ x: 0, y: 370, animated: false });
+      scrollViewRef.current?.scrollTo({ x: 0, y: scrollThreshold, animated: false });
     }
     console.log(currentOffsetY);
     // setScrollEnabled(currentOffsetY < scrollThreshold);
