@@ -1,4 +1,4 @@
-# Badi Client - SMOLDUCKK02!!
+# Badi Client
 
 Tech stack:
 
