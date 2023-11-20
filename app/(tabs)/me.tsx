@@ -3,16 +3,12 @@
 import "react-native-gesture-handler";
 
 import { AntDesign, Feather } from "@expo/vector-icons";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
 import * as ImagePicker from "expo-image-picker";
-import React from "react";
+import { useState } from "react";
 import {
   Alert,
   FlatList,
   Image,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -21,6 +17,7 @@ import {
 import {
   Button,
   Card,
+  DefaultTheme,
   IconButton,
   Modal,
   PaperProvider,
@@ -29,19 +26,100 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
+import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
+
 import { COLORS } from "~/lib/theme";
+const theme = {
+  ...DefaultTheme,
+  colors: COLORS,
+};
 
-export default function myProfile() {
-  const Stack = createStackNavigator();
+// TODO: use Expo Router's stack navigator, instead of a third party library.
+// TODO: use new routes in the (stack) directory.
 
-  const [profilePic, setProfilePic] = React.useState<string | null>(
+// export default function MyProfile() {
+//   const Stack = createStackNavigator();
+
+//   const [profilePic, setProfilePic] = useState<string | null>(
+//     "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78"
+//   );
+//   const updateProfilePic = (newProfilePic: string | null) => {
+//     setProfilePic(newProfilePic);
+//   };
+
+//   const [backgroundPic, setBackgroundPic] = useState<string | null>(
+//     "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78"
+//   );
+//   const updateBackgroundPic = (newBackgroundPic: string | null) => {
+//     setBackgroundPic(newBackgroundPic);
+//   };
+
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen
+//         name="Profile"
+//         options={{
+//           headerShown: false,
+//         }}
+//       >
+//         {(props: any) => (
+//           <ProfileContent
+//             {...props}
+//             profilePic={profilePic}
+//             updateProfilePic={updateProfilePic}
+//             backgroundPic={backgroundPic}
+//             updateBackgroundPic={updateBackgroundPic}
+//           />
+//         )}
+//       </Stack.Screen>
+//       <Stack.Screen name="Profile Photo">
+//         {(props: any) => <PicturePreview {...props} photo={profilePic} />}
+//       </Stack.Screen>
+//       <Stack.Screen name="Cover Photo">
+//         {(props: any) => <PicturePreview {...props} photo={backgroundPic} />}
+//       </Stack.Screen>
+//       <Stack.Screen name="Ratings & Reviews">
+//         {(props: any) => <RatingsReviews {...props} photo={backgroundPic} />}
+//       </Stack.Screen>
+//     </Stack.Navigator>
+//   );
+// }
+
+// const RatingsReviews = ({ navigation }: any) => {
+//   return (
+//     <View style={{ flex: 1 }}>
+//       <FlatList
+//         data={INVENTORY}
+//         renderItem={({ item }) => <CardComponent content={item.content} />}
+//         keyExtractor={(item) => item.id.toString()}
+//         style={{ height: 1000 }}
+//       />
+//     </View>
+//   );
+// };
+// const PicturePreview = ({ navigation, photo }: any) => {
+//   console.log(photo);
+//   return (
+//     <View style={{ flex: 1, justifyContent: "center" }}>
+//       <Image
+//         style={styles.photoPreview}
+//         source={{
+//           uri: photo ? photo : "Error",
+//         }}
+//       />
+//     </View>
+//   );
+// };
+
+export default function MyProfile() {
+  const [profilePic, setProfilePic] = useState<string | null>(
     "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78"
   );
   const updateProfilePic = (newProfilePic: string | null) => {
     setProfilePic(newProfilePic);
   };
 
-  const [backgroundPic, setBackgroundPic] = React.useState<string | null>(
+  const [backgroundPic, setBackgroundPic] = useState<string | null>(
     "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78"
   );
   const updateBackgroundPic = (newBackgroundPic: string | null) => {
@@ -49,33 +127,12 @@ export default function myProfile() {
   };
 
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Profile"
-        options={{
-          headerShown: false,
-        }}
-      >
-        {(props: any) => (
-          <ProfileContent
-            {...props}
-            profilePic={profilePic}
-            updateProfilePic={updateProfilePic}
-            backgroundPic={backgroundPic}
-            updateBackgroundPic={updateBackgroundPic}
-          />
-        )}
-      </Stack.Screen>
-      <Stack.Screen name="Profile Photo">
-        {(props: any) => <PicturePreview {...props} photo={profilePic} />}
-      </Stack.Screen>
-      <Stack.Screen name="Cover Photo">
-        {(props: any) => <PicturePreview {...props} photo={backgroundPic} />}
-      </Stack.Screen>
-      <Stack.Screen name="Ratings & Reviews">
-        {(props: any) => <RatingsReviews {...props} photo={backgroundPic} />}
-      </Stack.Screen>
-    </Stack.Navigator>
+    <ProfileContent
+      profilePic={profilePic}
+      updateProfilePic={updateProfilePic}
+      backgroundPic={backgroundPic}
+      updateBackgroundPic={updateBackgroundPic}
+    />
   );
 }
 
@@ -112,12 +169,10 @@ function ProfileContent({
   backgroundPic,
   updateBackgroundPic,
 }: any) {
-  const Tab = createMaterialTopTabNavigator();
-
-  const [name, setName] = React.useState("Liden U. Hoe");
-  const [nameInput, setNameInput] = React.useState(name);
-  const [visible, setVisible] = React.useState(false);
-  const [snackBarVisible, setSnackBarVisible] = React.useState(false);
+  const name = "Liden U. Hoe";
+  const [nameInput, setNameInput] = useState(name);
+  const [visible, setVisible] = useState(false);
+  const [snackBarVisible, setSnackBarVisible] = useState(false);
 
   const showModal = () => setVisible(true);
   const hideModal = () => {
@@ -154,26 +209,9 @@ function ProfileContent({
     }
   };
 
-  const [scrollEnabled, setScrollEnabled] = React.useState(true);
-  const scrollViewRef = React.useRef<ScrollView>(null);
-
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const currentOffsetY = event.nativeEvent.contentOffset.y;
-    const scrollThreshold = 390;
-
-    if (currentOffsetY >= scrollThreshold) {
-      setScrollEnabled(false);
-      // If the user tries to scroll beyond the threshold, prevent further scrolling
-      scrollViewRef.current?.scrollTo({ x: 0, y: scrollThreshold, animated: false });
-    }
-    console.log(currentOffsetY);
-    // setScrollEnabled(currentOffsetY < scrollThreshold);
-    // setScrollEnabled(true);
-  };
-
   return (
     <View style={styles.container}>
-      <PaperProvider>
+      <PaperProvider theme={theme}>
         <Portal>
           <Modal
             style={styles.editProfileModal}
@@ -276,12 +314,7 @@ function ProfileContent({
           </Snackbar>
         </Portal>
 
-        <ScrollView
-          style={{ flex: 1 }}
-          ref={scrollViewRef}
-          onScroll={handleScroll}
-          scrollEventThrottle={5}
-        >
+        <ScrollView style={{ flex: 1 }} scrollEventThrottle={5}>
           {/* <View style={{ alignSelf: "center", padding: 15 }}>
           <Text variant="titleLarge" style={{ color: "black" }}>
             Profile
@@ -340,18 +373,19 @@ function ProfileContent({
             </TouchableOpacity>
           </View>
 
-          <Tab.Navigator
-            screenOptions={{
-              // tabBarActiveTintColor: "#e91e63",
-              tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
-              tabBarLabelStyle: { fontSize: 12 },
-              tabBarStyle: { backgroundColor: "none" },
-            }}
-          >
-            <Tab.Screen name="Inventory" component={InventoryScreen} />
-            <Tab.Screen name="Wishes" component={WishesScreen} />
-            <Tab.Screen name="History" component={HistoryScreen} />
-          </Tab.Navigator>
+          <TabsProvider defaultIndex={0}>
+            <Tabs>
+              <TabScreen label="Inventory">
+                <InventoryScreen />
+              </TabScreen>
+              <TabScreen label="Wishes">
+                <WishesScreen />
+              </TabScreen>
+              <TabScreen label="History">
+                <HistoryScreen />
+              </TabScreen>
+            </Tabs>
+          </TabsProvider>
         </ScrollView>
       </PaperProvider>
     </View>
