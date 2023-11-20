@@ -6,16 +6,21 @@ import { DatePickerInput } from "react-native-paper-dates";
 
 export default function Register() {
   const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [counter, setCounter] = useState(0);
   const [inputDate, setInputDate] = useState<Date | undefined>(undefined);
 
-  const birthScreen = 0;
-  const mobileNumScreen = 1;
-  const locationScreen = 2;
+  const emailScreen = 0;
+  const birthScreen = 1;
+  const mobileNumScreen = 2;
+  const locationScreen = 3;
+  const passwordScreen = 4;
 
   const continueScreen = () => {
-    if (counter === locationScreen) {
-      router.push("/welcome/login");
+    if (counter === passwordScreen) {
+      router.push("/");
     } else {
       setCounter(counter + 1);
     }
@@ -34,6 +39,11 @@ export default function Register() {
     <View style={{ padding: 8, flex: 1, height: "100%" }}>
       <View>
         <IconButton onPress={backScreen} icon="arrow-left" />
+        {counter === emailScreen && (
+          <Text variant="titleLarge" style={{ padding: 12 }}>
+            Enter your email
+          </Text>
+        )}
         {counter === birthScreen && (
           <Text variant="titleLarge" style={{ padding: 12 }}>
             Select a Birthdate
@@ -44,17 +54,49 @@ export default function Register() {
             Enter your mobile number
           </Text>
         )}
-        {counter !== birthScreen && counter !== mobileNumScreen && (
+        {counter === locationScreen && (
           <Text variant="titleLarge" style={{ padding: 12 }}>
             Enter your location
           </Text>
         )}
+        {counter !== birthScreen &&
+          counter !== mobileNumScreen &&
+          counter !== emailScreen &&
+          counter !== locationScreen && (
+            <Text variant="titleLarge" style={{ padding: 12 }}>
+              Create your password
+            </Text>
+          )}
         <ProgressBar
-          progress={counter === birthScreen ? 0.25 : counter === mobileNumScreen ? 0.6 : 1}
+          progress={
+            counter === emailScreen
+              ? 0.2
+              : counter === birthScreen
+                ? 0.4
+                : counter === mobileNumScreen
+                  ? 0.6
+                  : counter === locationScreen
+                    ? 0.8
+                    : 1
+          }
         />
       </View>
       <View style={{ flex: 1 }}>
-        {counter === birthScreen ? (
+        {counter === emailScreen ? (
+          <View style={{ flex: 1 }}>
+            <View>
+              <TextInput
+                style={{ flex: 1 }}
+                mode="outlined"
+                label="Email"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                }}
+              />
+            </View>
+          </View>
+        ) : counter === birthScreen ? (
           <View style={{ flex: 1 }}>
             <View style={{ justifyContent: "center", alignItems: "center", padding: 8 }}>
               <DatePickerInput
@@ -81,10 +123,24 @@ export default function Register() {
               <TextInput style={{ flex: 1 }} mode="outlined" label="Mobile Number" />
             </View>
           </View>
-        ) : (
+        ) : counter === locationScreen ? (
           <View style={{ flex: 1 }}>
             <View>
               <TextInput style={{ flex: 1 }} mode="outlined" label="Location" />
+            </View>
+          </View>
+        ) : (
+          <View style={{ flex: 1 }}>
+            <View>
+              <TextInput
+                style={{ flex: 1 }}
+                mode="outlined"
+                label="Password"
+                value={password}
+                onChangeText={(password) => {
+                  setPassword(password);
+                }}
+              />
             </View>
           </View>
         )}
