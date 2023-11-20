@@ -3,7 +3,8 @@
 Table of Contents:
 
 - [Creating a new branch](#creating-a-new-branch) (branching out from `main`)
-- [Grabbing changes from main](#grabbing-changes-from-main) (may also be applied to other branches)
+- [Grabbing changes from main](#grabbing-changes-from-main) (or from other branches)
+- [Workflow guidelines](#workflow-guidelines)
 - [Extras](#extras)
 
 ## Creating a new branch
@@ -63,6 +64,16 @@ If you're already working on a branch and you want to grab the latest changes fr
    ```sh
    npm run freshinstall
    ```
+
+## Workflow guidelines
+
+1. Communicate! Ask for help, make suggestions, and let others know what you're working on.
+2. Push your commits regularly. Don't wait until you're done with your work before pushing.
+   - I recommend pushing after you're done working for the day (e.g. before turning off your computer or going to sleep).
+3. Create pull requests so we can discuss your branches before merging.
+   - So we can track and review your changes easier, I recommend creating a Pull Request immediately after creating a new branch, even if it's still in progress or empty. Request a review if you're finished.
+4. To avoid merge conflicts, avoid making changes to files assigned to other members. If you really need to, please communicate it properly when making a pull request.
+5. Keep your code simple and readable. Use descriptive variable names, and avoid unnecessary complexity.
 
 ## Extras
 
