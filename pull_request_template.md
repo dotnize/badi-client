@@ -1,5 +1,10 @@
-## Issue ticket number, if any
+### Issue ticket number
+<!-- Example: "resolves #8" -->
+
 
 ## Describe your changes
+<!-- Be descriptive if possible :) -->
 
-## List added/updated dependencies, if any
+
+## List added/updated dependencies with versions, if any
+- 
