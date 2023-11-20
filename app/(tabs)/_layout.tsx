@@ -75,7 +75,7 @@ export default function TabLayout() {
       shifting
     >
       <Tabs.Screen
-        name="me"
+        name="index"
         options={{
           title: "Home",
           tabBarIcon: ({ focused, color }) => (
@@ -121,7 +121,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="index"
+        name="me"
         options={{
           title: "My Profile",
           tabBarLabel: "Me",
