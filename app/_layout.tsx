@@ -1,5 +1,5 @@
-import { Stack } from "expo-router";
-import { MD3LightTheme as DefaultTheme, PaperProvider } from "react-native-paper";
+import { Stack, useRouter } from "expo-router";
+import { Appbar, MD3LightTheme as DefaultTheme, PaperProvider } from "react-native-paper";
 
 import { COLORS } from "~/lib/theme";
 
@@ -25,12 +25,23 @@ const theme = {
 //const user = undefined; // TEMPORARY
 
 export default function RootLayout() {
+  const router = useRouter();
+
   return (
     <PaperProvider theme={theme}>
       {/* {!user && <Redirect href="/welcome" />} */}
-      <Stack>
+      <Stack
+        screenOptions={{
+          header: () => (
+            <Appbar.Header>
+              <Appbar.BackAction
+                onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))}
+              />
+            </Appbar.Header>
+          ),
+        }}
+      >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(stack)" options={{ headerShown: false }} />
         <Stack.Screen name="welcome" options={{ headerShown: false }} />
       </Stack>
     </PaperProvider>
