@@ -14,7 +14,7 @@ import { Text } from "react-native-paper";
  * - if other user ratings, gamiton ang useLocalSearchParams() hook.
  * - else if my profile ratings, gamiton ang logged-in user id (via a custom hook or context)
  *
- * then kana nga reusable component kay gamiton both sa /user/me/ratings og /me/ratings nga routes.
+ * then kana nga reusable component kay gamiton both sa /user/[id]/ratings og /me/ratings nga routes.
  * @jameel @leonel
  * Sabotan nya ni nato sa discord. Chat sad mo sa server anytime if naa mo questions.
  */
