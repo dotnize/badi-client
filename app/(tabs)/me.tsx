@@ -113,14 +113,14 @@ const theme = {
 
 export default function MyProfile() {
   const [profilePic, setProfilePic] = useState<string | null>(
-    "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78"
+    "https://pbs.twimg.com/profile_images/1509961758022139904/fXryqX_6_400x400.jpg"
   );
   const updateProfilePic = (newProfilePic: string | null) => {
     setProfilePic(newProfilePic);
   };
 
   const [backgroundPic, setBackgroundPic] = useState<string | null>(
-    "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78"
+    "https://indianmemetemplates.com/wp-content/uploads/patrick-bateman-sigma-face.jpg"
   );
   const updateBackgroundPic = (newBackgroundPic: string | null) => {
     setBackgroundPic(newBackgroundPic);
