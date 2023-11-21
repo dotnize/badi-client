@@ -3,7 +3,7 @@
 
 
 ## Describe your changes
-<!-- Be descriptive if possible :) -->
+<!-- optional, but would be nice -->
 
 
 ## List added/updated dependencies with versions
