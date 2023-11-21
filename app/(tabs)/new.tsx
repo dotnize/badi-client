@@ -5,8 +5,8 @@ import { ScrollView, Text, TextInput, View } from "react-native";
 import { IconButton } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
-// New component for the listing form
-function ListingForm() {
+// New component for the title form
+function TitleForm() {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Title</Text>
@@ -35,7 +35,7 @@ function PhotoSection() {
         style={{
           borderWidth: 1,
           borderColor: "gray",
-          height: 120,
+          height: 200,
           justifyContent: "center",
           alignItems: "center",
           borderRadius: 4,
@@ -43,6 +43,25 @@ function PhotoSection() {
       >
         <IconButton icon="camera" onPress={() => console.log("Add Photos")} />
       </View>
+    </View>
+  );
+}
+
+function DescriptionForm() {
+  return (
+    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
+      <Text style={{ fontSize: 16, marginBottom: 8 }}>Description</Text>
+      <TextInput
+        placeholder=""
+        style={{
+          height: 80,
+          borderColor: "gray",
+          borderWidth: 1,
+          padding: 8,
+          borderRadius: 4,
+          width: "100%",
+        }}
+      />
     </View>
   );
 }
@@ -57,18 +76,16 @@ export default function NewListing() {
         <Tabs>
           <TabScreen label="Items">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              {/* ListingForm component */}
-              <ListingForm />
-              {/* PhotoSection component */}
+              <TitleForm />
               <PhotoSection />
+              <DescriptionForm />
             </ScrollView>
           </TabScreen>
           <TabScreen label="Services">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              {/* ListingForm component */}
-              <ListingForm />
-              {/* PhotoSection component */}
+              <TitleForm />
               <PhotoSection />
+              <DescriptionForm />
             </ScrollView>
           </TabScreen>
         </Tabs>
