@@ -1,5 +1,5 @@
 ### Assigned issue number
-<!-- Leave empty if not applicable. Example: close #8, close #32 -->
+<!-- Leave empty if none. Example: close #8, close #32 -->
 
 
 ## Describe your changes
@@ -7,5 +7,5 @@
 
 
 ## List added/updated dependencies with versions
-<!-- Leave empty if not applicable. -->
+<!-- Leave empty if none. -->
 -
