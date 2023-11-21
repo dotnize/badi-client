@@ -6,11 +6,11 @@ export default function StackLayout() {
   const router = useRouter();
   return (
     <View>
-      {router.canGoBack() && (
-        <Appbar.Header>
-          <Appbar.BackAction onPress={() => router.back()} />
-        </Appbar.Header>
-      )}
+      <Appbar.Header>
+        <Appbar.BackAction
+          onPress={() => (router.canGoBack() ? router.back() : router.push("/"))}
+        />
+      </Appbar.Header>
 
       <Slot />
     </View>

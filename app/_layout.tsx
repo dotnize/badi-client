@@ -30,6 +30,7 @@ export default function RootLayout() {
       {/* {!user && <Redirect href="/welcome" />} */}
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(stack)" options={{ headerShown: false }} />
         <Stack.Screen name="welcome" options={{ headerShown: false }} />
       </Stack>
     </PaperProvider>
