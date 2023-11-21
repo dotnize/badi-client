@@ -1,15 +1,20 @@
 # Badi Client
 
-Tech stack:
+Primary tech stack:
 
 - React 18 - https://react.dev/
 - React Native 0.72 - https://reactnative.dev/
 - Expo 49 - https://expo.dev/
-- Expo Router 2 - https://docs.expo.dev/routing/introduction/
-- Expo Vector Icons - https://icons.expo.fyi/
-- React Native Paper 5 - https://callstack.github.io/react-native-paper/
 - TypeScript 5 - https://www.typescriptlang.org/
 - ESLint & Prettier
+
+## Third-party libraries
+
+- Routing & navigation: [Expo Router 2](https://docs.expo.dev/routing/introduction/)
+- Material 3 Components: [React Native Paper 5](https://callstack.github.io/react-native-paper/)
+- Icons: [@expo/vector-icons](https://icons.expo.fyi/)
+- Top tabs: [react-native-paper-tabs](https://github.com/web-ridge/react-native-paper-tabs)
+- Dropdown: [react-native-element-dropdown](https://github.com/hoaphantn7604/react-native-element-dropdown)
 
 ## Documentation
 
