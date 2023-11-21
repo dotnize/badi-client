@@ -60,12 +60,12 @@ export default function Update() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 8, height: "100%", gap: 8 }}>
+    <View style={{ flex: 1, padding: 8, gap: 8 }}>
       <View style={{ width: "100%", flex: 1, gap: 12 }}>
         <Text style={{ alignSelf: "center" }} variant="titleMedium">
           Update Progress
         </Text>
-        <View style={{ flex: 1, width: "100%" }}>
+        <View style={{ width: "100%" }}>
           <Text>Select item from trade</Text>
           <View style={{ padding: 14 }}>
             {renderLabel()}
