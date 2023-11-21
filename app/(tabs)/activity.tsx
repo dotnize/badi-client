@@ -1,17 +1,23 @@
+import { Link } from "expo-router";
 import { ScrollView, View } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
-import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
+import { TabScreen, Tabs, TabsProvider, useTabIndex } from "react-native-paper-tabs";
 
 function CardComponent() {
+  const tabIndex = useTabIndex();
+  const whatTab = tabIndex === 0 ? "/active" : "/pending";
+
   return (
-    <Card style={{ height: 200, margin: 8 }}>
-      <Card.Content>
-        <Text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua.
-        </Text>
-      </Card.Content>
-    </Card>
+    <Link href={whatTab}>
+      <Card style={{ height: 200, margin: 8 }}>
+        <Card.Content>
+          <Text>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua.
+          </Text>
+        </Card.Content>
+      </Card>
+    </Link>
   );
 }
 
