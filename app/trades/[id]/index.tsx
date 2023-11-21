@@ -45,7 +45,7 @@ export default function ActiveTrade() {
         <ProgressBar progress={percent / 100} />
       </View>
       <View style={{ padding: 8 }}>
-        <Link asChild href="/update">
+        <Link asChild href={`/trades/${id}/update`}>
           <Button mode="contained">Update Progress</Button>
         </Link>
       </View>

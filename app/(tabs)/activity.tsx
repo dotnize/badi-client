@@ -5,7 +5,8 @@ import { TabScreen, Tabs, TabsProvider, useTabIndex } from "react-native-paper-t
 
 function CardComponent() {
   const tabIndex = useTabIndex();
-  const whatTab = tabIndex === 0 ? "/active" : "/pending";
+  const tempId = 1 + Math.floor(Math.random() * 100); // TODO: replace with legit id
+  const whatTab = tabIndex === 0 ? `/trades/${tempId}` : `/offers/${tempId}`;
 
   return (
     <Link href={whatTab}>
