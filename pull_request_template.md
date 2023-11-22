@@ -6,6 +6,6 @@
 <!-- optional, but would be nice -->
 
 
-## List added/updated dependencies with versions
+### New dependencies with URL to docs/homepage
 <!-- Leave empty if none. -->
 -
