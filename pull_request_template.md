@@ -1,6 +1,11 @@
+### Assigned issue number
+<!-- Leave empty if none. Example: close #8, close #32 -->
+
+
 ## Describe your changes
-<!-- Be descriptive if possible :) -->
+<!-- optional, but would be nice -->
 
 
-## List added/updated dependencies with versions, if any
-- 
+### New dependencies with URL to docs/homepage
+<!-- Leave empty if none. -->
+-

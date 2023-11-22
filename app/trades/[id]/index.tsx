@@ -1,4 +1,9 @@
-import { Link } from "expo-router";
+// Index page of a dynamic route!
+// e.g. /trades/1, /trades/8, etc.
+
+// Use the useLocalSearchParams hook from expo-router to get the id from the URL.
+
+import { Link, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Avatar, Button, Card, ProgressBar, Text } from "react-native-paper";
@@ -26,18 +31,21 @@ function ActiveComponent() {
   );
 }
 
-export default function Active() {
+export default function ActiveTrade() {
+  const { id } = useLocalSearchParams();
   const [percent, setPercent] = useState(0);
+  // If naa natay backend, pwede nato gamiton ang id ig fetch.
 
   return (
     <View style={{ flex: 1, padding: 8 }}>
+      <Text>ActiveTrade, id: {id}</Text>
       <View style={{ alignItems: "center", width: "100%", padding: 12, gap: 8 }}>
         <Text variant="titleMedium">Trading with !username!</Text>
         <Text>{percent}% Completed</Text>
         <ProgressBar progress={percent / 100} />
       </View>
       <View style={{ padding: 8 }}>
-        <Link asChild href="/update">
+        <Link asChild href={`/trades/${id}/update`}>
           <Button mode="contained">Update Progress</Button>
         </Link>
       </View>

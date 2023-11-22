@@ -1,9 +1,17 @@
+// Nested in a dynamic route!
+// e.g. /trades/1/update, /trades/8/update, etc.
+
+// Use the useLocalSearchParams hook from expo-router to get the id from the URL.
+
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Image, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Text, TextInput } from "react-native-paper";
 
-export default function Update() {
+export default function PostTradeProgress() {
+  const { id } = useLocalSearchParams();
+  // If naa natay backend, pwede nato gamiton ang id ig fetch.
   const [details, setDetails] = useState("");
   const [value, setValue] = useState<string | null>(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -60,12 +68,12 @@ export default function Update() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 8, height: "100%", gap: 8 }}>
+    <View style={{ flex: 1, padding: 8, gap: 8 }}>
       <View style={{ width: "100%", flex: 1, gap: 12 }}>
         <Text style={{ alignSelf: "center" }} variant="titleMedium">
           Update Progress
         </Text>
-        <View style={{ flex: 1, width: "100%" }}>
+        <View style={{ width: "100%" }}>
           <Text>Select item from trade</Text>
           <View style={{ padding: 14 }}>
             {renderLabel()}

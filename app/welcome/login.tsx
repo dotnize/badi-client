@@ -27,6 +27,7 @@ export default function Login() {
           onChangeText={(input) => setPasswordInput(input)}
           mode="outlined"
           label="Password"
+          secureTextEntry
         />
       </View>
       <View>

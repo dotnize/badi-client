@@ -149,6 +149,7 @@ export default function Register() {
                 onChangeText={(password) => {
                   setPassword(password);
                 }}
+                secureTextEntry
               />
             </View>
           </View>
