@@ -2,7 +2,7 @@ import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { IconButton } from "react-native-paper";
+import { Button, IconButton } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
 // New component for the title form
@@ -81,7 +81,6 @@ function CategoryDropdown() {
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
-      <Text style={{ fontSize: 16, marginBottom: 8 }}>Category</Text>
       <Dropdown
         style={styles.dropdown}
         data={data}
@@ -138,13 +137,16 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 5,
   },
+  postButton: {
+    marginTop: 16,
+  },
 });
 
 export default function NewListing() {
   return (
     <View style={{ flex: 1 }}>
       <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
-        <Text style={{ fontSize: 16, marginBottom: 16 }}>Create New Listing</Text>
+        <Text style={{ fontSize: 16, marginBottom: 4 }}>Create New Listing</Text>
       </View>
       <TabsProvider defaultIndex={0}>
         <Tabs>
@@ -156,6 +158,14 @@ export default function NewListing() {
               {/* Adding the new CategoryDropdown component */}
               <CategoryDropdown />
               <PriceForm />
+              {/* Adding the post button */}
+              <Button
+                mode="contained"
+                style={styles.postButton}
+                onPress={() => console.log("Post Listing")}
+              >
+                Post Listing
+              </Button>
             </ScrollView>
           </TabScreen>
           <TabScreen label="Services">
@@ -166,6 +176,14 @@ export default function NewListing() {
               {/* Adding the new CategoryDropdown component */}
               <CategoryDropdown />
               <PriceForm />
+              {/* Adding the post button */}
+              <Button
+                mode="contained"
+                style={styles.postButton}
+                onPress={() => console.log("Post Listing")}
+              >
+                Post Listing
+              </Button>
             </ScrollView>
           </TabScreen>
         </Tabs>
