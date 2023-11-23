@@ -1,7 +1,7 @@
 // new.tsx
 
-import React from "react";
-import { ScrollView, Text, TextInput, View } from "react-native";
+import React, { useState } from "react";
+import { Picker, ScrollView, Text, TextInput, View } from "react-native";
 import { IconButton } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
@@ -47,14 +47,59 @@ function PhotoSection() {
   );
 }
 
+// New component for the description form
 function DescriptionForm() {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Description</Text>
       <TextInput
         placeholder=""
+        multiline
         style={{
-          height: 80,
+          height: 120,
+          borderColor: "gray",
+          borderWidth: 1,
+          padding: 8,
+          borderRadius: 4,
+          width: "100%",
+        }}
+      />
+    </View>
+  );
+}
+
+// New component for the category dropdown, i used picker for the mean time. I improve lang nize or change it
+function CategoryDropdown() {
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  return (
+    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "50%" }}>
+      <Text style={{ fontSize: 16, marginBottom: 8 }}>Category</Text>
+      <Picker
+        selectedValue={selectedCategory}
+        onValueChange={(itemValue) => setSelectedCategory(itemValue)}
+        style={{ height: 40, width: "100%", borderColor: "gray", borderWidth: 1, borderRadius: 4 }}
+      >
+        <Picker.Item label="Select a category" value="" />
+        <Picker.Item label="Clothing" value="clothing" />
+        <Picker.Item label="Gadgets" value="gadgets" />
+        <Picker.Item label="Vehicles" value="vehicles" />
+        <Picker.Item label="Appliances" value="appliances" />
+      </Picker>
+    </View>
+  );
+}
+
+// New component for the price/value form
+function PriceForm() {
+  return (
+    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "50%" }}>
+      <Text style={{ fontSize: 16, marginBottom: 8 }}>Price/Value</Text>
+      <TextInput
+        placeholder=""
+        keyboardType="numeric"
+        style={{
+          height: 40,
           borderColor: "gray",
           borderWidth: 1,
           padding: 8,
@@ -75,17 +120,35 @@ export default function NewListing() {
       <TabsProvider defaultIndex={0}>
         <Tabs>
           <TabScreen label="Items">
-            <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              <TitleForm />
-              <PhotoSection />
-              <DescriptionForm />
+            <ScrollView
+              style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, flexDirection: "row" }}
+            >
+              <View style={{ flex: 1 }}>
+                <TitleForm />
+                <PhotoSection />
+                <DescriptionForm />
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                {/* Modified the layout for category and price to be side-by-side */}
+                <CategoryDropdown />
+                <PriceForm />
+              </View>
             </ScrollView>
           </TabScreen>
           <TabScreen label="Services">
-            <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              <TitleForm />
-              <PhotoSection />
-              <DescriptionForm />
+            <ScrollView
+              style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, flexDirection: "row" }}
+            >
+              <View style={{ flex: 1 }}>
+                <TitleForm />
+                <PhotoSection />
+                <DescriptionForm />
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                {/* Modified the layout for category and price to be side-by-side */}
+                <CategoryDropdown />
+                <PriceForm />
+              </View>
             </ScrollView>
           </TabScreen>
         </Tabs>
