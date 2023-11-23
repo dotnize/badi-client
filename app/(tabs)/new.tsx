@@ -1,6 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { IconButton } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
@@ -10,6 +10,17 @@ function TitleForm() {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Title</Text>
+      <TextInput
+        placeholder="Enter title"
+        style={{
+          height: 40,
+          borderColor: "gray",
+          borderWidth: 1,
+          padding: 8,
+          borderRadius: 4,
+          width: "100%",
+        }}
+      />
     </View>
   );
 }
@@ -24,7 +35,7 @@ function PhotoSection() {
         style={{
           borderWidth: 1,
           borderColor: "gray",
-          height: 200,
+          height: 140,
           justifyContent: "center",
           alignItems: "center",
           borderRadius: 4,
@@ -41,12 +52,23 @@ function DescriptionForm() {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Description</Text>
-      {/* Add your TextInput here */}
+      <TextInput
+        placeholder="Enter description"
+        multiline
+        style={{
+          height: 80,
+          borderColor: "gray",
+          borderWidth: 1,
+          padding: 8,
+          borderRadius: 4,
+          width: "100%",
+        }}
+      />
     </View>
   );
 }
 
-// New component for the category dropdown using react-native-element-dropdown. Replaced picker.
+// New component for the category dropdown using react-native-element-dropdown
 function CategoryDropdown() {
   const data = [
     { label: "Clothing", value: "clothing" },
@@ -65,7 +87,7 @@ function CategoryDropdown() {
         data={data}
         labelField="label"
         valueField="value"
-        placeholder={!selectedCategory ? "Select item" : "..."}
+        placeholder={!selectedCategory ? "Select category" : "..."}
         onChange={(item) => setSelectedCategory(item.value)}
         renderLeftIcon={() => (
           <AntDesign
@@ -75,6 +97,31 @@ function CategoryDropdown() {
             size={20}
           />
         )}
+      />
+    </View>
+  );
+}
+
+// New component for the price form
+function PriceForm() {
+  const [price, setPrice] = useState<string>("");
+
+  return (
+    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
+      <Text style={{ fontSize: 16, marginBottom: 8 }}>Price</Text>
+      <TextInput
+        placeholder="Enter price"
+        keyboardType="numeric"
+        style={{
+          height: 40,
+          borderColor: "gray",
+          borderWidth: 1,
+          padding: 8,
+          borderRadius: 4,
+          width: "100%",
+        }}
+        value={price}
+        onChangeText={(text) => setPrice(text)}
       />
     </View>
   );
@@ -106,7 +153,9 @@ export default function NewListing() {
               <TitleForm />
               <PhotoSection />
               <DescriptionForm />
+              {/* Adding the new CategoryDropdown component */}
               <CategoryDropdown />
+              <PriceForm />
             </ScrollView>
           </TabScreen>
           <TabScreen label="Services">
@@ -114,7 +163,9 @@ export default function NewListing() {
               <TitleForm />
               <PhotoSection />
               <DescriptionForm />
+              {/* Adding the new CategoryDropdown component */}
               <CategoryDropdown />
+              <PriceForm />
             </ScrollView>
           </TabScreen>
         </Tabs>
