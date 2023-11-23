@@ -1,17 +1,17 @@
-// new.tsx
-
-import React from "react";
-import { ScrollView, Text, TextInput, View } from "react-native";
-import { IconButton } from "react-native-paper";
+import { AntDesign } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
+import { Button, IconButton } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
-// New component for the listing form
-function ListingForm() {
+// New component for the title form
+function TitleForm() {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Title</Text>
       <TextInput
-        placeholder=""
+        placeholder="Enter title"
         style={{
           height: 40,
           borderColor: "gray",
@@ -35,7 +35,7 @@ function PhotoSection() {
         style={{
           borderWidth: 1,
           borderColor: "gray",
-          height: 120,
+          height: 140,
           justifyContent: "center",
           alignItems: "center",
           borderRadius: 4,
@@ -47,28 +47,143 @@ function PhotoSection() {
   );
 }
 
+// New component for the description form
+function DescriptionForm() {
+  return (
+    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
+      <Text style={{ fontSize: 16, marginBottom: 8 }}>Description</Text>
+      <TextInput
+        placeholder="Enter description"
+        multiline
+        style={{
+          height: 80,
+          borderColor: "gray",
+          borderWidth: 1,
+          padding: 8,
+          borderRadius: 4,
+          width: "100%",
+        }}
+      />
+    </View>
+  );
+}
+
+// New component for the category dropdown using react-native-element-dropdown
+function CategoryDropdown() {
+  const data = [
+    { label: "Clothing", value: "clothing" },
+    { label: "Gadgets", value: "gadgets" },
+    { label: "Vehicles", value: "vehicles" },
+    { label: "Appliances", value: "appliances" },
+  ];
+
+  const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
+
+  return (
+    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
+      <Dropdown
+        style={styles.dropdown}
+        data={data}
+        labelField="label"
+        valueField="value"
+        placeholder={!selectedCategory ? "Select category" : "..."}
+        onChange={(item) => setSelectedCategory(item.value)}
+        renderLeftIcon={() => (
+          <AntDesign
+            style={styles.icon}
+            color={selectedCategory ? "blue" : "black"}
+            name="Safety"
+            size={20}
+          />
+        )}
+      />
+    </View>
+  );
+}
+
+// New component for the price form
+function PriceForm() {
+  const [price, setPrice] = useState<string>("");
+
+  return (
+    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
+      <Text style={{ fontSize: 16, marginBottom: 8 }}>Price</Text>
+      <TextInput
+        placeholder="Enter price"
+        keyboardType="numeric"
+        style={{
+          height: 40,
+          borderColor: "gray",
+          borderWidth: 1,
+          padding: 8,
+          borderRadius: 4,
+          width: "100%",
+        }}
+        value={price}
+        onChangeText={(text) => setPrice(text)}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  dropdown: {
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  postButton: {
+    marginTop: 16,
+  },
+});
+
 export default function NewListing() {
   return (
     <View style={{ flex: 1 }}>
       <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
-        <Text style={{ fontSize: 16, marginBottom: 16 }}>Create New Listing</Text>
+        <Text style={{ fontSize: 16, marginBottom: 4 }}>Create New Listing</Text>
       </View>
       <TabsProvider defaultIndex={0}>
         <Tabs>
           <TabScreen label="Items">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              {/* ListingForm component */}
-              <ListingForm />
-              {/* PhotoSection component */}
+              <TitleForm />
               <PhotoSection />
+              <DescriptionForm />
+              {/* Adding the new CategoryDropdown component */}
+              <CategoryDropdown />
+              <PriceForm />
+              {/* Adding the post button */}
+              <Button
+                mode="contained"
+                style={styles.postButton}
+                onPress={() => console.log("Post Listing")}
+              >
+                Post Listing
+              </Button>
             </ScrollView>
           </TabScreen>
           <TabScreen label="Services">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              {/* ListingForm component */}
-              <ListingForm />
-              {/* PhotoSection component */}
+              <TitleForm />
               <PhotoSection />
+              <DescriptionForm />
+              {/* Adding the new CategoryDropdown component */}
+              <CategoryDropdown />
+              <PriceForm />
+              {/* Adding the post button */}
+              <Button
+                mode="contained"
+                style={styles.postButton}
+                onPress={() => console.log("Post Listing")}
+              >
+                Post Listing
+              </Button>
             </ScrollView>
           </TabScreen>
         </Tabs>
