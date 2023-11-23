@@ -15,6 +15,7 @@ Primary tech stack:
 - Icons: [@expo/vector-icons](https://icons.expo.fyi/)
 - Top tabs: [react-native-paper-tabs](https://github.com/web-ridge/react-native-paper-tabs)
 - Dropdown: [react-native-element-dropdown](https://github.com/hoaphantn7604/react-native-element-dropdown)
+- Image picker: [expo-image-picker](https://docs.expo.dev/versions/latest/sdk/imagepicker/#api)
 
 ## Documentation
 
