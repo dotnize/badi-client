@@ -1,7 +1,7 @@
-// new.tsx
-
+import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Picker, ScrollView, Text, TextInput, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 import { IconButton } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
@@ -10,17 +10,6 @@ function TitleForm() {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Title</Text>
-      <TextInput
-        placeholder=""
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          padding: 8,
-          borderRadius: 4,
-          width: "100%",
-        }}
-      />
     </View>
   );
 }
@@ -52,64 +41,57 @@ function DescriptionForm() {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Description</Text>
-      <TextInput
-        placeholder=""
-        multiline
-        style={{
-          height: 120,
-          borderColor: "gray",
-          borderWidth: 1,
-          padding: 8,
-          borderRadius: 4,
-          width: "100%",
-        }}
-      />
+      {/* Add your TextInput here */}
     </View>
   );
 }
 
-// New component for the category dropdown, i used picker for the mean time. I improve lang nize or change it
+// New component for the category dropdown using react-native-element-dropdown. Replaced picker.
 function CategoryDropdown() {
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const data = [
+    { label: "Clothing", value: "clothing" },
+    { label: "Gadgets", value: "gadgets" },
+    { label: "Vehicles", value: "vehicles" },
+    { label: "Appliances", value: "appliances" },
+  ];
+
+  const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
 
   return (
-    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "50%" }}>
+    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Category</Text>
-      <Picker
-        selectedValue={selectedCategory}
-        onValueChange={(itemValue) => setSelectedCategory(itemValue)}
-        style={{ height: 40, width: "100%", borderColor: "gray", borderWidth: 1, borderRadius: 4 }}
-      >
-        <Picker.Item label="Select a category" value="" />
-        <Picker.Item label="Clothing" value="clothing" />
-        <Picker.Item label="Gadgets" value="gadgets" />
-        <Picker.Item label="Vehicles" value="vehicles" />
-        <Picker.Item label="Appliances" value="appliances" />
-      </Picker>
-    </View>
-  );
-}
-
-// New component for the price/value form
-function PriceForm() {
-  return (
-    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "50%" }}>
-      <Text style={{ fontSize: 16, marginBottom: 8 }}>Price/Value</Text>
-      <TextInput
-        placeholder=""
-        keyboardType="numeric"
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          padding: 8,
-          borderRadius: 4,
-          width: "100%",
-        }}
+      <Dropdown
+        style={styles.dropdown}
+        data={data}
+        labelField="label"
+        valueField="value"
+        placeholder={!selectedCategory ? "Select item" : "..."}
+        onChange={(item) => setSelectedCategory(item.value)}
+        renderLeftIcon={() => (
+          <AntDesign
+            style={styles.icon}
+            color={selectedCategory ? "blue" : "black"}
+            name="Safety"
+            size={20}
+          />
+        )}
       />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  dropdown: {
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+  },
+  icon: {
+    marginRight: 5,
+  },
+});
 
 export default function NewListing() {
   return (
@@ -120,35 +102,19 @@ export default function NewListing() {
       <TabsProvider defaultIndex={0}>
         <Tabs>
           <TabScreen label="Items">
-            <ScrollView
-              style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, flexDirection: "row" }}
-            >
-              <View style={{ flex: 1 }}>
-                <TitleForm />
-                <PhotoSection />
-                <DescriptionForm />
-              </View>
-              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                {/* Modified the layout for category and price to be side-by-side */}
-                <CategoryDropdown />
-                <PriceForm />
-              </View>
+            <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
+              <TitleForm />
+              <PhotoSection />
+              <DescriptionForm />
+              <CategoryDropdown />
             </ScrollView>
           </TabScreen>
           <TabScreen label="Services">
-            <ScrollView
-              style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, flexDirection: "row" }}
-            >
-              <View style={{ flex: 1 }}>
-                <TitleForm />
-                <PhotoSection />
-                <DescriptionForm />
-              </View>
-              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                {/* Modified the layout for category and price to be side-by-side */}
-                <CategoryDropdown />
-                <PriceForm />
-              </View>
+            <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
+              <TitleForm />
+              <PhotoSection />
+              <DescriptionForm />
+              <CategoryDropdown />
             </ScrollView>
           </TabScreen>
         </Tabs>
