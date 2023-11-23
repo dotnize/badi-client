@@ -23,7 +23,7 @@ Primary tech stack:
 
 ## Team
 
-- Tampus, Nathaniel - [ntampus](https://github.com/ntampus)
+- Tampus, Nathaniel - [dotnize](https://github.com/dotnize)
 - Baclayon, Leonel - [carefreebee](https://github.com/carefreebee)
 - Sagmon, Liden - [lninyow](https://github.com/lninyow)
 - Ursonal, Jameel - [SmolDuck02](https://github.com/SmolDuck02)
