@@ -14,11 +14,11 @@
 
 1. Clone this project:
    ```sh
-   git clone git@github.com:Mugnavo/badi-client.git
+   git clone git@github.com:dotnize/badi-client.git
    ```
    if it doesn't work, try the https url:
    ```sh
-   git clone https://github.com/Mugnavo/badi-client.git
+   git clone https://github.com/dotnize/badi-client.git
    ```
 2. Install dependencies:
    ```sh
