@@ -1,34 +1,22 @@
 // hello guyss
 
-import "react-native-gesture-handler";
-
-import { AntDesign, Feather } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { AntDesign } from "@expo/vector-icons";
+import { Link, useRouter } from "expo-router";
+import { useRef, useState } from "react";
 import {
-  Alert,
   FlatList,
   Image,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from "react-native";
-import {
-  Button,
-  Card,
-  DefaultTheme,
-  IconButton,
-  Modal,
-  PaperProvider,
-  Portal,
-  Snackbar,
-  Text,
-  TextInput,
-} from "react-native-paper";
+import "react-native-gesture-handler";
+import { Button, Card, DefaultTheme, IconButton, PaperProvider, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
-
 import { COLORS } from "~/lib/theme";
+
 const theme = {
   ...DefaultTheme,
   colors: COLORS,
@@ -37,92 +25,21 @@ const theme = {
 // TODO: use Expo Router's stack navigator, instead of a third party library.
 // TODO: use new routes in the (stack) directory.
 
-// export default function MyProfile() {
-//   const Stack = createStackNavigator();
-
-//   const [profilePic, setProfilePic] = useState<string | null>(
-//     "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78"
-//   );
-//   const updateProfilePic = (newProfilePic: string | null) => {
-//     setProfilePic(newProfilePic);
-//   };
-
-//   const [backgroundPic, setBackgroundPic] = useState<string | null>(
-//     "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78"
-//   );
-//   const updateBackgroundPic = (newBackgroundPic: string | null) => {
-//     setBackgroundPic(newBackgroundPic);
-//   };
-
-//   return (
-//     <Stack.Navigator>
-//       <Stack.Screen
-//         name="Profile"
-//         options={{
-//           headerShown: false,
-//         }}
-//       >
-//         {(props: any) => (
-//           <ProfileContent
-//             {...props}
-//             profilePic={profilePic}
-//             updateProfilePic={updateProfilePic}
-//             backgroundPic={backgroundPic}
-//             updateBackgroundPic={updateBackgroundPic}
-//           />
-//         )}
-//       </Stack.Screen>
-//       <Stack.Screen name="Profile Photo">
-//         {(props: any) => <PicturePreview {...props} photo={profilePic} />}
-//       </Stack.Screen>
-//       <Stack.Screen name="Cover Photo">
-//         {(props: any) => <PicturePreview {...props} photo={backgroundPic} />}
-//       </Stack.Screen>
-//       <Stack.Screen name="Ratings & Reviews">
-//         {(props: any) => <RatingsReviews {...props} photo={backgroundPic} />}
-//       </Stack.Screen>
-//     </Stack.Navigator>
-//   );
-// }
-
-// const RatingsReviews = ({ navigation }: any) => {
-//   return (
-//     <View style={{ flex: 1 }}>
-//       <FlatList
-//         data={INVENTORY}
-//         renderItem={({ item }) => <CardComponent content={item.content} />}
-//         keyExtractor={(item) => item.id.toString()}
-//         style={{ height: 1000 }}
-//       />
-//     </View>
-//   );
-// };
-// const PicturePreview = ({ navigation, photo }: any) => {
-//   console.log(photo);
-//   return (
-//     <View style={{ flex: 1, justifyContent: "center" }}>
-//       <Image
-//         style={styles.photoPreview}
-//         source={{
-//           uri: photo ? photo : "Error",
-//         }}
-//       />
-//     </View>
-//   );
-// };
+const defaultPfpPic =
+  "https://pbs.twimg.com/profile_images/1402484552195481600/i0GBotgY_400x400.jpg";
+const defaultCoverPic =
+  "https://www.adorama.com/alc/wp-content/uploads/2018/11/landscape-photography-tips-yosemite-valley-feature.jpg";
 
 export default function MyProfile() {
-  const [profilePic, setProfilePic] = useState<string | null>(
-    "https://pbs.twimg.com/profile_images/1509961758022139904/fXryqX_6_400x400.jpg"
-  );
-  const updateProfilePic = (newProfilePic: string | null) => {
+  const [profilePic, setProfilePic] = useState<string>(defaultPfpPic);
+
+  const updateProfilePic = (newProfilePic: string) => {
     setProfilePic(newProfilePic);
   };
 
-  const [backgroundPic, setBackgroundPic] = useState<string | null>(
-    "https://indianmemetemplates.com/wp-content/uploads/patrick-bateman-sigma-face.jpg"
-  );
-  const updateBackgroundPic = (newBackgroundPic: string | null) => {
+  const [backgroundPic, setBackgroundPic] = useState<string>(defaultCoverPic);
+
+  const updateBackgroundPic = (newBackgroundPic: string) => {
     setBackgroundPic(newBackgroundPic);
   };
 
@@ -136,32 +53,6 @@ export default function MyProfile() {
   );
 }
 
-const RatingsReviews = ({ navigation }: any) => {
-  return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={INVENTORY}
-        renderItem={({ item }) => <CardComponent content={item.content} />}
-        keyExtractor={(item) => item.id.toString()}
-        style={{ height: 1000 }}
-      />
-    </View>
-  );
-};
-const PicturePreview = ({ navigation, photo }: any) => {
-  console.log(photo);
-  return (
-    <View style={{ flex: 1, justifyContent: "center" }}>
-      <Image
-        style={styles.photoPreview}
-        source={{
-          uri: photo ? photo : "Error",
-        }}
-      />
-    </View>
-  );
-};
-
 function ProfileContent({
   navigation,
   profilePic,
@@ -169,212 +60,96 @@ function ProfileContent({
   backgroundPic,
   updateBackgroundPic,
 }: any) {
-  const name = "Liden U. Hoe";
+  const router = useRouter();
+
+  // STATES
+  const [name, setName] = useState("Liden U. Hoe");
   const [nameInput, setNameInput] = useState(name);
-  const [visible, setVisible] = useState(false);
-  const [snackBarVisible, setSnackBarVisible] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => {
-    setVisible(false);
-    setSnackBarVisible(true);
-  };
+  // HANDLERS
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const currentOffsetY = event.nativeEvent.contentOffset.y;
+    const scrollThreshold = 390;
 
-  const onDismissSnackBar = () => setSnackBarVisible(false);
-
-  // Function to pick an image from
-  //the device's media library
-  const pickImage = async (urlPic: string) => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (status !== "granted") {
-      // If permission is denied, show an alert
-      Alert.alert("Permission Denied", `Sorry, we need cameraroll permission to upload images.`);
-    } else {
-      // Launch the image library and get
-      // the selected image
-      const result = await ImagePicker.launchImageLibraryAsync();
-
-      if (result?.assets?.[0]?.uri) {
-        // If an image is selected (not cancelled),
-        // update the file state variable
-        if (urlPic === "profile") {
-          // setProfilePic(result?.assets?.[0]?.uri);
-          updateProfilePic(result?.assets?.[0]?.uri);
-        } else if (urlPic === "background") {
-          // setBackgroundPic(result?.assets?.[0]?.uri);
-          updateBackgroundPic(result?.assets?.[0]?.uri);
-        }
-      }
+    if (currentOffsetY >= scrollThreshold) {
+      // setScrollEnabled(false);
+      // If the user tries to scroll beyond the threshold, prevent further scrolling
+      scrollViewRef.current?.scrollTo({ x: 0, y: scrollThreshold, animated: false });
     }
   };
+
+  // function previewPhoto(photo: any) {
+  //   router.push({ pathname: `/photo-preview`, params: { photo: photo } });
+  // }
 
   return (
     <View style={styles.container}>
       <PaperProvider theme={theme}>
-        <Portal>
-          <Modal
-            style={styles.editProfileModal}
-            visible={visible}
-            onDismiss={hideModal}
-            contentContainerStyle={styles.modalContainerStyle}
+        <ScrollView
+          style={{ flex: 1 }}
+          ref={scrollViewRef}
+          onScroll={handleScroll}
+          scrollEventThrottle={5}
+        >
+          <IconButton icon="arrow-left" iconColor="black" />
+
+          <Link
+            href={{
+              pathname: "/photo-preview",
+              params: { photo: defaultCoverPic },
+            }}
+            asChild
           >
-            <Feather
-              style={{ alignSelf: "flex-end" }}
-              name="x"
-              size={24}
-              color="black"
-              onPress={hideModal}
-            />
-            <Text
-              style={{
-                color: "black",
-                alignSelf: "center",
-                marginBottom: 10,
-                borderBottomWidth: 2,
-              }}
-              variant="headlineMedium"
+            <Image style={styles.backgroundPic} source={{ uri: defaultCoverPic }} />
+          </Link>
+
+          <Link
+            asChild
+            href={{
+              pathname: "/photo-preview",
+              params: { photo: profilePic },
+            }}
+            style={styles.profilePicButton}
+          >
+            <Image style={styles.profilePic} source={profilePic} />
+          </Link>
+
+          <Link asChild href={{ pathname: "/me/edit" }}>
+            <Button
+              icon="pencil"
+              mode="outlined"
+              style={styles.editProfileButton}
+              contentStyle={{ flexDirection: "row-reverse" }}
+              textColor={COLORS.primary}
             >
               Edit Profile
-            </Text>
-            <TextInput
-              selectTextOnFocus
-              textColor="#555"
-              label="Name"
-              mode="outlined"
-              style={[styles.editNameInput, { marginVertical: 20 }]}
-              value={nameInput}
-              onChangeText={(text) => setNameInput(text)}
-            />
-            <View style={styles.editProfileLabels}>
-              <Text variant="titleMedium" style={{ color: "black" }}>
-                Profile Picture
-              </Text>
-              <Button
-                mode="contained"
-                style={styles.editProfilePicButton}
-                textColor={COLORS.primary}
-                onPress={() => pickImage("profile")}
-              >
-                Edit
-              </Button>
-            </View>
-
-            <Image
-              style={[styles.editProfilePic, { marginBottom: 10 }]}
-              source={{
-                uri: profilePic
-                  ? profilePic
-                  : "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78",
-              }}
-            />
-
-            <View style={styles.editProfileLabels}>
-              <Text variant="titleMedium" style={{ color: "black" }}>
-                Background Picture
-              </Text>
-              <Button
-                mode="contained"
-                style={styles.editProfilePicButton}
-                textColor={COLORS.primary}
-                onPress={() => pickImage("background")}
-              >
-                Edit
-              </Button>
-            </View>
-
-            <Image
-              style={[styles.backgroundPic, { marginVertical: 10 }]}
-              source={{
-                uri: backgroundPic
-                  ? backgroundPic
-                  : "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78",
-              }}
-            />
-
-            <Button
-              icon="content-save-edit"
-              style={[styles.saveChangesButton, { marginVertical: 10 }]}
-              mode="contained"
-              contentStyle={{ flexDirection: "row-reverse" }}
-              onPress={hideModal}
-            >
-              Press me
             </Button>
-            <Button
-              style={[styles.saveChangesButton, { backgroundColor: "#f0f0f0" }]}
-              mode="contained"
-              onPress={hideModal}
-            >
-              Cancel
-            </Button>
-          </Modal>
-          <Snackbar visible={snackBarVisible} duration={2000} onDismiss={onDismissSnackBar}>
-            Profile Saved! Liden U. HoeeS
-          </Snackbar>
-        </Portal>
-
-        <ScrollView style={{ flex: 1 }} scrollEventThrottle={5}>
-          {/* <View style={{ alignSelf: "center", padding: 15 }}>
-          <Text variant="titleLarge" style={{ color: "black" }}>
-            Profile
-          </Text>
-        </View> */}
-
-          <IconButton onPress={() => navigation.goBack()} icon="arrow-left" iconColor="black" />
-          <TouchableOpacity onPress={() => navigation.navigate("Cover Photo")}>
-            <Image
-              style={styles.backgroundPic}
-              source={{
-                uri: backgroundPic,
-              }}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.profilePicButton}
-            onPress={() => navigation.navigate("Profile Photo")}
-          >
-            <Image
-              style={styles.profilePic}
-              source={{
-                uri: profilePic,
-              }}
-            />
-          </TouchableOpacity>
-
-          <Button
-            icon="pencil"
-            mode="outlined"
-            style={styles.editProfileButton}
-            contentStyle={{ flexDirection: "row-reverse" }}
-            textColor={COLORS.primary}
-            onPress={showModal}
-          >
-            Edit Profile
-          </Button>
+          </Link>
           <View style={styles.profileLabels}>
             <Text variant="headlineMedium" style={{ color: "black" }}>
               Liden U. Hoe
             </Text>
 
-            <TouchableOpacity onPress={() => navigation.navigate("Ratings & Reviews")}>
+            <Link
+              href={{
+                pathname: "/me/ratings",
+              }}
+            >
               <Text
                 variant="titleLarge"
                 style={{
                   color: "black",
-                  // textDecorationLine: "underline",
-                  // textDecorationColor: COLORS.primary,
                 }}
               >
                 &#9733; &#9733; &#9733; (69) &nbsp;
                 <AntDesign name="infocirlceo" size={20} color="black" />
               </Text>
-            </TouchableOpacity>
+            </Link>
           </View>
 
           <TabsProvider defaultIndex={0}>
-            <Tabs>
+            <Tabs style={{ backgroundColor: "transparent" }}>
               <TabScreen label="Inventory">
                 <InventoryScreen />
               </TabScreen>
@@ -391,6 +166,8 @@ function ProfileContent({
     </View>
   );
 }
+
+// TAB CONTENTS
 
 function InventoryScreen() {
   return (
@@ -447,30 +224,31 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   backgroundPic: {
-    resizeMode: "contain",
+    resizeMode: "cover",
+    alignSelf: "center",
     backgroundColor: "#e0e0e0",
     height: 200,
+    width: "100%",
   },
   profilePic: {
     resizeMode: "cover",
     borderRadius: 100,
     height: 150,
     width: 150,
-    borderWidth: 6,
-    borderColor: "white",
+    // borderWidth: 6,
+    // borderColor: "white",
   },
   profilePicButton: {
     position: "absolute",
-    top: 180, // Adjust top position as needed
-    left: 25, // Adjust left position as needed
-
-    borderRadius: 100,
-    height: 150,
-    width: 150,
+    // top: 120, if header not shown
+    top: 170,
+    left: 25,
+    borderWidth: 5,
+    borderColor: "rgb(234,239,224)",
   },
   profileLabels: {
     marginHorizontal: 25,
-    marginTop: 30,
+
     marginBottom: 10,
 
     flexDirection: "row",
@@ -496,8 +274,7 @@ const styles = StyleSheet.create({
   },
   editProfileButton: {
     alignSelf: "flex-end",
-    marginTop: 20,
-    marginRight: 25,
+    margin: 20,
     fontWeight: 700,
   },
   editProfilePicButton: {
@@ -552,6 +329,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// CARD CONTENT SAMPLE DATA
 const INVENTORY = [
   {
     id: 1,
