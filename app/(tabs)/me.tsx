@@ -1,33 +1,20 @@
 // hello guyss
 
-import { AntDesign, Feather } from "@expo/vector-icons";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
-import * as ImagePicker from "expo-image-picker";
-import React from "react";
+import { AntDesign } from "@expo/vector-icons";
+import { Link, useRouter } from "expo-router";
+import { useRef, useState } from "react";
 import {
-  Alert,
   FlatList,
   Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from "react-native";
 import "react-native-gesture-handler";
-import {
-  Button,
-  Card,
-  IconButton,
-  Modal,
-  PaperProvider,
-  Portal,
-  Snackbar,
-  Text,
-  TextInput,
-} from "react-native-paper";
+import { Button, Card, DefaultTheme, IconButton, PaperProvider, Text } from "react-native-paper";
+import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 import { COLORS } from "~/lib/theme";
 
 // const defaultPic =
@@ -35,66 +22,41 @@ import { COLORS } from "~/lib/theme";
 
 const defaultPic = require("~/assets/liden.png");
 
-export default function myProfile() {
-  const Stack = createStackNavigator();
+const theme = {
+  ...DefaultTheme,
+  colors: COLORS,
+};
 
-  // STATES
-  const [profilePic, setProfilePic] = React.useState<string>(defaultPic);
-  const [backgroundPic, setBackgroundPic] = React.useState<string>(defaultPic);
+// TODO: use Expo Router's stack navigator, instead of a third party library.
+// TODO: use new routes in the (stack) directory.
 
-  // HANDLERS
+const defaultPfpPic =
+  "https://pbs.twimg.com/profile_images/1402484552195481600/i0GBotgY_400x400.jpg";
+const defaultCoverPic =
+  "https://www.adorama.com/alc/wp-content/uploads/2018/11/landscape-photography-tips-yosemite-valley-feature.jpg";
+
+export default function MyProfile() {
+  const [profilePic, setProfilePic] = useState<string>(defaultPfpPic);
+
   const updateProfilePic = (newProfilePic: string) => {
     setProfilePic(newProfilePic);
   };
+
+  const [backgroundPic, setBackgroundPic] = useState<string>(defaultCoverPic);
+
   const updateBackgroundPic = (newBackgroundPic: string) => {
     setBackgroundPic(newBackgroundPic);
   };
 
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Profile" options={{ headerShown: false }}>
-        {(props: any) => (
-          <ProfileContent
-            {...props}
-            profilePic={profilePic}
-            updateProfilePic={updateProfilePic}
-            backgroundPic={backgroundPic}
-            updateBackgroundPic={updateBackgroundPic}
-          />
-        )}
-      </Stack.Screen>
-      <Stack.Screen name="Profile Photo">
-        {(props: any) => <PicturePreview {...props} photo={profilePic} />}
-      </Stack.Screen>
-      <Stack.Screen name="Cover Photo">
-        {(props: any) => <PicturePreview {...props} photo={backgroundPic} />}
-      </Stack.Screen>
-      <Stack.Screen name="Ratings & Reviews">
-        {(props: any) => <RatingsReviews {...props} />}
-      </Stack.Screen>
-    </Stack.Navigator>
+    <ProfileContent
+      profilePic={profilePic}
+      updateProfilePic={updateProfilePic}
+      backgroundPic={backgroundPic}
+      updateBackgroundPic={updateBackgroundPic}
+    />
   );
 }
-
-const RatingsReviews = ({ navigation }: any) => {
-  return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={INVENTORY}
-        renderItem={({ item }) => <CardComponent content={item.content} />}
-        keyExtractor={(item) => item.id.toString()}
-        style={{ height: 1000 }}
-      />
-    </View>
-  );
-};
-const PicturePreview = ({ navigation, photo }: any) => {
-  return (
-    <View style={[styles.container, { justifyContent: "center" }]}>
-      <Image style={styles.photoPreview} source={photo} />
-    </View>
-  );
-};
 
 function ProfileContent({
   navigation,
@@ -103,46 +65,14 @@ function ProfileContent({
   backgroundPic,
   updateBackgroundPic,
 }: any) {
-  const Tab = createMaterialTopTabNavigator();
+  const router = useRouter();
 
   // STATES
-  const [name, setName] = React.useState("Liden U. Hoe");
-  const [nameInput, setNameInput] = React.useState(name);
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [isSnackBarVisible, setIsSnackBarVisible] = React.useState(false);
-  const [scrollEnabled, setScrollEnabled] = React.useState(true);
-  const scrollViewRef = React.useRef<ScrollView>(null);
+  const [name, setName] = useState("Liden U. Hoe");
+  const [nameInput, setNameInput] = useState(name);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // HANDLERS
-  const showModal = () => setIsModalVisible(true);
-  const hideModal = () => setIsModalVisible(false);
-  const saveProfileChanges = () => {
-    setIsSnackBarVisible(true);
-    setIsModalVisible(false);
-  };
-  const onDismissSnackBar = () => setIsSnackBarVisible(false);
-
-  // Function to pick an image from the device's media library
-  const pickImage = async (urlPic: string) => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (status !== "granted") {
-      Alert.alert("Permission Denied", `Sorry, we need cameraroll permission to upload images.`);
-    } else {
-      // Launch the image library and get the selected image
-      const result = await ImagePicker.launchImageLibraryAsync();
-
-      if (result?.assets?.[0]?.uri) {
-        // If an image is selected (not cancelled), update the file state variable
-        if (urlPic === "profile") {
-          updateProfilePic(result?.assets?.[0]?.uri);
-        } else if (urlPic === "background") {
-          updateBackgroundPic(result?.assets?.[0]?.uri);
-        }
-      }
-    }
-  };
-
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentOffsetY = event.nativeEvent.contentOffset.y;
     const scrollThreshold = 390;
@@ -154,168 +84,88 @@ function ProfileContent({
     }
   };
 
+  // function previewPhoto(photo: any) {
+  //   router.push({ pathname: `/photo-preview`, params: { photo: photo } });
+  // }
+
   return (
     <View style={styles.container}>
-      <PaperProvider>
-        <Portal>
-          <Modal
-            style={styles.editProfileModal}
-            visible={isModalVisible}
-            onDismiss={hideModal}
-            contentContainerStyle={styles.modalContainerStyle}
-          >
-            <Feather
-              style={{ alignSelf: "flex-end" }}
-              name="x"
-              size={24}
-              color="black"
-              onPress={hideModal}
-            />
-            <Text
-              style={{
-                color: "black",
-                alignSelf: "center",
-                marginBottom: 10,
-                borderBottomWidth: 2,
-              }}
-              variant="headlineMedium"
-            >
-              Edit Profile
-            </Text>
-            <TextInput
-              selectTextOnFocus
-              textColor="#555"
-              label="Name"
-              mode="outlined"
-              style={[styles.editNameInput, { marginVertical: 20 }]}
-              value={nameInput}
-              onChangeText={(text) => setNameInput(text)}
-            />
-            <View style={styles.editProfileLabels}>
-              <Text variant="titleMedium" style={{ color: "black" }}>
-                Profile Picture
-              </Text>
-              <Button
-                mode="contained"
-                style={styles.editProfilePicButton}
-                textColor={COLORS.primary}
-                onPress={() => pickImage("profile")}
-              >
-                Edit
-              </Button>
-            </View>
-
-            <Image
-              style={[styles.editProfilePic, { marginBottom: 10 }]}
-              source={profilePic ? profilePic : defaultPic}
-            />
-
-            <View style={styles.editProfileLabels}>
-              <Text variant="titleMedium" style={{ color: "black" }}>
-                Background Picture
-              </Text>
-              <Button
-                mode="contained"
-                style={styles.editProfilePicButton}
-                textColor={COLORS.primary}
-                onPress={() => pickImage("background")}
-              >
-                Edit
-              </Button>
-            </View>
-
-            <Image
-              style={[styles.backgroundPic, { marginVertical: 10 }]}
-              source={backgroundPic ? backgroundPic : defaultPic}
-            />
-
-            <Button
-              icon="content-save-edit"
-              style={[styles.saveChangesButton, { marginVertical: 10 }]}
-              mode="contained"
-              contentStyle={{ flexDirection: "row-reverse" }}
-              onPress={saveProfileChanges}
-            >
-              Press me
-            </Button>
-            <Button
-              style={[styles.saveChangesButton, { backgroundColor: "#f0f0f0" }]}
-              mode="contained"
-              onPress={hideModal}
-            >
-              Cancel
-            </Button>
-          </Modal>
-          <Snackbar
-            style={{ backgroundColor: "#F2F2F2" }}
-            visible={isSnackBarVisible}
-            duration={2000}
-            onDismiss={onDismissSnackBar}
-          >
-            Profile Saved!
-          </Snackbar>
-        </Portal>
-
+      <PaperProvider theme={theme}>
         <ScrollView
           style={{ flex: 1 }}
           ref={scrollViewRef}
           onScroll={handleScroll}
           scrollEventThrottle={5}
         >
-          <IconButton onPress={() => navigation.goBack()} icon="arrow-left" iconColor="black" />
-          <TouchableOpacity onPress={() => navigation.navigate("Cover Photo")}>
-            <Image style={styles.backgroundPic} source={backgroundPic} />
-          </TouchableOpacity>
+          <IconButton icon="arrow-left" iconColor="black" />
 
-          <TouchableOpacity
+          <Link
+            href={{
+              pathname: "/photo-preview",
+              params: { photo: defaultCoverPic },
+            }}
+            asChild
+          >
+            <Image style={styles.backgroundPic} source={{ uri: defaultCoverPic }} />
+          </Link>
+
+          <Link
+            asChild
+            href={{
+              pathname: "/photo-preview",
+              params: { photo: profilePic },
+            }}
             style={styles.profilePicButton}
-            onPress={() => navigation.navigate("Profile Photo")}
           >
             <Image style={styles.profilePic} source={profilePic} />
-          </TouchableOpacity>
+          </Link>
 
-          <Button
-            icon="pencil"
-            mode="outlined"
-            style={styles.editProfileButton}
-            contentStyle={{ flexDirection: "row-reverse" }}
-            textColor={COLORS.primary}
-            onPress={showModal}
-          >
-            Edit Profile
-          </Button>
+          <Link asChild href={{ pathname: "/me/edit" }}>
+            <Button
+              icon="pencil"
+              mode="outlined"
+              style={styles.editProfileButton}
+              contentStyle={{ flexDirection: "row-reverse" }}
+              textColor={COLORS.primary}
+            >
+              Edit Profile
+            </Button>
+          </Link>
           <View style={styles.profileLabels}>
             <Text variant="headlineMedium" style={{ color: "black" }}>
               Liden U. Hoe
             </Text>
 
-            <TouchableOpacity onPress={() => navigation.navigate("Ratings & Reviews")}>
+            <Link
+              href={{
+                pathname: "/me/ratings",
+              }}
+            >
               <Text
                 variant="titleLarge"
                 style={{
                   color: "black",
-                  // textDecorationLine: "underline",
-                  // textDecorationColor: COLORS.primary,
                 }}
               >
                 &#9733; &#9733; &#9733; (69) &nbsp;
                 <AntDesign name="infocirlceo" size={20} color="black" />
               </Text>
-            </TouchableOpacity>
+            </Link>
           </View>
 
-          <Tab.Navigator
-            screenOptions={{
-              // tabBarActiveTintColor: "#e91e63",
-              tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
-              tabBarLabelStyle: { fontSize: 12 },
-              tabBarStyle: { backgroundColor: "none" },
-            }}
-          >
-            <Tab.Screen name="Inventory" component={InventoryScreen} />
-            <Tab.Screen name="Wishes" component={WishesScreen} />
-            <Tab.Screen name="History" component={HistoryScreen} />
-          </Tab.Navigator>
+          <TabsProvider defaultIndex={0}>
+            <Tabs style={{ backgroundColor: "transparent" }}>
+              <TabScreen label="Inventory">
+                <InventoryScreen />
+              </TabScreen>
+              <TabScreen label="Wishes">
+                <WishesScreen />
+              </TabScreen>
+              <TabScreen label="History">
+                <HistoryScreen />
+              </TabScreen>
+            </Tabs>
+          </TabsProvider>
         </ScrollView>
       </PaperProvider>
     </View>
@@ -379,7 +229,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   backgroundPic: {
-    resizeMode: "contain",
+    resizeMode: "cover",
     alignSelf: "center",
     backgroundColor: "#e0e0e0",
     height: 200,
@@ -390,21 +240,20 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     height: 150,
     width: 150,
-    borderWidth: 6,
-    borderColor: "white",
+    // borderWidth: 6,
+    // borderColor: "white",
   },
   profilePicButton: {
     position: "absolute",
-    top: 180,
+    // top: 120, if header not shown
+    top: 170,
     left: 25,
-
-    borderRadius: 100,
-    height: 150,
-    width: 150,
+    borderWidth: 5,
+    borderColor: "rgb(234,239,224)",
   },
   profileLabels: {
     marginHorizontal: 25,
-    marginTop: 30,
+
     marginBottom: 10,
 
     flexDirection: "row",
@@ -430,8 +279,7 @@ const styles = StyleSheet.create({
   },
   editProfileButton: {
     alignSelf: "flex-end",
-    marginTop: 20,
-    marginRight: 25,
+    margin: 20,
     fontWeight: 700,
   },
   editProfilePicButton: {

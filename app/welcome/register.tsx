@@ -9,6 +9,7 @@ export default function Register() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [mobileNum, setmobileNum] = useState("");
   const [counter, setCounter] = useState(0);
   const [inputDate, setInputDate] = useState<Date | undefined>(undefined);
 
@@ -120,7 +121,15 @@ export default function Register() {
               }}
             >
               <TextInput mode="outlined" style={{ width: 56 }} disabled label="+63" />
-              <TextInput style={{ flex: 1 }} mode="outlined" label="Mobile Number" />
+              <TextInput
+                onChangeText={(num) => {
+                  setmobileNum(num);
+                }}
+                value={mobileNum}
+                style={{ flex: 1 }}
+                mode="outlined"
+                label="Mobile Number"
+              />
             </View>
           </View>
         ) : counter === locationScreen ? (
@@ -140,6 +149,7 @@ export default function Register() {
                 onChangeText={(password) => {
                   setPassword(password);
                 }}
+                secureTextEntry
               />
             </View>
           </View>

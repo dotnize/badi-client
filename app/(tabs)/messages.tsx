@@ -39,7 +39,11 @@ export default function Messages() {
         />
         <IconButton size={20} icon="bell" />
       </View>
+<<<<<<< HEAD
       <View style={{ marginLeft: 18 }}>
+=======
+      <View style={{marginLeft: 18}}>
+>>>>>>> main
         {messages.map((message) => (
           <MessageListItem
             key={message.key}
