@@ -2,29 +2,52 @@
 
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
-import { ScrollView, View, ViewStyle } from "react-native";
+import { ScrollView, TouchableOpacity, View, ViewStyle } from "react-native";
 import { Avatar, Button, Card, IconButton, Modal, Portal, Text } from "react-native-paper";
 
 // Magamit man guro ni for both New Offer and Edit Counter Offer?
 
+interface AddItemModalProps {
+  addTempItem: (item: string) => void;
+}
+
+interface OfferCardProps {
+  item: string;
+}
+
 function ItemsCard() {
-  const [remaning, setRemaining] = useState(0);
+  const [remaining, setRemaining] = useState(0);
+  const [selected, setSelected] = useState(false);
+
+  const toggleSelected = () => {
+    setSelected((prevSelected) => !prevSelected);
+  };
   return (
-    <Card elevation={2} style={{ margin: 8 }}>
-      <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <View style={{ flexDirection: "row", gap: 12 }}>
-          <Avatar.Image size={72} source={require("~/assets/adaptive-icon.png")} />
-          <View style={{ gap: 5 }}>
-            <Text variant="titleSmall">Kanding</Text>
-            <Text variant="labelSmall">from nize</Text>
+    <TouchableOpacity onPress={toggleSelected}>
+      <Card
+        elevation={2}
+        style={{
+          margin: 8,
+          backgroundColor: selected ? "lightblue" : "white", // Change the background color based on the selected state
+        }}
+      >
+        <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", gap: 12 }}>
+            <Avatar.Image size={72} source={require("~/assets/adaptive-icon.png")} />
+            <View style={{ gap: 5 }}>
+              <Text variant="titleSmall">Kanding</Text>
+              <Text variant="labelSmall">In stock: {remaining} </Text>
+            </View>
           </View>
-        </View>
-      </Card.Content>
-    </Card>
+        </Card.Content>
+      </Card>
+    </TouchableOpacity>
   );
 }
+
 function OfferCard() {
   const [remaning, setRemaining] = useState(0);
+
   return (
     <Card elevation={2} style={{ margin: 8 }}>
       <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -103,6 +126,7 @@ function AddItemModal() {
     </>
   );
 }
+
 export default function CreateOffer() {
   return (
     <View style={{ flex: 1, alignItems: "center", padding: 8, justifyContent: "space-around" }}>
@@ -130,7 +154,6 @@ export default function CreateOffer() {
         <OfferCard />
         <OfferCard />
       </ScrollView>
-
       <View style={{ alignSelf: "flex-end" }}>
         <AddItemModal />
       </View>
