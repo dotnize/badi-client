@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { Card, IconButton, Searchbar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
+import TradeItem from "~/components/trade-item";
 
 function CardComponent() {
   return (
@@ -44,7 +45,7 @@ export default function Index() {
           <TabScreen label="Items">
             <View style={{ flex: 1 }}>
               <View style={{ gap: 8, padding: 8, flex: 1 }}>
-                <CardComponent />
+                <TradeItem />
                 <CardComponent />
               </View>
             </View>

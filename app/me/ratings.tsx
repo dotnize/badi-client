@@ -1,7 +1,7 @@
 // URL: /me/ratings
 
 import { ScrollView } from "react-native-gesture-handler";
-import TradeItem from "~/components/trade-item";
+import RatingItem from "~/components/rating-item";
 
 /**
  * Since ang My Profile Ratings og Other User Ratings kay similar ra, naa koy suggestion:
@@ -21,12 +21,11 @@ export default function MyRatings() {
 
   return (
     <ScrollView style={{ flex: 1 }}>
-      <TradeItem />
-      <TradeItem />
-      <TradeItem />
-      <TradeItem />
-      <TradeItem />
-      <TradeItem />
+      <RatingItem total={5} />
+      <RatingItem total={2} />
+      <RatingItem total={3} />
+      <RatingItem total={4} />
+      <RatingItem total={4} />
     </ScrollView>
   );
 }

@@ -3,18 +3,12 @@
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useRef, useState } from "react";
-import {
-  FlatList,
-  Image,
-  ScrollView,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
 import "react-native-gesture-handler";
-import { Button, Card, DefaultTheme, Portal, Snackbar, Text } from "react-native-paper";
+import { Button, Card, DefaultTheme, Modal, Portal, Snackbar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 import ConfirmModal from "~/components/confirm-modal";
+import TradeItem from "~/components/trade-item";
 import { COLORS } from "~/lib/theme";
 
 const defaultPic = require("~/assets/liden.png");
@@ -30,7 +24,7 @@ const defaultCoverPic =
   "https://www.adorama.com/alc/wp-content/uploads/2018/11/landscape-photography-tips-yosemite-valley-feature.jpg";
 
 export default function MyProfile() {
-  const [profilePic, setProfilePic] = useState<string>(defaultPic);
+  const [profilePic, setProfilePic] = useState<string>(defaultPfpPic);
 
   const updateProfilePic = (newProfilePic: string) => {
     setProfilePic(newProfilePic);
@@ -57,9 +51,7 @@ function ProfileContent({ profilePic }: any) {
   const [name, setName] = useState("Liden U. Hoe");
   const scrollViewRef = useRef<ScrollView>(null);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState<boolean>(false);
-  const [isProfileSettingsCardVisible, setIsProfileSettingsCardVisible] = useState<"none" | "flex">(
-    "none"
-  );
+  const [isProfileSettingsCardVisible, setIsProfileSettingsCardVisible] = useState(false);
   const [isSnackBarVisible, setIsSnackBarVisible] = useState<boolean>(false);
 
   // HANDLERS
@@ -70,138 +62,142 @@ function ProfileContent({ profilePic }: any) {
     setIsSnackBarVisible(false);
   };
 
-  const toggleProfileSettingsCard = () =>
-    setIsProfileSettingsCardVisible(isProfileSettingsCardVisible == "flex" ? "none" : "flex");
+  const toggleProfileSettingsCard = () => setIsProfileSettingsCardVisible(true);
   const showConfirmModal = () => {
-    setIsProfileSettingsCardVisible("none");
+    setIsProfileSettingsCardVisible(false);
     setIsConfirmModalVisible(true);
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => setIsProfileSettingsCardVisible("none")}>
-      <View style={styles.container}>
-        <Portal>
-          <Snackbar
-            theme={theme}
-            style={{ marginBottom: 100 }}
-            visible={isSnackBarVisible}
-            duration={2000}
-            onDismiss={onDismissSnackBar}
-            onIconPress={onDismissSnackBar}
+    <View style={styles.container}>
+      <Portal>
+        <Snackbar
+          theme={theme}
+          style={{ marginBottom: 100 }}
+          visible={isSnackBarVisible}
+          duration={2000}
+          onDismiss={onDismissSnackBar}
+          onIconPress={onDismissSnackBar}
+        >
+          Profile Saved!
+        </Snackbar>
+
+        <Modal
+          onDismiss={() => setIsProfileSettingsCardVisible(false)}
+          visible={isProfileSettingsCardVisible}
+          theme={{
+            colors: {
+              backdrop: "transparent",
+              surface: "white",
+            },
+          }}
+          contentContainerStyle={{
+            position: "absolute",
+            alignSelf: "flex-end",
+            padding: 5,
+            borderRadius: 5,
+            top: 265,
+            right: 20,
+            zIndex: 999,
+            backgroundColor: COLORS.surface,
+          }}
+        >
+          <Button
+            style={{ backgroundColor: COLORS.surface }}
+            textColor="black"
+            icon="account-remove"
+            mode="contained"
+            onPress={showConfirmModal}
           >
-            Profile Saved!
-          </Snackbar>
-        </Portal>
+            Delete Account
+          </Button>
+        </Modal>
+      </Portal>
 
-        <ConfirmModal
-          title={`Your account will be deleted.${"\n"}Are you sure?`}
-          state={isConfirmModalVisible}
-          setState={setIsConfirmModalVisible}
-        />
+      <ConfirmModal
+        title={`Your account will be deleted.${"\n"}Are you sure?`}
+        state={isConfirmModalVisible}
+        setState={setIsConfirmModalVisible}
+      />
 
-        <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }}>
+        <Link
+          href={{
+            pathname: "/photo-preview",
+            params: { photo: defaultCoverPic },
+          }}
+          asChild
+        >
+          <Image style={styles.backgroundPic} source={{ uri: defaultCoverPic }} />
+        </Link>
+
+        <Link
+          asChild
+          href={{
+            pathname: "/photo-preview",
+            params: { photo: profilePic },
+          }}
+          style={styles.profilePicButton}
+        >
+          <Image style={styles.profilePic} source={profilePic} />
+        </Link>
+
+        <View style={styles.editProfileButtons}>
           <Link
-            href={{
-              pathname: "/photo-preview",
-              params: { photo: defaultCoverPic },
-            }}
-            asChild
-          >
-            <Image style={styles.backgroundPic} source={{ uri: defaultCoverPic }} />
-          </Link>
-
-          <Link
             asChild
             href={{
-              pathname: "/photo-preview",
-              params: { photo: profilePic },
+              pathname: "/me/edit",
+              params: {
+                name: name,
+                pfpPic: defaultPfpPic,
+                coverPic: defaultCoverPic,
+              },
             }}
-            style={styles.profilePicButton}
           >
-            <Image style={styles.profilePic} source={profilePic} />
-          </Link>
-
-          <View style={styles.editProfileButtons}>
-            <Link
-              asChild
-              href={{
-                pathname: "/me/edit",
-                params: {
-                  name: name,
-                  pfpPic: defaultPfpPic,
-                  coverPic: defaultCoverPic,
-                },
-              }}
+            <Button
+              icon="pencil"
+              mode="outlined"
+              contentStyle={{ flexDirection: "row-reverse" }}
+              textColor={COLORS.primary}
             >
-              <Button
-                icon="pencil"
-                mode="outlined"
-                contentStyle={{ flexDirection: "row-reverse" }}
-                textColor={COLORS.primary}
-              >
-                Edit Profile
-              </Button>
-            </Link>
+              Edit Profile
+            </Button>
+          </Link>
 
-            <Entypo
-              style={{ verticalAlign: "middle" }}
-              name="dots-three-vertical"
-              size={18}
-              color="black"
-              onPress={toggleProfileSettingsCard}
-            />
-          </View>
+          <Entypo
+            style={{ verticalAlign: "middle" }}
+            name="dots-three-vertical"
+            size={18}
+            color="black"
+            onPress={toggleProfileSettingsCard}
+          />
+        </View>
 
-          <Card
-            style={{
-              display: isProfileSettingsCardVisible,
-              position: "absolute",
-              alignSelf: "flex-end",
-              top: 265,
-              right: 20,
-              zIndex: 999,
-              backgroundColor: COLORS.surface,
-            }}
-          >
-            <Card.Content style={{ padding: 10 }}>
-              <Button
-                style={{ backgroundColor: COLORS.surface }}
-                textColor="black"
-                icon="account-remove"
-                mode="contained"
-                onPress={showConfirmModal}
-              >
-                Delete Account
-              </Button>
-            </Card.Content>
-          </Card>
+        <View style={styles.profileTexts}>
+          <Text variant="headlineMedium">Liden U. Hoe</Text>
+          <Link href={{ pathname: "/me/ratings" }}>
+            <Text variant="titleMedium">
+              &#9733; &#9733; &#9733; (69) &nbsp;
+              <AntDesign name="infocirlceo" size={18} style={{ verticalAlign: "middle" }} />
+            </Text>
+          </Link>
+        </View>
 
-          <View style={styles.profileTexts}>
-            <Text variant="headlineMedium">Liden U. Hoe</Text>
-            <Link href={{ pathname: "/me/ratings" }}>
-              <Text variant="titleMedium">
-                &#9733; &#9733; &#9733; (69) &nbsp;
-                <AntDesign name="infocirlceo" size={18} style={{ verticalAlign: "middle" }} />
-              </Text>
-            </Link>
-          </View>
-
-          <TabsProvider defaultIndex={0}>
-            <Tabs style={{ backgroundColor: "transparent" }}>
-              <TabScreen label="Inventory">
-                <InventoryScreen />
-              </TabScreen>
-              <TabScreen label="Wishes">
-                <WishesScreen />
-              </TabScreen>
-              <TabScreen label="History">
-                <HistoryScreen />
-              </TabScreen>
-            </Tabs>
-          </TabsProvider>
-        </ScrollView>
-      </View>
-    </TouchableWithoutFeedback>
+        <TabsProvider defaultIndex={0}>
+          <Tabs style={{ backgroundColor: "transparent" }}>
+            <TabScreen label="Inventory">
+              <InventoryScreen />
+            </TabScreen>
+            <TabScreen label="Wishes">
+              <WishesScreen />
+            </TabScreen>
+            <TabScreen label="History">
+              <HistoryScreen />
+            </TabScreen>
+          </Tabs>
+        </TabsProvider>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -211,7 +207,7 @@ function InventoryScreen() {
   return (
     <FlatList
       data={INVENTORY}
-      renderItem={({ item }) => <CardComponent content={item.content} />}
+      renderItem={({ item }) => <TradeItem editable={true} />}
       keyExtractor={(item) => item.id.toString()}
       style={{ height: 1000, paddingVertical: 10 }}
     />
