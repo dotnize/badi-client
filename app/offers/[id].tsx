@@ -6,6 +6,7 @@
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { Avatar, Button, Card, Text } from "react-native-paper";
 
 /**
@@ -44,15 +45,22 @@ export default function PendingOffer() {
     <View style={{ flex: 1, alignItems: "center", padding: 8, justifyContent: "space-around" }}>
       <Text>PendingOffer, id: {id}</Text>
       <Text variant="titleMedium">!usernames! Offer</Text>
-      <View style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
-        <Text>You receive</Text>
+      <Text style={{ alignSelf: "flex-start", padding: 8 }}>You receive</Text>
+
+      <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
         <OfferCard />
-      </View>
-      <View style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
-        <Text>You will send</Text>
         <OfferCard />
-      </View>
-      <View style={{ width: "100%", gap: 8 }}>
+        <OfferCard />
+        <OfferCard />
+      </ScrollView>
+      <Text style={{ alignSelf: "flex-start", padding: 8 }}>You will send</Text>
+      <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
+        <OfferCard />
+        <OfferCard />
+        <OfferCard />
+        <OfferCard />
+      </ScrollView>
+      <View style={{ width: "100%", gap: 8, padding: 8 }}>
         <Button mode="contained">Edit Counter Offer</Button>
         <Button mode="contained">Accept</Button>
         <Button mode="contained">Reject</Button>
