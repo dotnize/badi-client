@@ -9,9 +9,9 @@ Table of Contents:
 
 ## Creating a new branch
 
-When working on a new screen, feature, or bugfix, create a new branch from `main` with the following naming convention: `lastname/branchame`
+For general tasks, use your last name as the branch name. For specific & experimental changes, use a descriptive branch name following the format `lastname/branchname`.
 
-> e.g. `tampus/home` or `sagmon/fix-routing`
+- e.g. `ursonal`, `sagmon/fix-routing`, `tampus`, or `ursonal/home`
 
 1. Switch to `main` branch:
    ```sh
@@ -23,11 +23,11 @@ When working on a new screen, feature, or bugfix, create a new branch from `main
    ```
 3. Create a new branch:
    ```sh
-   git switch -c lastname/branchname # replace with ur names
+   git switch -c branchname # replace with ur branch name
    ```
 4. Push the branch to remote:
    ```sh
-   git push -u origin lastname/branchname # replace with the created branch name
+   git push -u origin branchname # replace with the created branch name
    ```
 5. Install dependencies
    ```sh
@@ -53,7 +53,7 @@ If you're already working on a branch and you want to grab the latest changes fr
    ```
 3. Switch back to your branch:
    ```sh
-   git switch lastname/branchname # replace with ur names
+   git switch branchname # replace with ur destination branch name
    ```
 4. Merge the changes from `main` (or your chosen source branch) to your branch:
    ```sh
@@ -78,10 +78,10 @@ If you're already working on a branch and you want to grab the latest changes fr
 ## Git Extras
 
 - Use `git switch` to switch to an existing branch, and add the `-c` flag when creating a new one.
-  - e.g `git switch -c lastname/newbranchname`
+  - e.g `git switch -c newbranchname`
 - Use `git merge` to grab commits from another branch to your current branch. Examples:
   - grabbing commits from main branch: `git merge main`
-  - grabbing commits from a different member's branch: `git merge sagmon/fix-routing`
+  - grabbing commits from a different member's branch: `git merge sagmon`
   - Make sure to `git pull` from the source branch first!
 - Make sure to always pull the latest commits from `main` branch before merging or creating a new branch
   - `git switch main` then `git pull`
