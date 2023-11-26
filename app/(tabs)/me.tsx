@@ -1,24 +1,15 @@
 // hello guyss
 
-import { AntDesign } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router";
+import { AntDesign, Entypo } from "@expo/vector-icons";
+import { Link } from "expo-router";
 import { useRef, useState } from "react";
-import {
-  FlatList,
-  Image,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
 import "react-native-gesture-handler";
-import { Button, Card, DefaultTheme, IconButton, PaperProvider, Text } from "react-native-paper";
+import { Button, Card, DefaultTheme, Modal, Portal, Snackbar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
+import ConfirmModal from "~/components/confirm-modal";
+import TradeItem from "~/components/trade-item";
 import { COLORS } from "~/lib/theme";
-
-// const defaultPic =
-//   "https://scontent.fmnl4-2.fna.fbcdn.net/v/t39.30808-6/400620751_122117989682085260_870845570978591772_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n0dELboLFD0AX8l9Tyk&_nc_ht=scontent.fmnl4-2.fna&oh=00_AfB-7lWn6a3qcT2rrZlMjXIr-fkxOyZ6yz_4GiFKrea4uA&oe=65588F78";
 
 const defaultPic = require("~/assets/liden.png");
 
@@ -26,9 +17,6 @@ const theme = {
   ...DefaultTheme,
   colors: COLORS,
 };
-
-// TODO: use Expo Router's stack navigator, instead of a third party library.
-// TODO: use new routes in the (stack) directory.
 
 const defaultPfpPic =
   "https://pbs.twimg.com/profile_images/1402484552195481600/i0GBotgY_400x400.jpg";
@@ -58,116 +46,157 @@ export default function MyProfile() {
   );
 }
 
-function ProfileContent({
-  navigation,
-  profilePic,
-  updateProfilePic,
-  backgroundPic,
-  updateBackgroundPic,
-}: any) {
-  const router = useRouter();
-
+function ProfileContent({ profilePic }: any) {
   // STATES
   const [name, setName] = useState("Liden U. Hoe");
-  const [nameInput, setNameInput] = useState(name);
   const scrollViewRef = useRef<ScrollView>(null);
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState<boolean>(false);
+  const [isProfileSettingsCardVisible, setIsProfileSettingsCardVisible] = useState(false);
+  const [isSnackBarVisible, setIsSnackBarVisible] = useState<boolean>(false);
 
   // HANDLERS
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const currentOffsetY = event.nativeEvent.contentOffset.y;
-    const scrollThreshold = 390;
-
-    if (currentOffsetY >= scrollThreshold) {
-      // setScrollEnabled(false);
-      // If the user tries to scroll beyond the threshold, prevent further scrolling
-      scrollViewRef.current?.scrollTo({ x: 0, y: scrollThreshold, animated: false });
-    }
+  const saveProfileChanges = () => {
+    setIsSnackBarVisible(true);
+  };
+  const onDismissSnackBar = () => {
+    setIsSnackBarVisible(false);
   };
 
-  // function previewPhoto(photo: any) {
-  //   router.push({ pathname: `/photo-preview`, params: { photo: photo } });
-  // }
+  const toggleProfileSettingsCard = () => setIsProfileSettingsCardVisible(true);
+  const showConfirmModal = () => {
+    setIsProfileSettingsCardVisible(false);
+    setIsConfirmModalVisible(true);
+  };
 
   return (
     <View style={styles.container}>
-      <PaperProvider theme={theme}>
-        <ScrollView
-          style={{ flex: 1 }}
-          ref={scrollViewRef}
-          onScroll={handleScroll}
-          scrollEventThrottle={5}
+      <Portal>
+        <Snackbar
+          theme={theme}
+          style={{ marginBottom: 100 }}
+          visible={isSnackBarVisible}
+          duration={2000}
+          onDismiss={onDismissSnackBar}
+          onIconPress={onDismissSnackBar}
         >
-          <IconButton icon="arrow-left" iconColor="black" />
+          Profile Saved!
+        </Snackbar>
 
-          <Link
-            href={{
-              pathname: "/photo-preview",
-              params: { photo: defaultCoverPic },
-            }}
-            asChild
+        <Modal
+          onDismiss={() => setIsProfileSettingsCardVisible(false)}
+          visible={isProfileSettingsCardVisible}
+          theme={{
+            colors: {
+              backdrop: "transparent",
+              surface: "white",
+            },
+          }}
+          contentContainerStyle={{
+            position: "absolute",
+            alignSelf: "flex-end",
+            padding: 5,
+            borderRadius: 5,
+            top: 265,
+            right: 20,
+            zIndex: 999,
+            backgroundColor: COLORS.surface,
+          }}
+        >
+          <Button
+            style={{ backgroundColor: COLORS.surface }}
+            textColor="black"
+            icon="account-remove"
+            mode="contained"
+            onPress={showConfirmModal}
           >
-            <Image style={styles.backgroundPic} source={{ uri: defaultCoverPic }} />
-          </Link>
+            Delete Account
+          </Button>
+        </Modal>
+      </Portal>
 
+      <ConfirmModal
+        title={`Your account will be deleted.${"\n"}Are you sure?`}
+        state={isConfirmModalVisible}
+        setState={setIsConfirmModalVisible}
+      />
+
+      <ScrollView style={{ flex: 1 }}>
+        <Link
+          href={{
+            pathname: "/photo-preview",
+            params: { photo: defaultCoverPic },
+          }}
+          asChild
+        >
+          <Image style={styles.backgroundPic} source={{ uri: defaultCoverPic }} />
+        </Link>
+
+        <Link
+          asChild
+          href={{
+            pathname: "/photo-preview",
+            params: { photo: profilePic },
+          }}
+          style={styles.profilePicButton}
+        >
+          <Image style={styles.profilePic} source={profilePic} />
+        </Link>
+
+        <View style={styles.editProfileButtons}>
           <Link
             asChild
             href={{
-              pathname: "/photo-preview",
-              params: { photo: profilePic },
+              pathname: "/me/edit",
+              params: {
+                name: name,
+                pfpPic: defaultPfpPic,
+                coverPic: defaultCoverPic,
+              },
             }}
-            style={styles.profilePicButton}
           >
-            <Image style={styles.profilePic} source={profilePic} />
-          </Link>
-
-          <Link asChild href={{ pathname: "/me/edit" }}>
             <Button
               icon="pencil"
               mode="outlined"
-              style={styles.editProfileButton}
               contentStyle={{ flexDirection: "row-reverse" }}
               textColor={COLORS.primary}
             >
               Edit Profile
             </Button>
           </Link>
-          <View style={styles.profileLabels}>
-            <Text variant="headlineMedium" style={{ color: "black" }}>
-              Liden U. Hoe
+
+          <Entypo
+            style={{ verticalAlign: "middle" }}
+            name="dots-three-vertical"
+            size={18}
+            color="black"
+            onPress={toggleProfileSettingsCard}
+          />
+        </View>
+
+        <View style={styles.profileTexts}>
+          <Text variant="headlineMedium">Liden U. Hoe</Text>
+          <Link href={{ pathname: "/me/ratings" }}>
+            <Text variant="titleMedium">
+              &#9733; &#9733; &#9733; (69) &nbsp;
+              <AntDesign name="infocirlceo" size={18} style={{ verticalAlign: "middle" }} />
             </Text>
+          </Link>
+        </View>
 
-            <Link
-              href={{
-                pathname: "/me/ratings",
-              }}
-            >
-              <Text
-                variant="titleLarge"
-                style={{
-                  color: "black",
-                }}
-              >
-                &#9733; &#9733; &#9733; (69) &nbsp;
-                <AntDesign name="infocirlceo" size={20} color="black" />
-              </Text>
-            </Link>
-          </View>
-
-          <TabsProvider defaultIndex={0}>
-            <Tabs style={{ backgroundColor: "transparent" }}>
-              <TabScreen label="Inventory">
-                <InventoryScreen />
-              </TabScreen>
-              <TabScreen label="Wishes">
-                <WishesScreen />
-              </TabScreen>
-              <TabScreen label="History">
-                <HistoryScreen />
-              </TabScreen>
-            </Tabs>
-          </TabsProvider>
-        </ScrollView>
-      </PaperProvider>
+        <TabsProvider defaultIndex={0}>
+          <Tabs style={{ backgroundColor: "transparent" }}>
+            <TabScreen label="Inventory">
+              <InventoryScreen />
+            </TabScreen>
+            <TabScreen label="Wishes">
+              <WishesScreen />
+            </TabScreen>
+            <TabScreen label="History">
+              <HistoryScreen />
+            </TabScreen>
+          </Tabs>
+        </TabsProvider>
+      </ScrollView>
     </View>
   );
 }
@@ -178,7 +207,7 @@ function InventoryScreen() {
   return (
     <FlatList
       data={INVENTORY}
-      renderItem={({ item }) => <CardComponent content={item.content} />}
+      renderItem={({ item }) => <TradeItem editable={true} />}
       keyExtractor={(item) => item.id.toString()}
       style={{ height: 1000, paddingVertical: 10 }}
     />
@@ -245,19 +274,18 @@ const styles = StyleSheet.create({
   },
   profilePicButton: {
     position: "absolute",
-    // top: 120, if header not shown
-    top: 170,
+    top: 120, // if header not shown
+    // top: 170,
     left: 25,
     borderWidth: 5,
-    borderColor: "rgb(234,239,224)",
+    borderColor: COLORS.surface,
   },
-  profileLabels: {
+  profileTexts: {
     marginHorizontal: 25,
-
     marginBottom: 10,
-
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   editProfileLabels: {
     marginHorizontal: 10,
@@ -277,10 +305,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "black",
   },
-  editProfileButton: {
+  editProfileButtons: {
     alignSelf: "flex-end",
     margin: 20,
-    fontWeight: 700,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   editProfilePicButton: {
     alignSelf: "flex-end",
@@ -290,12 +320,15 @@ const styles = StyleSheet.create({
     margin: 20,
     gap: 10,
   },
+
   modalContainerStyle: {
     backgroundColor: "white",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 40,
     maxHeight: "80%",
     overflow: "scroll",
-    justifyContent: "flex-start",
+    gap: 30,
+    borderRadius: 10,
   },
   editNameInput: {
     marginVertical: 20,
@@ -364,6 +397,6 @@ const INVENTORY = [
   {
     id: 6,
     content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   },
 ];

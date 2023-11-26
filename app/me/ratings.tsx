@@ -1,7 +1,7 @@
 // URL: /me/ratings
 
-import { FlatList, View } from "react-native";
-import { Card, Text } from "react-native-paper";
+import { ScrollView } from "react-native-gesture-handler";
+import RatingItem from "~/components/rating-item";
 
 /**
  * Since ang My Profile Ratings og Other User Ratings kay similar ra, naa koy suggestion:
@@ -20,58 +20,12 @@ export default function MyRatings() {
   // para makuha ang logged-in user id, maghimo ra nya kog custom hook if nana tay backend -nize
 
   return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={INVENTORY}
-        renderItem={({ item }) => <CardComponent content={item.content} />}
-        keyExtractor={(item) => item.id.toString()}
-        style={{ height: 1000 }}
-      />
-    </View>
+    <ScrollView style={{ flex: 1 }}>
+      <RatingItem total={5} />
+      <RatingItem total={2} />
+      <RatingItem total={3} />
+      <RatingItem total={4} />
+      <RatingItem total={4} />
+    </ScrollView>
   );
 }
-
-type CardProps = { content: string };
-function CardComponent(props: CardProps) {
-  return (
-    <Card style={{ height: 200, backgroundColor: "rgb(243, 246, 235)", margin: 8 }}>
-      <Card.Content>
-        <Text style={{ color: "black" }}>{props.content}</Text>
-      </Card.Content>
-    </Card>
-  );
-}
-
-// CARD CONTENT SAMPLE DATA
-const INVENTORY = [
-  {
-    id: 1,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  },
-  {
-    id: 2,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  },
-  {
-    id: 3,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  },
-  {
-    id: 4,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  },
-  {
-    id: 5,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  },
-  {
-    id: 6,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  },
-];

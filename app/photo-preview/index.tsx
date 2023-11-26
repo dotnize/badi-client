@@ -1,18 +1,22 @@
 import { useLocalSearchParams } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
 
-type SearchParams = {
-  photo: string; // Replace 'string' with the actual type of photo
-  // Add other properties if needed
-};
-
 export default function PhotoPreview() {
-  const params = useLocalSearchParams() as SearchParams;
-  const { photo } = params;
+  const { photo } = useLocalSearchParams<{ photo: string }>();
+
+  let n: any = 0;
+
+  if (photo && /^[0-9]+$/.test(photo)) {
+    n = parseInt(photo, 10);
+  } else {
+    n = photo;
+  }
+
+  console.log(n, typeof n, photo, typeof photo, "feffe");
 
   return (
     <View style={{ height: "90%" }}>
-      <Image style={styles.photoPreview} source={{ uri: photo }} />
+      <Image style={styles.photoPreview} source={n} />
     </View>
   );
 }
@@ -20,7 +24,7 @@ export default function PhotoPreview() {
 const styles = StyleSheet.create({
   photoPreview: {
     resizeMode: "contain",
-
+    width: "100%",
     height: "100%",
   },
 });
