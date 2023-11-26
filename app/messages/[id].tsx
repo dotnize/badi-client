@@ -46,8 +46,8 @@ export default function Convo({ navigation }: any) {
     setConversation((prevConversation) => ({
       ...prevConversation,
       messages: [
-        { id: 1, text: "Hello!", sender: "Liden U. Hoe" },
-        { id: 2, text: "Hi there!", sender: "You" },
+        { id: 1, text: "Hi bro, tagpila ning kanding", sender: "Liden U. Hoe" },
+        { id: 2, text: "Oy bro, tara meet up para sabotan tarung.", sender: "You" },
       ],
     }));
   }, [id]);
@@ -86,9 +86,18 @@ export default function Convo({ navigation }: any) {
           <IconButton icon="arrow-right" onPress={() => null} style={styles.arrowIcon} />
         </Card>
         {conversation.messages.map((message) => (
-          <View key={message.id} style={styles.message}>
-            <Text>
-              {message.sender.split(" ")[0]}: {message.text}
+          <View
+            key={message.id}
+            style={[
+              styles.messageStyle,
+              {
+                alignSelf: message.sender === 'You' ? 'flex-end' : 'flex-start',
+                backgroundColor: message.sender === 'You' ? '#4CAF50' : '#fff', // Green for sent, white for received
+              },
+            ]}
+          >
+            <Text style={{ color: message.sender === 'You' ? '#fff' : '#000', fontSize: 18 /* Adjust the font size as needed */ }}>
+              {message.text}
             </Text>
           </View>
         ))}
@@ -196,5 +205,12 @@ const styles = StyleSheet.create({
     fontSize: 16, // Adjust the font size as needed
     width: 100,
     // Adjust the width as needed
+  },
+  messageStyle: {
+    marginBottom: 8,
+    padding: 10,
+    borderRadius: 5,
+    maxWidth: "100%", // Full width
+    boxSizing: "border-box",
   },
 });
