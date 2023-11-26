@@ -1,9 +1,10 @@
+import { Link } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { IconButton, List, Searchbar } from "react-native-paper";
 
 interface Message {
-  key: number;
+  id: number;
   avatar: string; // Update the type based on your actual data structure
   username: string;
   preview: string;
@@ -23,8 +24,13 @@ export default function Messages() {
   const [searchValue, setSearchValue] = useState("");
 
   const messages: Message[] = [
-    { key: 1, avatar: "account", username: "Liden U. Hoe", preview: "BAWAWAWAWAW" },
-    { key: 2, avatar: "account", username: "Jameel D. Great", preview: "I love marcy <3." },
+    {
+      id: 1,
+      avatar: "account",
+      username: "Liden U. Hoe",
+      preview: "You: Oy bro, tara meet up para sabotan tarung.",
+    },
+    { id: 2, avatar: "account", username: "Jameel D. Great", preview: "I love marcy <3." },
     // Add more messages as needed
   ];
 
@@ -41,12 +47,14 @@ export default function Messages() {
       </View>
       <View style={{ marginLeft: 18 }}>
         {messages.map((message) => (
-          <MessageListItem
-            key={message.key}
-            avatar={message.avatar}
-            username={message.username}
-            preview={message.preview}
-          />
+          <Link href={`/messages/${message.id}`}>
+            <MessageListItem
+              id={message.id}
+              avatar={message.avatar}
+              username={message.username}
+              preview={message.preview}
+            />
+          </Link>
         ))}
       </View>
     </View>
