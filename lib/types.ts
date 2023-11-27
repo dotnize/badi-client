@@ -14,7 +14,7 @@ export interface User {
 export interface Inventory {
   id: number;
   name: string;
-  userId: number;
+  user: User | number;
   type: "item" | "service";
   keywords: string[];
   location: string | null;
@@ -26,7 +26,7 @@ export interface Inventory {
 export interface Wish {
   id: number;
   name: string;
-  userId: number;
+  user: User | number;
   type: "item" | "service";
   keywords: string[];
   description: string;
@@ -41,18 +41,18 @@ export interface Contract {
 
 export interface TradeGroup {
   id: number;
-  user1Id: number | null;
-  user2Id: number;
+  user1: User | number;
+  user2: User | number;
   contractId: number | null;
   status: "pending" | "rejected" | "active" | "cancelled";
 }
 
 export interface TradeInventory {
   id: number;
-  tradeGroupId: number;
-  senderId: number;
-  receiverId: number;
-  inventoryId: number;
+  tradeGroup: TradeGroup | number;
+  sender: User | number;
+  receiver: User | number;
+  inventory: Inventory | number;
   totalQuantity: number;
   completedQuantity: number;
   isCompleted: boolean;
@@ -61,7 +61,7 @@ export interface TradeInventory {
 export interface TradeTransaction {
   id: number;
   description: string | null;
-  tradeInventoryId: number;
+  tradeInventory: number;
   proofUrls: string[];
   quantity: number;
   timestamp: Date;
@@ -69,8 +69,8 @@ export interface TradeTransaction {
 
 export interface ChatRoom {
   id: number;
-  member1Id: number;
-  member2Id: number;
+  member1: User | number;
+  member2: User | number;
 }
 
 export interface ChatMessage {
