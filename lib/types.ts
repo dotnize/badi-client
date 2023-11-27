@@ -17,6 +17,7 @@ export interface Inventory {
   userId: number;
   type: "item" | "service";
   keywords: string[];
+  location: string | null;
   description: string;
   imageUrls: string[];
   preferredOffer: string | null;
