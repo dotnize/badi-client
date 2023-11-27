@@ -24,11 +24,15 @@
    ```sh
    npm install
    ```
-3. Run the project:
+3. Create a `.env` file at the root directory of the project with the following content:
+   ```sh
+   EXPO_PUBLIC_API_URL=http://localhost:3001 # replace with your backend URL/port
+   ```
+4. Run the project:
    ```sh
    npm start
    ```
    - or `npm run web` to start immediately for the browser
-4. Open the project:
+5. Open the project:
    - If running for the browser only, then check the terminal for the URL
    - If running for mobile, open the Expo app you installed on your phone then scan the QR code from the terminal
