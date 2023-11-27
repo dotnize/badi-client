@@ -44,7 +44,7 @@ export interface TradeGroup {
   user1Id: number | null;
   user2Id: number;
   contractId: number | null;
-  status: string;
+  status: "pending" | "rejected" | "active" | "cancelled";
 }
 
 export interface TradeInventory {
@@ -62,7 +62,7 @@ export interface TradeTransaction {
   id: number;
   description: string | null;
   tradeInventoryId: number;
-  proofUrls: unknown;
+  proofUrls: string[];
   quantity: number;
   timestamp: Date;
 }
