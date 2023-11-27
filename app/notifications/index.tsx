@@ -2,19 +2,26 @@
 
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Card, Paragraph, Title } from "react-native-paper";
+import { Avatar, Card, Paragraph, Title } from "react-native-paper";
 
 const notifications = [
-  { id: 1, title: "Liden", content: "Has sent you an offer!" },
-  { id: 2, title: "Leonel", content: "This is the content of notification 2." },
-  // Add more notifications as needed
+  { id: 1, title: "Liden", content: "has sent you an offer!" },
+  { id: 2, title: "Leonel", content: "Looking for a secondhand airplane." },
 ];
 
-const NotificationCard = ({ title, content }) => (
+interface NotificationCardProps {
+  title: string;
+  content: string;
+}
+
+const NotificationCard: React.FC<NotificationCardProps> = ({ title, content }) => (
   <Card style={styles.card}>
-    <Card.Content>
-      <Title>{title}</Title>
-      <Paragraph>{content}</Paragraph>
+    <Card.Content style={styles.cardContent}>
+      <Avatar.Icon size={48} icon="account-circle" />
+      <View style={styles.textContainer}>
+        <Title>{title}</Title>
+        <Paragraph>{content}</Paragraph>
+      </View>
     </Card.Content>
   </Card>
 );
@@ -38,12 +45,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
   card: {
     marginVertical: 8,
+  },
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textContainer: {
+    marginLeft: 16,
   },
 });
