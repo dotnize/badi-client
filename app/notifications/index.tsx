@@ -1,10 +1,10 @@
 // URL: /notifications
 
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Avatar, Card, IconButton, Paragraph, Title } from "react-native-paper";
+import { Avatar, Button, Card, IconButton, Paragraph, Title } from "react-native-paper";
 
-const notifications = [
+const initialNotifications = [
   { id: 1, title: "Liden", content: "has sent you an offer!" },
   { id: 2, title: "Leonel", content: "Looking for a secondhand airplane." },
 ];
@@ -30,13 +30,23 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ id, title, content,
 );
 
 export default function Notifications() {
+  const [notifications, setNotifications] = useState(initialNotifications);
+
   const removeNotification = (id: number) => {
-    // Implement the remove notification with the given id
-    console.log("Notification removed:", id);
+    const updatedNotifications = notifications.filter((notification) => notification.id !== id);
+    setNotifications(updatedNotifications);
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
   };
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Title style={styles.header}>Notifications</Title>
+        <Button onPress={clearAllNotifications}>Clear All</Button>
+      </View>
       {notifications.map((notification) => (
         <NotificationCard
           key={notification.id}
@@ -54,6 +64,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
   },
   card: {
     marginVertical: 8,
