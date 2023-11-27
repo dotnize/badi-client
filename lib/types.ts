@@ -69,6 +69,7 @@ export interface TradeInventory {
 export interface TradeTransaction {
   id: number;
   description: string | null;
+  tradeGroupId: number;
   tradeInventoryId: number;
   proofUrls: string[];
   quantity: number;
