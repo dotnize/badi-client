@@ -37,6 +37,7 @@ export interface Wish {
 
 export interface Contract {
   id: number;
+  tradeGroupId: number;
   description: string;
   documentUrls: string[];
 }
@@ -47,7 +48,6 @@ export interface TradeGroup {
   user2Id: number;
   user1?: User;
   user2?: User;
-  contractId: number | null;
   status: "pending" | "rejected" | "active" | "cancelled";
 }
 
