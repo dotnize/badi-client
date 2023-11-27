@@ -64,7 +64,7 @@ export interface TradeTransaction {
   tradeInventoryId: number;
   proofUrls: unknown;
   quantity: number;
-  timestamp: Date | null;
+  timestamp: Date;
 }
 
 export interface ChatRoom {
@@ -76,15 +76,16 @@ export interface ChatRoom {
 export interface ChatMessage {
   id: number;
   senderId: number;
-  timestamp: Date | null;
+  timestamp: Date;
   chatRoomId: number;
   content: string;
 }
 
 export interface Notification {
   id: number;
-  senderId: number;
+  userId: number;
+  type: string;
   timestamp: Date;
-  chatRoomId: number;
   content: any; // temporary, klarohon pa tani
+  isRead: boolean;
 }
