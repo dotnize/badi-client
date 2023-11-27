@@ -68,7 +68,7 @@ export function useFetch<T = unknown>(endpoint?: string, options?: RequestInit):
 
     fetchData();
 
-    // Use the cleanup function for avoiding a possibly...
+    // Use the cleanup function for avoiding a possible...
     // ...state update after the component was unmounted
     return () => {
       cancelRequest.current = true;
