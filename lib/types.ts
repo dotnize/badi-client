@@ -9,7 +9,7 @@ export interface User {
   avatarUrl: string | null;
   location: string;
   verified: number;
-  averageRating: number;
+  averageRating: number | null;
 }
 
 export interface Inventory {
@@ -110,4 +110,5 @@ export interface Rating {
   toUserId: number;
   amount: number;
   description: string | null;
+  timestamp: Date;
 }
