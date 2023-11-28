@@ -1,8 +1,8 @@
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { Button, IconButton } from "react-native-paper";
+import { Button, IconButton, TextInput } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
 // New component for the title form
@@ -13,7 +13,7 @@ function TitleForm() {
       <TextInput
         placeholder="Enter title"
         style={{
-          height: 40,
+          height: 30,
           borderColor: "gray",
           borderWidth: 1,
           padding: 8,
@@ -56,7 +56,7 @@ function DescriptionForm() {
         placeholder="Enter description"
         multiline
         style={{
-          height: 80,
+          height: 60,
           borderColor: "gray",
           borderWidth: 1,
           padding: 8,
@@ -112,7 +112,7 @@ function PriceForm() {
         placeholder="Enter price"
         keyboardType="numeric"
         style={{
-          height: 40,
+          height: 30,
           borderColor: "gray",
           borderWidth: 1,
           padding: 8,
