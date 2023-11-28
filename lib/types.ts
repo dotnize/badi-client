@@ -83,6 +83,7 @@ export interface ChatRoom {
   member1?: User;
   member2Id: number;
   member2?: User;
+  lastMessagePreview?: ChatMessage;
 }
 
 export interface ChatMessage {
