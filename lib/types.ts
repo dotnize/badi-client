@@ -9,6 +9,7 @@ export interface User {
   avatarUrl: string | null;
   location: string;
   verified: number;
+  averageRating: number;
 }
 
 export interface Inventory {
@@ -100,4 +101,13 @@ export interface Notification {
   title: string;
   content: any; // temporary, klarohon pa tani
   isRead: boolean;
+}
+
+export interface Rating {
+  id: number;
+  fromUserId: number;
+  fromUser?: User;
+  toUserId: number;
+  amount: number;
+  description: string | null;
 }
