@@ -49,7 +49,6 @@ export default function Activity() {
                 <CardComponent />
                 <CardComponent />
                 <CardComponent />
-                <CardComponent />
               </ScrollView>
             </View>
           </TabScreen>
