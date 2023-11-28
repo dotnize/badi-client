@@ -43,7 +43,7 @@ export default function Activity() {
         >
           <TabScreen label="Active">
             <View style={{ flex: 1 }}>
-              <ScrollView style={{ flex: 1, padding: 8 }} showsVerticalScrollIndicator={false}>
+              <ScrollView style={{ flex: 1, padding: 8 }}>
                 <CardComponent />
                 <CardComponent />
                 <CardComponent />
