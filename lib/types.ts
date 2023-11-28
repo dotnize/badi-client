@@ -97,6 +97,7 @@ export interface Notification {
   userId: number;
   type: string;
   timestamp: Date;
+  title: string;
   content: any; // temporary, klarohon pa tani
   isRead: boolean;
 }
