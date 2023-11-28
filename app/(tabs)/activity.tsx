@@ -1,26 +1,8 @@
-import { Link } from "expo-router";
 import { ScrollView, View } from "react-native";
-import { Card, IconButton, Text } from "react-native-paper";
-import { TabScreen, Tabs, TabsProvider, useTabIndex } from "react-native-paper-tabs";
-
-function CardComponent() {
-  const tabIndex = useTabIndex();
-  const tempId = 1 + Math.floor(Math.random() * 100); // TODO: replace with legit id
-  const whatTab = tabIndex === 0 ? `/trades/${tempId}` : `/offers/${tempId}`;
-
-  return (
-    <Link href={whatTab}>
-      <Card style={{ height: 200, margin: 8 }}>
-        <Card.Content>
-          <Text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua.
-          </Text>
-        </Card.Content>
-      </Card>
-    </Link>
-  );
-}
+import { IconButton, Text } from "react-native-paper";
+import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
+import ActiveCardComponent from "~/components/activetrade-card";
+import PendingCardComponent from "~/components/pendingtrade-card";
 
 export default function Activity() {
   return (
@@ -44,11 +26,11 @@ export default function Activity() {
           <TabScreen label="Active">
             <View style={{ flex: 1 }}>
               <ScrollView style={{ flex: 1, padding: 8 }}>
-                <CardComponent />
-                <CardComponent />
-                <CardComponent />
-                <CardComponent />
-                <CardComponent />
+                <ActiveCardComponent />
+                <ActiveCardComponent />
+                <ActiveCardComponent />
+                <ActiveCardComponent />
+                <ActiveCardComponent />
               </ScrollView>
             </View>
           </TabScreen>
@@ -56,12 +38,11 @@ export default function Activity() {
           <TabScreen label="Pending">
             <View style={{ flex: 1 }}>
               <ScrollView style={{ flex: 1, padding: 8 }}>
-                <CardComponent />
-                <CardComponent />
-                <CardComponent />
-                <CardComponent />
-                <CardComponent />
-                <CardComponent />
+                <PendingCardComponent />
+                <PendingCardComponent />
+                <PendingCardComponent />
+                <PendingCardComponent />
+                <PendingCardComponent />
               </ScrollView>
             </View>
           </TabScreen>
