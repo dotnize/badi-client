@@ -1,8 +1,8 @@
 import { ScrollView, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
-import ActiveCardComponent from "~/components/activetrade-card";
-import PendingCardComponent from "~/components/pendingtrade-card";
+import ActiveTradeCard from "~/components/activetrade-card";
+import PendingTradeCard from "~/components/pendingtrade-card";
 
 export default function Activity() {
   return (
@@ -26,11 +26,11 @@ export default function Activity() {
           <TabScreen label="Active">
             <View style={{ flex: 1 }}>
               <ScrollView style={{ flex: 1, padding: 8 }}>
-                <ActiveCardComponent />
-                <ActiveCardComponent />
-                <ActiveCardComponent />
-                <ActiveCardComponent />
-                <ActiveCardComponent />
+                <ActiveTradeCard />
+                <ActiveTradeCard />
+                <ActiveTradeCard />
+                <ActiveTradeCard />
+                <ActiveTradeCard />
               </ScrollView>
             </View>
           </TabScreen>
@@ -38,11 +38,11 @@ export default function Activity() {
           <TabScreen label="Pending">
             <View style={{ flex: 1 }}>
               <ScrollView style={{ flex: 1, padding: 8 }}>
-                <PendingCardComponent />
-                <PendingCardComponent />
-                <PendingCardComponent />
-                <PendingCardComponent />
-                <PendingCardComponent />
+                <PendingTradeCard />
+                <PendingTradeCard />
+                <PendingTradeCard />
+                <PendingTradeCard />
+                <PendingTradeCard />
               </ScrollView>
             </View>
           </TabScreen>
