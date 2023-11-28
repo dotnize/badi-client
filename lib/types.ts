@@ -9,7 +9,7 @@ export interface User {
   avatarUrl: string | null;
   location: string;
   verified: number;
-  averageRating: number;
+  averageRating: number | null;
 }
 
 export interface Inventory {
@@ -83,6 +83,7 @@ export interface ChatRoom {
   member1?: User;
   member2Id: number;
   member2?: User;
+  lastMessagePreview?: ChatMessage;
 }
 
 export interface ChatMessage {
@@ -110,4 +111,5 @@ export interface Rating {
   toUserId: number;
   amount: number;
   description: string | null;
+  timestamp: Date;
 }
