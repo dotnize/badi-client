@@ -12,8 +12,6 @@ export default function PhotoPreview() {
     n = photo;
   }
 
-  console.log(n, typeof n, photo, typeof photo, "feffe");
-
   return (
     <View style={{ height: "90%" }}>
       <Image style={styles.photoPreview} source={n} />
