@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link, Slot, usePathname } from "expo-router";
 import { View, useWindowDimensions } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 
 import Tabs from "~/components/bottom-tabs";
 import { COLORS, SIZES } from "~/lib/theme";
@@ -15,56 +15,153 @@ export default function TabLayout() {
   const isLandscape = width > height * 1.2;
 
   return isLandscape ? (
-    <View style={{ flexDirection: "row", flex: 1, justifyContent: "center", gap: SIZES[8] }}>
-      <View style={{ justifyContent: "center", gap: SIZES[2], width: 180 }}>
-        <Link replace asChild href="/">
-          <Button
-            icon={pathname === "/" ? "home" : "home-outline"}
-            mode={pathname === "/" ? "outlined" : "text"}
-            contentStyle={{ justifyContent: "flex-start", width: "100%" }}
-          >
-            Home
-          </Button>
-        </Link>
-        <Link replace asChild href="/messages">
-          <Button
-            icon={pathname.startsWith("/messages") ? "message" : "message-outline"}
-            mode={pathname.startsWith("/messages") ? "outlined" : "text"}
-            contentStyle={{ justifyContent: "flex-start", width: "100%" }}
-          >
-            Messages
-          </Button>
-        </Link>
-        <Link replace asChild href="/new">
-          <Button
-            icon="plus"
-            mode={pathname === "/new" ? "outlined" : "text"}
-            contentStyle={{ justifyContent: "flex-start", width: "100%" }}
-          >
-            New Listing
-          </Button>
-        </Link>
-        <Link replace asChild href="/activity">
-          <Button
-            icon={pathname.startsWith("/activity") ? "bell" : "bell-outline"}
-            mode={pathname.startsWith("/activity") ? "outlined" : "text"}
-            contentStyle={{ justifyContent: "flex-start", width: "100%" }}
-          >
-            Activity
-          </Button>
-        </Link>
-        <Link replace asChild href="/me">
-          <Button
-            icon={pathname === "/me" ? "account" : "account-outline"}
-            mode={pathname === "/me" ? "outlined" : "text"}
-            contentStyle={{ justifyContent: "flex-start", width: "100%" }}
-          >
-            My Profile
-          </Button>
-        </Link>
+    <View
+      style={{
+        flexDirection: "row",
+        flex: 1,
+        justifyContent: "center",
+        gap: SIZES[8],
+      }}
+    >
+      <View style={{ justifyContent: "space-evenly", width: 192 }}>
+        <View style={{ gap: SIZES[12] }}>
+          <View>
+            <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+              Badi (or logo here)
+            </Text>
+          </View>
+          <View style={{ gap: 4 }}>
+            <Link replace asChild href="/">
+              <Button
+                textColor={COLORS.onSurface}
+                icon={
+                  pathname === "/"
+                    ? ({ color }) => <MaterialCommunityIcons name="home" size={24} color={color} />
+                    : ({ color }) => (
+                        <MaterialCommunityIcons name="home-outline" size={24} color={color} />
+                      )
+                }
+                //mode={pathname === "/" ? "outlined" : "text"}
+                mode="text"
+                contentStyle={{ justifyContent: "flex-start", width: "100%", height: 52 }}
+              >
+                <Text
+                  style={{ paddingLeft: 4, fontWeight: pathname === "/" ? "bold" : "normal" }}
+                  variant="titleMedium"
+                >
+                  Home
+                </Text>
+              </Button>
+            </Link>
+            <Link replace asChild href="/messages">
+              <Button
+                textColor={COLORS.onSurface}
+                icon={
+                  pathname.startsWith("/messages")
+                    ? ({ color }) => (
+                        <MaterialCommunityIcons name="message" size={24} color={color} />
+                      )
+                    : ({ color }) => (
+                        <MaterialCommunityIcons name="message-outline" size={24} color={color} />
+                      )
+                }
+                //mode={pathname.startsWith("/messages") ? "outlined" : "text"}
+                mode="text"
+                contentStyle={{ justifyContent: "flex-start", width: "100%", height: 52 }}
+              >
+                <Text
+                  style={{
+                    paddingLeft: 4,
+                    fontWeight: pathname.startsWith("/messages") ? "bold" : "normal",
+                  }}
+                  variant="titleMedium"
+                >
+                  Messages
+                </Text>
+              </Button>
+            </Link>
+            <Link replace asChild href="/new">
+              <Button
+                textColor={COLORS.onSurface}
+                icon={({ color }) => <MaterialCommunityIcons name="plus" size={24} color={color} />}
+                //mode={pathname === "/new" ? "outlined" : "text"}
+                mode="text"
+                contentStyle={{ justifyContent: "flex-start", width: "100%", height: 52 }}
+              >
+                <Text
+                  style={{ paddingLeft: 4, fontWeight: pathname === "/new" ? "bold" : "normal" }}
+                  variant="titleMedium"
+                >
+                  New Listing
+                </Text>
+              </Button>
+            </Link>
+            <Link replace asChild href="/activity">
+              <Button
+                textColor={COLORS.onSurface}
+                icon={
+                  pathname.startsWith("/activity")
+                    ? ({ color }) => <MaterialCommunityIcons name="bell" size={24} color={color} />
+                    : ({ color }) => (
+                        <MaterialCommunityIcons name="bell-outline" size={24} color={color} />
+                      )
+                }
+                //mode={pathname.startsWith("/activity") ? "outlined" : "text"}
+                mode="text"
+                contentStyle={{ justifyContent: "flex-start", width: "100%", height: 52 }}
+              >
+                <Text
+                  style={{
+                    paddingLeft: 4,
+                    fontWeight: pathname.startsWith("/activity") ? "bold" : "normal",
+                  }}
+                  variant="titleMedium"
+                >
+                  Activity
+                </Text>
+              </Button>
+            </Link>
+            <Link replace asChild href="/me">
+              <Button
+                textColor={COLORS.onSurface}
+                icon={
+                  pathname === "/me"
+                    ? ({ color }) => (
+                        <MaterialCommunityIcons name="account" size={24} color={color} />
+                      )
+                    : ({ color }) => (
+                        <MaterialCommunityIcons name="account-outline" size={24} color={color} />
+                      )
+                }
+                //mode={pathname === "/me" ? "outlined" : "text"}
+                mode="text"
+                contentStyle={{ justifyContent: "flex-start", width: "100%", height: 52 }}
+              >
+                <Text
+                  style={{ paddingLeft: 4, fontWeight: pathname === "/me" ? "bold" : "normal" }}
+                  variant="titleMedium"
+                >
+                  My Profile
+                </Text>
+              </Button>
+            </Link>
+          </View>
+        </View>
+        <View>
+          <Text>about, terms & conditions, logout, etc.</Text>
+        </View>
       </View>
 
-      <View style={{ maxWidth: 768, flex: 1 }}>
+      <View
+        style={{
+          maxWidth: 640,
+          flex: 1,
+          // card components dont match well with these borders
+          // borderColor: COLORS.surfaceVariant,
+          // borderLeftWidth: 2,
+          // borderRightWidth: 2,
+        }}
+      >
         <Slot />
       </View>
     </View>
