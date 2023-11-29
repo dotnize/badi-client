@@ -1,6 +1,5 @@
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack, useRouter } from "expo-router";
-import { useState } from "react";
 import { useWindowDimensions } from "react-native";
 import {
   Appbar,
@@ -10,9 +9,8 @@ import {
   adaptNavigationTheme,
 } from "react-native-paper";
 
-import { SessionContext } from "~/context/SessionContext";
+import ContextProvider from "~/context/ContextProvider";
 import { COLORS } from "~/lib/theme";
-import { User } from "~/lib/types";
 
 // Defining routes: <<--- START HERE!
 // https://docs.expo.dev/routing/create-pages/
@@ -41,15 +39,13 @@ const { LightTheme } = adaptNavigationTheme({
 //const user = undefined; // TEMPORARY
 
 export default function RootLayout() {
-  const [user, setUser] = useState<User | null>(null);
-
   const router = useRouter();
   const { height, width } = useWindowDimensions();
 
   const isLandscape = width > height * 1.2;
 
   return (
-    <SessionContext.Provider value={{ user, setUser }}>
+    <ContextProvider>
       <PaperProvider theme={theme}>
         {/* {!user && <Redirect href="/welcome" />} */}
         <ThemeProvider value={LightTheme}>
@@ -87,6 +83,6 @@ export default function RootLayout() {
           </Stack>
         </ThemeProvider>
       </PaperProvider>
-    </SessionContext.Provider>
+    </ContextProvider>
   );
 }
