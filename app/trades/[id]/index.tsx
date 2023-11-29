@@ -8,7 +8,7 @@ import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, ProgressBar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
-import ActiveUserItem from "~/components/cards/activetrades/activeuser-item";
+import ActiveUserItem from "~/components/cards/activetrade/active-inventory";
 
 export default function ActiveTrade() {
   const { id } = useLocalSearchParams();
