@@ -3,10 +3,10 @@
 
 // Use the useLocalSearchParams hook from expo-router to get the id from the URL.
 
-import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { View, StyleSheet } from "react-native";
-import { Text, Avatar, IconButton, TextInput, Button, Card } from "react-native-paper";
+import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { Avatar, Button, Card, IconButton, Text, TextInput } from "react-native-paper";
 
 interface User {
   name: string;
@@ -26,7 +26,7 @@ interface Conversation {
   messages: Message[];
 }
 
-export default function Convo({ navigation }: any) {
+export default function Convo() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   // If naa natay backend, pwede nato gamiton ang id ig fetch.
@@ -91,12 +91,17 @@ export default function Convo({ navigation }: any) {
             style={[
               styles.messageStyle,
               {
-                alignSelf: message.sender === 'You' ? 'flex-end' : 'flex-start',
-                backgroundColor: message.sender === 'You' ? '#4CAF50' : '#fff', // Green for sent, white for received
+                alignSelf: message.sender === "You" ? "flex-end" : "flex-start",
+                backgroundColor: message.sender === "You" ? "#4CAF50" : "#fff", // Green for sent, white for received
               },
             ]}
           >
-            <Text style={{ color: message.sender === 'You' ? '#fff' : '#000', fontSize: 18 /* Adjust the font size as needed */ }}>
+            <Text
+              style={{
+                color: message.sender === "You" ? "#fff" : "#000",
+                fontSize: 18 /* Adjust the font size as needed */,
+              }}
+            >
               {message.text}
             </Text>
           </View>
