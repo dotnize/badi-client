@@ -2,71 +2,12 @@
 
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
-import { ScrollView, TouchableOpacity, View, ViewStyle } from "react-native";
-import { Avatar, Button, Card, IconButton, Modal, Portal, Text } from "react-native-paper";
+import { ScrollView, View, ViewStyle } from "react-native";
+import { Button, Modal, Portal, Text } from "react-native-paper";
+import OfferItem from "~/components/cards/offer/offer-item";
+import ItemsCard from "~/components/cards/offer/select-item";
 
 // Magamit man guro ni for both New Offer and Edit Counter Offer?
-
-interface AddItemModalProps {
-  addTempItem: (item: string) => void;
-}
-
-interface OfferCardProps {
-  item: string;
-}
-
-function ItemsCard() {
-  const [remaining, setRemaining] = useState(0);
-  const [selected, setSelected] = useState(false);
-
-  const toggleSelected = () => {
-    setSelected((prevSelected) => !prevSelected);
-  };
-  return (
-    <TouchableOpacity onPress={toggleSelected}>
-      <Card
-        elevation={2}
-        style={{
-          margin: 8,
-          backgroundColor: selected ? "lightblue" : "white", // Change the background color based on the selected state
-        }}
-      >
-        <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <View style={{ flexDirection: "row", gap: 12 }}>
-            <Avatar.Image size={72} source={require("~/assets/adaptive-icon.png")} />
-            <View style={{ gap: 5 }}>
-              <Text variant="titleSmall">Kanding</Text>
-              <Text variant="labelSmall">In stock: {remaining} </Text>
-            </View>
-          </View>
-        </Card.Content>
-      </Card>
-    </TouchableOpacity>
-  );
-}
-
-function OfferCard() {
-  const [remaning, setRemaining] = useState(0);
-
-  return (
-    <Card elevation={2} style={{ margin: 8 }}>
-      <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <View style={{ flexDirection: "row", gap: 12 }}>
-          <Avatar.Image size={72} source={require("~/assets/adaptive-icon.png")} />
-          <View style={{ gap: 5 }}>
-            <Text variant="titleSmall">Kanding</Text>
-            <Text variant="labelSmall">from nize</Text>
-          </View>
-        </View>
-        <View style={{ alignItems: "center", flexDirection: "row" }}>
-          <IconButton icon="minus" />
-          <Text variant="titleLarge">{remaning}</Text>
-          <IconButton icon="plus" />
-        </View>
-      </Card.Content>
-    </Card>
-  );
-}
 
 function AddItemModal() {
   const [visible, setVisible] = useState(false);
@@ -135,10 +76,10 @@ export default function CreateOffer() {
       <Text style={{ alignSelf: "flex-start", padding: 8 }}>You receive</Text>
 
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
-        <OfferCard />
-        <OfferCard />
-        <OfferCard />
-        <OfferCard />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
       </ScrollView>
       <View
         style={{
@@ -149,10 +90,10 @@ export default function CreateOffer() {
       </View>
       <Text style={{ alignSelf: "flex-start", padding: 8 }}>You will send</Text>
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
-        <OfferCard />
-        <OfferCard />
-        <OfferCard />
-        <OfferCard />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
       </ScrollView>
       <View style={{ alignSelf: "flex-end" }}>
         <AddItemModal />
