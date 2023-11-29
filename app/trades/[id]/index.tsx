@@ -63,7 +63,7 @@ export default function ActiveTrade() {
           // showLeadingSpace={true} //  (default=true) show leading space in scrollable tabs inside the header
           // disableSwipe={false} // (default=false) disable swipe to left/right gestures
           >
-            <TabScreen label="Active">
+            <TabScreen label="Ongoing">
               <View style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1, padding: 8 }} showsVerticalScrollIndicator={false}>
                   <ActiveComponent />
@@ -76,7 +76,7 @@ export default function ActiveTrade() {
               </View>
             </TabScreen>
 
-            <TabScreen label="Pending">
+            <TabScreen label="Completed">
               <View style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1, padding: 8 }}>
                   <ActiveComponent></ActiveComponent>
