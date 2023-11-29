@@ -1,5 +1,6 @@
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack, useRouter } from "expo-router";
+import { useWindowDimensions } from "react-native";
 import {
   Appbar,
   MD3LightTheme,
@@ -38,6 +39,9 @@ const { LightTheme } = adaptNavigationTheme({
 
 export default function RootLayout() {
   const router = useRouter();
+  const { height, width } = useWindowDimensions();
+
+  const isLandscape = width > height * 1.2;
 
   return (
     <PaperProvider theme={theme}>
@@ -46,7 +50,7 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             contentStyle: {
-              maxWidth: 640,
+              maxWidth: isLandscape ? 640 : "auto",
               width: "100%",
               alignSelf: "center",
             },
@@ -72,11 +76,6 @@ export default function RootLayout() {
             name="welcome"
             options={{
               headerShown: false,
-              contentStyle: {
-                maxWidth: 640,
-                width: "100%",
-                alignSelf: "center",
-              },
             }}
           />
         </Stack>
