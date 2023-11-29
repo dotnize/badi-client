@@ -156,9 +156,10 @@ export default function TabLayout() {
         style={{
           maxWidth: 640,
           flex: 1,
-          borderColor: COLORS.surfaceVariant,
-          borderLeftWidth: 2,
-          borderRightWidth: 2,
+          // card components dont match well with these borders
+          // borderColor: COLORS.surfaceVariant,
+          // borderLeftWidth: 2,
+          // borderRightWidth: 2,
         }}
       >
         <Slot />
