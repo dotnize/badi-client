@@ -1,8 +1,8 @@
 import { ScrollView, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
-import ActiveTradeCard from "~/components/activetrade-card";
-import PendingTradeCard from "~/components/pendingtrade-card";
+import ActiveTradeCard from "~/components/cards/activitytabs/active-trade";
+import PendingTradeCard from "~/components/cards/activitytabs/pending-trade";
 
 export default function Activity() {
   return (
