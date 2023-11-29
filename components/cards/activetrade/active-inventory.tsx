@@ -2,8 +2,8 @@ import { useState } from "react";
 import { View } from "react-native";
 import { Avatar, Card, Text } from "react-native-paper";
 
-export default function PendingOfferItem() {
-  const [remaning, setRemaining] = useState(0);
+export default function ActiveUserItem() {
+  const [remaning, setRemaining] = useState(10000);
   return (
     <Card elevation={2} style={{ margin: 8 }}>
       <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -14,10 +14,11 @@ export default function PendingOfferItem() {
             <Text variant="labelSmall">from nize</Text>
           </View>
         </View>
-        <View style={{ alignItems: "center", flexDirection: "row", marginRight: 18 }}>
-          {/* <IconButton icon="minus" /> */}
-          <Text variant="titleLarge">{remaning}</Text>
-          {/* <IconButton icon="plus" /> */}
+        <View style={{ alignItems: "center", marginRight: 7, justifyContent: "center" }}>
+          <Text variant="titleSmall">Remaining: </Text>
+          <Text style={{ alignSelf: "flex-end", marginRight: 7 }} variant="titleLarge">
+            {remaning}
+          </Text>
         </View>
       </Card.Content>
     </Card>

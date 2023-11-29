@@ -7,8 +7,7 @@ import { useLocalSearchParams } from "expo-router";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, Text } from "react-native-paper";
-import ActiveUserItem from "~/components/activeuser-item";
-import PendingOfferItem from "~/components/pendingoffer-item";
+import OfferItem from "~/components/cards/offer/offer-item";
 
 /**
  * Pwede ni gamiton for both Sent and Received pending offers.
@@ -28,17 +27,17 @@ export default function PendingOffer() {
       <Text style={{ alignSelf: "flex-start", padding: 8 }}>You receive</Text>
 
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
-        <PendingOfferItem />
-        <PendingOfferItem />
-        <PendingOfferItem />
-        <PendingOfferItem />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
       </ScrollView>
       <Text style={{ alignSelf: "flex-start", padding: 8 }}>You will send</Text>
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
-        <ActiveUserItem />
-        <ActiveUserItem />
-        <ActiveUserItem />
-        <ActiveUserItem />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
       </ScrollView>
       <View style={{ width: "100%", gap: 8, padding: 8 }}>
         <Button mode="contained">Edit Counter Offer</Button>
