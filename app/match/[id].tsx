@@ -1,3 +1,8 @@
+// Dynamic route!
+// e.g. /match/1, /match/8, etc.
+
+// Use the useLocalSearchParams hook from expo-router to get the id from the URL>
+
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -26,39 +31,38 @@ export default function MatchFound() {
                 username="jameel123"
                 content="Very good kanding, used only once. Shiny and lightweight kanding.
                         Very good kanding, used only once. Shiny and lightweight kanding."
-                imageSource={require("assets/Kambing.png")} // Replace with actual image source
+                imageSource={require("assets/Kambing.png")}
               />
               <CardComponent
                 title="Card 2"
                 username="User 2"
                 content="Content for Card 2"
-                imageSource={require("assets/Kambing.png")} // Replace with actual image source
+                imageSource={require("assets/Kambing.png")}
               />
               <CardComponent
                 title="Card 1"
                 username="User 1"
                 content="Content for Card 1"
-                imageSource={require("assets/Kambing.png")} // Replace with actual image source
+                imageSource={require("assets/Kambing.png")}
               />
               <CardComponent
                 title="Card 2"
                 username="User 2"
                 content="Content for Card 2"
-                imageSource={require("assets/Kambing.png")} // Replace with actual image source
+                imageSource={require("assets/Kambing.png")}
               />
               <CardComponent
                 title="Card 1"
                 username="User 1"
                 content="Content for Card 1"
-                imageSource={require("assets/Kambing.png")} // Replace with actual image source
+                imageSource={require("assets/Kambing.png")}
               />
               <CardComponent
                 title="Card 2"
                 username="User 2"
                 content="Content for Card 2"
-                imageSource={require("assets/Kambing.png")} // Replace with actual image source
+                imageSource={require("assets/Kambing.png")}
               />
-              {/* Add more CardComponents for suggested matches in Tab 1 */}
             </ScrollView>
           </TabScreen>
           <TabScreen label="To receive">
@@ -72,9 +76,8 @@ export default function MatchFound() {
                 username="jameel123"
                 content="Very good kanding, used only once. Shiny and lightweight kanding.
                         Very good kanding, used only once. Shiny and lightweight kanding."
-                imageSource={require("assets/Kambing.png")} // Replace with actual image source
+                imageSource={require("assets/Kambing.png")}
               />
-              {/* Add more CardComponents for suggested matches in Tab 2 */}
             </ScrollView>
           </TabScreen>
         </Tabs>
@@ -84,7 +87,15 @@ export default function MatchFound() {
 }
 
 // Create a separate CardComponent for reusability
-const CardComponent = ({ title, username, content, imageSource }) => (
+
+interface CardComponentProps {
+  title: string;
+  username: string;
+  content: string;
+  imageSource: number; // Assuming imageSource is a number (asset)
+}
+
+const CardComponent: React.FC<CardComponentProps> = ({ title, username, content, imageSource }) => (
   <Card style={styles.card}>
     <Card.Cover source={imageSource} style={styles.cardImage} />
     <Card.Content style={styles.cardContent}>
