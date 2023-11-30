@@ -126,7 +126,6 @@ const styles = StyleSheet.create({
   card: {
     flexBasis: "48%",
     marginVertical: 8,
-    height: 320, // Set a fixed height for the card
   },
   cardImage: {
     resizeMode: "cover",
@@ -184,5 +183,4 @@ const sampleData = [
     content: "Content for Card 1",
     imageSource: require("assets/Kambing.png"),
   },
-  // Add more data as needed
 ];
