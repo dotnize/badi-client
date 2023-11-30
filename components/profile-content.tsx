@@ -3,12 +3,13 @@
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useRef, useState } from "react";
-import { FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
+import { FlatList, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import "react-native-gesture-handler";
 import { Button, Card, DefaultTheme, Modal, Portal, Snackbar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
+import TradeItem from "~/components/cards/home/trade-item";
 import ConfirmModal from "~/components/confirm-modal";
-import TradeItem from "~/components/trade-item";
+import PhotoPreview from "~/components/photo-preview";
 import { COLORS } from "~/lib/theme";
 
 const defaultPic = require("~/assets/liden.png");
@@ -23,13 +24,15 @@ const defaultPfpPic =
 const defaultCoverPic =
   "https://www.adorama.com/alc/wp-content/uploads/2018/11/landscape-photography-tips-yosemite-valley-feature.jpg";
 
-export default function ProfileContent({ user, isLoggedUser }: any) {
+export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
   // VARIABLES
   // const name = user.name etc.
 
   // STATES
   const [name, setName] = useState("Liden U. Hoe");
   const scrollViewRef = useRef<ScrollView>(null);
+  const [currentPhoto, setCurrentPhoto] = useState<string>(defaultPfpPic);
+  const [isPhotoPreviewVisibile, setIsPhotoPreviewVisible] = useState<boolean>(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState<boolean>(false);
   const [isProfileSettingsCardVisible, setIsProfileSettingsCardVisible] = useState(false);
   const [isSnackBarVisible, setIsSnackBarVisible] = useState<boolean>(false);
@@ -46,6 +49,11 @@ export default function ProfileContent({ user, isLoggedUser }: any) {
   const showConfirmModal = () => {
     setIsProfileSettingsCardVisible(false);
     setIsConfirmModalVisible(true);
+  };
+
+  const onPreviewPhoto = (photo: string) => {
+    setCurrentPhoto(photo);
+    setIsPhotoPreviewVisible(true);
   };
 
   const styles = StyleSheet.create({
@@ -78,8 +86,8 @@ export default function ProfileContent({ user, isLoggedUser }: any) {
       top: 120, // if header not shown
       // top: 170,
       left: 25,
-      borderWidth: 5,
-      borderColor: COLORS.surface,
+      // borderWidth: 5,
+      // borderColor: COLORS.surface,
     },
     profileTexts: {
       marginHorizontal: 25,
@@ -215,33 +223,29 @@ export default function ProfileContent({ user, isLoggedUser }: any) {
         </Modal>
       </Portal>
 
+      {/* MODALS */}
       <ConfirmModal
         title={`Your account will be deleted.${"\n"}Are you sure?`}
         state={isConfirmModalVisible}
         setState={setIsConfirmModalVisible}
       />
 
-      <ScrollView style={{ flex: 1 }}>
-        <Link
-          href={{
-            pathname: "/photo-preview",
-            params: { photo: defaultCoverPic },
-          }}
-          asChild
-        >
-          <Image style={styles.backgroundPic} source={{ uri: defaultCoverPic }} />
-        </Link>
+      <PhotoPreview
+        photo={currentPhoto}
+        state={isPhotoPreviewVisibile}
+        setState={setIsPhotoPreviewVisible}
+      />
 
-        <Link
-          asChild
-          href={{
-            pathname: "/photo-preview",
-            params: { photo: defaultPfpPic },
-          }}
-          style={styles.profilePicButton}
-        >
+      {/*  MODALS END*/}
+
+      <ScrollView style={{ flex: 1 }}>
+        <Pressable onPress={() => onPreviewPhoto(defaultCoverPic)}>
+          <Image style={styles.backgroundPic} source={{ uri: defaultCoverPic }} />
+        </Pressable>
+
+        <Pressable style={styles.profilePicButton} onPress={() => onPreviewPhoto(defaultPfpPic)}>
           <Image style={styles.profilePic} source={{ uri: defaultPfpPic }} />
-        </Link>
+        </Pressable>
 
         {isLoggedUser && (
           <View style={styles.editProfileButtons}>
@@ -329,6 +333,17 @@ export default function ProfileContent({ user, isLoggedUser }: any) {
       </ScrollView>
     </View>
   );
+
+  function WishesScreen() {
+    return (
+      <FlatList
+        data={wishes}
+        renderItem={({ item }) => <TradeItem />}
+        keyExtractor={(item) => item.id.toString()}
+        style={{ height: 1000, paddingVertical: 10 }}
+      />
+    );
+  }
 }
 
 // TAB CONTENTS
@@ -338,17 +353,6 @@ function InventoryScreen() {
     <FlatList
       data={INVENTORY}
       renderItem={({ item }) => <TradeItem editable={true} />}
-      keyExtractor={(item) => item.id.toString()}
-      style={{ height: 1000, paddingVertical: 10 }}
-    />
-  );
-}
-
-function WishesScreen() {
-  return (
-    <FlatList
-      data={INVENTORY}
-      renderItem={({ item }) => <CardComponent content={item.content} />}
       keyExtractor={(item) => item.id.toString()}
       style={{ height: 1000, paddingVertical: 10 }}
     />
