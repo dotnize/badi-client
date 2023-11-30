@@ -26,43 +26,16 @@ export default function MatchFound() {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContent}
             >
-              <CardComponent
-                title="Listing #1"
-                username="jameel123"
-                content="Very good kanding, used only once. Shiny and lightweight kanding.
-                        Very good kanding, used only once. Shiny and lightweight kanding."
-                imageSource={require("assets/Kambing.png")}
-              />
-              <CardComponent
-                title="Card 2"
-                username="User 2"
-                content="Content for Card 2"
-                imageSource={require("assets/Kambing.png")}
-              />
-              <CardComponent
-                title="Card 1"
-                username="User 1"
-                content="Content for Card 1"
-                imageSource={require("assets/Kambing.png")}
-              />
-              <CardComponent
-                title="Card 2"
-                username="User 2"
-                content="Content for Card 2"
-                imageSource={require("assets/Kambing.png")}
-              />
-              <CardComponent
-                title="Card 1"
-                username="User 1"
-                content="Content for Card 1"
-                imageSource={require("assets/Kambing.png")}
-              />
-              <CardComponent
-                title="Card 2"
-                username="User 2"
-                content="Content for Card 2"
-                imageSource={require("assets/Kambing.png")}
-              />
+              {sampleData.map((item) => (
+                <CardComponent
+                  key={item.id}
+                  id={item.id}
+                  title={item.title}
+                  username={item.username}
+                  content={item.content}
+                  imageSource={item.imageSource}
+                />
+              ))}
             </ScrollView>
           </TabScreen>
           <TabScreen label="To receive">
@@ -71,13 +44,16 @@ export default function MatchFound() {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContent}
             >
-              <CardComponent
-                title="Listing #1"
-                username="jameel123"
-                content="Very good kanding, used only once. Shiny and lightweight kanding.
-                        Very good kanding, used only once. Shiny and lightweight kanding."
-                imageSource={require("assets/Kambing.png")}
-              />
+              {sampleData.map((item) => (
+                <CardComponent
+                  key={item.id}
+                  id={item.id}
+                  title={item.title}
+                  username={item.username}
+                  content={item.content}
+                  imageSource={item.imageSource}
+                />
+              ))}
             </ScrollView>
           </TabScreen>
         </Tabs>
@@ -89,13 +65,20 @@ export default function MatchFound() {
 // Create a separate CardComponent for reusability
 
 interface CardComponentProps {
+  id: string; // Assuming id is of type string
   title: string;
   username: string;
   content: string;
   imageSource: number; // Assuming imageSource is a number (asset)
 }
 
-const CardComponent: React.FC<CardComponentProps> = ({ title, username, content, imageSource }) => (
+const CardComponent: React.FC<CardComponentProps> = ({
+  id,
+  title,
+  username,
+  content,
+  imageSource,
+}) => (
   <Card style={styles.card}>
     <Card.Cover source={imageSource} style={styles.cardImage} />
     <Card.Content style={styles.cardContent}>
@@ -153,3 +136,53 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 });
+
+// not finished, will change later to correspond with the actual database
+
+// just a sample data,
+const sampleData = [
+  {
+    id: "1",
+    title: "Listing #1",
+    username: "jameel123",
+    content:
+      "Very good kanding, used only once. Shiny and lightweight kanding. Very good kanding, used only once. Shiny and lightweight kanding.",
+    imageSource: require("assets/Kambing.png"),
+  },
+  {
+    id: "2",
+    title: "Card 1",
+    username: "User 1",
+    content: "Content for Card 1",
+    imageSource: require("assets/Kambing.png"),
+  },
+  {
+    id: "3",
+    title: "Card 1",
+    username: "User 1",
+    content: "Content for Card 1",
+    imageSource: require("assets/Kambing.png"),
+  },
+  {
+    id: "4",
+    title: "Card 1",
+    username: "User 1",
+    content: "Content for Card 1",
+    imageSource: require("assets/Kambing.png"),
+  },
+  {
+    id: "5",
+    title: "Card 1",
+    username: "User 1",
+    content: "Content for Card 1",
+    imageSource: require("assets/Kambing.png"),
+  },
+  {
+    id: "6",
+    title: "Card 1",
+    username: "User 1",
+    content: "Content for Card 1",
+    imageSource: require("assets/Kambing.png"),
+  },
+  // Add more data as needed
+];
