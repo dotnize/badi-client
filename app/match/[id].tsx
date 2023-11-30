@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     resizeMode: "cover",
-    height: "60%",
+    height: 200,
   },
   cardContent: {
     marginTop: 8,
@@ -145,7 +145,7 @@ const sampleData = [
     title: "Listing #1",
     username: "jameel123",
     content:
-      "Very good kanding, used only once. Shiny and lightweight kanding. Very good kanding, used only once. Shiny and lightweight kanding.",
+      "Very good kanding, used only once. Shiny and lightweight kanding. Very good kanding, used only once. Shiny and lightweight kanding.Very good kanding, used only once. Shiny and lightweight kanding.Very good kanding, used only once. Shiny and lightweight kanding.  Very good kanding, used only once. Shiny and lightweight kanding.",
     imageSource: require("assets/Kambing.png"),
   },
   {
