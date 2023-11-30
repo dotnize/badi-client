@@ -1,20 +1,30 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { Link } from "expo-router";
 import { useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import { Card, Text } from "react-native-paper";
-import ConfirmModal from "./confirm-modal";
+import PhotoPreview from "~/components/photo-preview";
+import ConfirmModal from "../../confirm-modal";
+
 const itemPhoto = require("~/assets/Kambing.png");
 
-export default function TradeItem({ editable = false }: { editable?: boolean }) {
-  const [modalState, setModalState] = useState(false);
+export default function TradeItem({ editable, wish }: { editable?: any; wish?: any }) {
+  // VARIABLES
 
-  console.log(itemPhoto, typeof itemPhoto.toString(), "lop");
+  // STATES
+  const [modalState, setModalState] = useState(false);
+  const [currentPhoto, setCurrentPhoto] = useState<string>(itemPhoto);
+  const [isPhotoPreviewVisibile, setIsPhotoPreviewVisible] = useState<boolean>(false);
 
   const handleOnEditItem = () => {};
   const handleOnDeleteItem = () => {
     setModalState(true);
   };
+
+  const onPreviewPhoto = (photo: string) => {
+    setCurrentPhoto(photo);
+    setIsPhotoPreviewVisible(true);
+  };
+
   return (
     <Card style={{ height: "auto", margin: 8, paddingBottom: 10 }}>
       {editable && (
@@ -43,17 +53,25 @@ export default function TradeItem({ editable = false }: { editable?: boolean }) 
         </View>
       )}
 
+      {/* MODALS */}
       <ConfirmModal
         title={`Item will be deleted.${"\n"}Are you sure?`}
         state={modalState}
         setState={setModalState}
       />
+      <PhotoPreview
+        photo={currentPhoto}
+        state={isPhotoPreviewVisibile}
+        setState={setIsPhotoPreviewVisible}
+      />
 
-      <Link href={{ pathname: "/photo-preview", params: { photo: itemPhoto.toString() } }}>
+      {/* MODALS END */}
+
+      <Pressable style={{ height: 200 }} onPress={() => onPreviewPhoto(itemPhoto)}>
         <Image
           style={{
             flex: 1,
-            height: 200,
+            height: "100%",
             width: "100%",
             resizeMode: "cover",
             borderRadius: 10,
@@ -61,7 +79,7 @@ export default function TradeItem({ editable = false }: { editable?: boolean }) 
           }}
           source={itemPhoto}
         />
-      </Link>
+      </Pressable>
       <Card.Content>
         <View
           style={{
@@ -90,8 +108,8 @@ export default function TradeItem({ editable = false }: { editable?: boolean }) 
           <Text style={{ marginLeft: "auto", paddingTop: 5 }}>11/27/35</Text>
         </View>
         <Text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua.
+          {"description" ||
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
         </Text>
       </Card.Content>
     </Card>
