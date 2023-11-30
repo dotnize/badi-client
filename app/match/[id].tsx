@@ -92,7 +92,9 @@ const CardComponent = ({ title, username, content, imageSource }) => (
       <Text numberOfLines={1} style={{ color: "grey" }}>
         {username} &#9733;&#9733;&#9733;&#9733; 4.7 (51)
       </Text>
-      <Paragraph numberOfLines={3}>{content}</Paragraph>
+      <Paragraph style={styles.cardParagraph} numberOfLines={3}>
+        {content}
+      </Paragraph>
     </Card.Content>
   </Card>
 );
@@ -114,7 +116,12 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: "bold", // Apply bold style
+    fontWeight: "bold",
+    marginBottom: -4,
+  },
+  cardParagraph: {
+    fontSize: 12,
+    paddingTop: 4,
   },
   scrollViewContent: {
     flexDirection: "row",
@@ -125,11 +132,11 @@ const styles = StyleSheet.create({
   card: {
     flexBasis: "48%",
     marginVertical: 8,
-    height: 280, // Set a fixed height for the card
+    height: 320, // Set a fixed height for the card
   },
   cardImage: {
     resizeMode: "cover",
-    height: "50%", // Adjust the height of the card image within the fixed height
+    height: "60%",
   },
   cardContent: {
     marginTop: 8,
