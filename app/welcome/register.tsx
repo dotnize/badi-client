@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 import { Button, IconButton, ProgressBar, Text, TextInput } from "react-native-paper";
 import { DatePickerInput } from "react-native-paper-dates";
 
@@ -8,10 +9,20 @@ export default function Register() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setlastName] = useState("");
+  const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
   const [mobileNum, setmobileNum] = useState("");
   const [counter, setCounter] = useState(0);
   const [inputDate, setInputDate] = useState<Date | undefined>(undefined);
+  const [value, setValue] = useState<string | null>(null);
+  const [isFocus, setIsFocus] = useState(false);
+
+  const items = [
+    { label: "Male", value: "male" },
+    { label: "Female", value: "female" },
+  ];
 
   const emailScreen = 0;
   const birthScreen = 1;
@@ -42,7 +53,7 @@ export default function Register() {
         <IconButton onPress={backScreen} icon="arrow-left" />
         {counter === emailScreen && (
           <Text variant="titleLarge" style={{ padding: 12 }}>
-            Enter your email
+            Enter your details
           </Text>
         )}
         {counter === birthScreen && (
@@ -84,8 +95,60 @@ export default function Register() {
       </View>
       <View style={{ flex: 1 }}>
         {counter === emailScreen ? (
-          <View style={{ flex: 1 }}>
-            <View>
+          <View style={{ flex: 1, gap: 8 }}>
+            <View style={{ padding: 8, marginTop: 8, flexDirection: "row" }}>
+              <View style={{ flex: 1 }}>
+                <Text variant="titleMedium">First Name</Text>
+                <TextInput
+                  style={{ flex: 1, width: "95%" }}
+                  mode="outlined"
+                  label="First Name"
+                  value={firstName}
+                  onChangeText={(text) => {
+                    setFirstName(text);
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text variant="titleMedium">Last Name</Text>
+                <TextInput
+                  style={{ flex: 1, width: "95%" }}
+                  mode="outlined"
+                  label="Last Name"
+                  value={lastName}
+                  onChangeText={(text) => {
+                    setlastName(text);
+                  }}
+                />
+              </View>
+            </View>
+            <View style={{ padding: 8 }}>
+              <Dropdown
+                style={{
+                  height: 50,
+                  borderWidth: 0.5,
+                  borderRadius: 8,
+                  paddingHorizontal: 8,
+                  borderColor: isFocus ? "lightgreen" : "gray",
+                }}
+                maxHeight={250}
+                data={items}
+                value={value}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? "Select your gender" : "..."}
+                selectedTextStyle={{ fontSize: 14 }}
+                onChange={(item) => {
+                  setValue(item.value);
+                  setIsFocus(false);
+                }}
+              />
+            </View>
+            <View style={{ padding: 8 }}>
+              <Text variant="titleMedium">Enter your email</Text>
+
               <TextInput
                 style={{ flex: 1 }}
                 mode="outlined"
