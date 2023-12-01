@@ -1,7 +1,7 @@
 // URL: /me/edit
 
 import * as ImagePicker from "expo-image-picker";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link } from "expo-router";
 import { useState } from "react";
 import { Alert, Image, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
@@ -11,17 +11,25 @@ type SearchParams = {
   name: string;
   pfpPic: string;
   coverPic: string;
+  location: string;
 };
 
 export default function EditProfile() {
+  // use fetch to get the currentUser
+
   // VARIABLES
-  const params = useLocalSearchParams() as SearchParams;
-  const { name, pfpPic, coverPic } = params;
+  // const params = useLocalSearchParams() as SearchParams;
+
+  const fName = "Liden U.",
+    lName = "Hoe",
+    loc = "Cebu";
 
   // STATES
-  const [nameInput, setNameInput] = useState(name);
-  const [pfpPicChange, setPfpPicChange] = useState<string>(pfpPic);
-  const [coverPicChange, setCoverPicChange] = useState<string>(coverPic);
+  const [firstName, setFirstName] = useState(fName);
+  const [lastName, setLastName] = useState(lName);
+  const [location, setLocation] = useState(loc);
+  const [pfpPicChange, setPfpPicChange] = useState<string>();
+  const [coverPicChange, setCoverPicChange] = useState<string>();
 
   // HANDLERS
   // Function to pick an image from the device's media library
@@ -50,11 +58,29 @@ export default function EditProfile() {
       <TextInput
         selectTextOnFocus
         textColor="#555"
-        label="Name"
+        label="First Name"
         mode="outlined"
         style={styles.editNameInput}
-        value={nameInput}
-        onChangeText={(text) => setNameInput(text)}
+        value={firstName}
+        onChangeText={(text) => setFirstName(text)}
+      />
+      <TextInput
+        selectTextOnFocus
+        textColor="#555"
+        label="Last Name"
+        mode="outlined"
+        style={styles.editNameInput}
+        value={lastName}
+        onChangeText={(text) => setLastName(text)}
+      />
+      <TextInput
+        selectTextOnFocus
+        textColor="#555"
+        label="Location"
+        mode="outlined"
+        style={styles.editNameInput}
+        value={location}
+        onChangeText={(text) => setLocation(text)}
       />
       <View style={styles.editProfileLabels}>
         <Text variant="titleMedium">Profile Picture</Text>

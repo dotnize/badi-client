@@ -1,4 +1,6 @@
+import { MaterialIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+
 import { useState } from "react";
 import { Image, Pressable, View } from "react-native";
 import { Card, Text } from "react-native-paper";
@@ -7,7 +9,7 @@ import PhotoPreview from "~/components/photo-preview";
 
 const itemPhoto = require("~/assets/Kambing.png");
 
-export default function ActiveTradeCard() {
+export default function HistoryItem() {
   const tabIndex = useTabIndex();
   const tempId = 1 + Math.floor(Math.random() * 100); // TODO: replace with legit id
   const whatTab = tabIndex === 0 ? `/trades/${tempId}` : `/offers/${tempId}`;
@@ -33,6 +35,20 @@ export default function ActiveTradeCard() {
     <Link href={whatTab}>
       <View style={{ flex: 1, width: "100%" }}>
         <Card style={{ height: "auto", margin: 8, paddingBottom: 10 }}>
+          <View
+            style={{
+              position: "absolute",
+              top: 5,
+              right: 10,
+              justifyContent: "flex-end",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 10,
+              zIndex: 999,
+            }}
+          >
+            <MaterialIcons name="cancel" size={24} color="BLACK" onPress={handleOnDeleteItem} />
+          </View>
           {/* MODALS */}
 
           <PhotoPreview
@@ -87,7 +103,11 @@ export default function ActiveTradeCard() {
               <View>
                 <Text variant="headlineSmall">Liden x Nize</Text>
               </View>
-              <Text style={{ marginLeft: "auto", paddingTop: 5 }}>11/27/35</Text>
+              <Text style={{ marginLeft: "auto", paddingTop: 5 }}>
+                COMPLETED$
+                <br />
+                11/27/35
+              </Text>
             </View>
             <Text>An apple for a goat</Text>
           </Card.Content>
