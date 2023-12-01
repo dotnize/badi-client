@@ -209,7 +209,7 @@ export default function NewListing() {
           <TabScreen label="Items">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
               <TitleForm setTitle={setTitle} />
-              <PhotoSection /> // will implement later
+              <PhotoSection />
               <DescriptionForm setDescription={setDescription} />
               <CategoryDropdown setCategory={setCategory} />
               <PriceForm setPrice={setPrice} />
