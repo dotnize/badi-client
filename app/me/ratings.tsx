@@ -1,7 +1,7 @@
 // URL: /me/ratings
 
 import { ScrollView } from "react-native-gesture-handler";
-import RatingItem from "~/components/rating-item";
+import RatingItem from "~/components/cards/rating/rating-item";
 
 /**
  * Since ang My Profile Ratings og Other User Ratings kay similar ra, naa koy suggestion:

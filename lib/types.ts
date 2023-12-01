@@ -97,11 +97,17 @@ export interface ChatMessage {
 export interface Notification {
   id: number;
   userId: number;
-  type: string;
+  type: "match" | "finishtrade";
   timestamp: Date;
   title: string;
-  content: any; // temporary, klarohon pa tani
+  content: number | NotificationMatchContent; // id of finished tradegroup if number
   isRead: boolean;
+}
+
+interface NotificationMatchContent {
+  matchedUser: User;
+  toReceive: Inventory[];
+  toSend: Inventory[];
 }
 
 export interface Rating {

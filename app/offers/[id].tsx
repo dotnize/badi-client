@@ -4,10 +4,10 @@
 // Use the useLocalSearchParams hook from expo-router to get the id from the URL.
 
 import { useLocalSearchParams } from "expo-router";
-import { useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { Avatar, Button, Card, Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
+import OfferItem from "~/components/cards/offer/offer-item";
 
 /**
  * Pwede ni gamiton for both Sent and Received pending offers.
@@ -16,27 +16,6 @@ import { Avatar, Button, Card, Text } from "react-native-paper";
  * For now, paghimo lang sa gurog fake data or variables? nya ternary operator
  */
 
-function OfferCard() {
-  const [remaning, setRemaining] = useState(0);
-  return (
-    <Card elevation={2} style={{ margin: 8 }}>
-      <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <View style={{ flexDirection: "row", gap: 12 }}>
-          <Avatar.Image size={72} source={require("~/assets/adaptive-icon.png")} />
-          <View style={{ gap: 5 }}>
-            <Text variant="titleSmall">Kanding</Text>
-            <Text variant="labelSmall">from nize</Text>
-          </View>
-        </View>
-        <View style={{ alignItems: "center", flexDirection: "row", marginRight: 18 }}>
-          {/* <IconButton icon="minus" /> */}
-          <Text variant="titleLarge">{remaning}</Text>
-          {/* <IconButton icon="plus" /> */}
-        </View>
-      </Card.Content>
-    </Card>
-  );
-}
 export default function PendingOffer() {
   const { id } = useLocalSearchParams();
   // If naa natay backend, pwede nato gamiton ang id ig fetch.
@@ -48,17 +27,17 @@ export default function PendingOffer() {
       <Text style={{ alignSelf: "flex-start", padding: 8 }}>You receive</Text>
 
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
-        <OfferCard />
-        <OfferCard />
-        <OfferCard />
-        <OfferCard />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
       </ScrollView>
       <Text style={{ alignSelf: "flex-start", padding: 8 }}>You will send</Text>
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
-        <OfferCard />
-        <OfferCard />
-        <OfferCard />
-        <OfferCard />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
+        <OfferItem />
       </ScrollView>
       <View style={{ width: "100%", gap: 8, padding: 8 }}>
         <Button mode="contained">Edit Counter Offer</Button>
