@@ -6,30 +6,9 @@
 import { Link, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Avatar, Button, Card, ProgressBar, Text } from "react-native-paper";
+import { Button, ProgressBar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
-
-function ActiveComponent() {
-  const [remaning, setRemaining] = useState(0);
-  return (
-    <Card elevation={2} style={{ flex: 1, margin: 8 }}>
-      <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <View style={{ flexDirection: "row", gap: 12 }}>
-          <Avatar.Image size={72} source={require("~/assets/adaptive-icon.png")} />
-          <View style={{ gap: 5 }}>
-            <Text variant="titleSmall">Kanding</Text>
-            <Text variant="labelSmall">from nize</Text>
-            <Text variant="labelSmall">to You</Text>
-          </View>
-        </View>
-        <View>
-          <Text variant="titleSmall">Remaining:</Text>
-          <Text variant="labelMedium">{remaning}</Text>
-        </View>
-      </Card.Content>
-    </Card>
-  );
-}
+import ActiveUserItem from "~/components/cards/activetrade/active-inventory";
 
 export default function ActiveTrade() {
   const { id } = useLocalSearchParams();
@@ -66,12 +45,12 @@ export default function ActiveTrade() {
             <TabScreen label="Ongoing">
               <View style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1, padding: 8 }} showsVerticalScrollIndicator={false}>
-                  <ActiveComponent />
-                  <ActiveComponent />
-                  <ActiveComponent />
-                  <ActiveComponent />
-                  <ActiveComponent />
-                  <ActiveComponent />
+                  <ActiveUserItem />
+                  <ActiveUserItem />
+                  <ActiveUserItem />
+                  <ActiveUserItem />
+                  <ActiveUserItem />
+                  <ActiveUserItem />
                 </ScrollView>
               </View>
             </TabScreen>
@@ -79,11 +58,11 @@ export default function ActiveTrade() {
             <TabScreen label="Completed">
               <View style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1, padding: 8 }}>
-                  <ActiveComponent></ActiveComponent>
-                  <ActiveComponent></ActiveComponent>
-                  <ActiveComponent></ActiveComponent>
-                  <ActiveComponent></ActiveComponent>
-                  <ActiveComponent></ActiveComponent>
+                  <ActiveUserItem />
+                  <ActiveUserItem />
+                  <ActiveUserItem />
+                  <ActiveUserItem />
+                  <ActiveUserItem />
                 </ScrollView>
               </View>
             </TabScreen>
