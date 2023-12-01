@@ -4,20 +4,46 @@ import { View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, IconButton, ProgressBar, Text, TextInput } from "react-native-paper";
 import { DatePickerInput } from "react-native-paper-dates";
+import { useSession } from "~/hooks/useSession";
+import { User } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 
 export default function Register() {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setlastName] = useState("");
   const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
+  const [location, setLocation] = useState("");
   const [mobileNum, setmobileNum] = useState("");
-  const [counter, setCounter] = useState(0);
   const [inputDate, setInputDate] = useState<Date | undefined>(undefined);
-  const [value, setValue] = useState<string | null>(null);
+
+  const router = useRouter();
+  const [counter, setCounter] = useState(0);
   const [isFocus, setIsFocus] = useState(false);
+
+  const { setUser } = useSession();
+
+  async function register() {
+    const { data, error } = await apiFetch<User>(`/auth/register`, {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        firstName,
+        lastName,
+        password,
+        gender,
+        location,
+      }),
+    });
+    if (data) {
+      setUser(data);
+      router.push("/");
+      console.log("register complete");
+    } else {
+      console.log(error);
+    }
+  }
 
   const items = [
     { label: "Male", value: "male" },
@@ -36,7 +62,6 @@ export default function Register() {
     } else {
       setCounter(counter + 1);
     }
-    console.log(counter);
   };
 
   const backScreen = () => {
@@ -133,7 +158,7 @@ export default function Register() {
                 }}
                 maxHeight={250}
                 data={items}
-                value={value}
+                value={gender}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 labelField="label"
@@ -141,7 +166,7 @@ export default function Register() {
                 placeholder={!isFocus ? "Select your gender" : "..."}
                 selectedTextStyle={{ fontSize: 14 }}
                 onChange={(item) => {
-                  setValue(item.value);
+                  setGender(item.value);
                   setIsFocus(false);
                 }}
               />
@@ -198,7 +223,15 @@ export default function Register() {
         ) : counter === locationScreen ? (
           <View style={{ flex: 1 }}>
             <View>
-              <TextInput style={{ flex: 1 }} mode="outlined" label="Location" />
+              <TextInput
+                style={{ flex: 1 }}
+                mode="outlined"
+                label="Location"
+                value={location}
+                onChangeText={(text) => {
+                  setLocation(text);
+                }}
+              />
             </View>
           </View>
         ) : (
@@ -217,9 +250,15 @@ export default function Register() {
             </View>
           </View>
         )}
-        <Button onPress={continueScreen} mode="contained">
-          Continue
-        </Button>
+        {counter === passwordScreen ? (
+          <Button onPress={register} mode="contained">
+            Register
+          </Button>
+        ) : (
+          <Button onPress={continueScreen} mode="contained">
+            Continue
+          </Button>
+        )}
       </View>
     </View>
   );
