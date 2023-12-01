@@ -1,14 +1,13 @@
 import { AntDesign } from "@expo/vector-icons";
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { IconButton, TextInput } from "react-native-paper";
+import { Button, IconButton, TextInput } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
 interface ListItem {
-  id: number;
   title: string;
-  photos: string[]; //will implement this if nanay backend
+  photos: string[]; //will implement this later
   description: string;
   category: string;
   price: string;
@@ -152,6 +151,54 @@ const styles = StyleSheet.create({
 });
 
 export default function NewListing() {
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [category, setCategory] = useState<string | null>("");
+  const [price, setPrice] = useState<string>("");
+
+  const handlePostListing = async () => {
+    // Validate if all required fields are filled
+    if (!title || !description || !category || !price) {
+      console.error("Please fill in all required fields.");
+      return;
+    }
+
+    // Create a new item
+    const newItem: ListItem = {
+      title,
+      photos: [], // Placeholder for photos
+      description,
+      category,
+      price,
+    };
+
+    // Send the data to the server to create the listing
+    try {
+      const response = await fetch("your-backend-api-endpoint", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newItem),
+      });
+
+      if (response.ok) {
+        // If the request was successful, update your local state or perform other actions
+        console.log("Listing created successfully");
+      } else {
+        console.error("Failed to create listing");
+      }
+    } catch (error) {
+      console.error("Error creating listing:", error);
+    }
+
+    // Clear the form fields
+    setTitle("");
+    setDescription("");
+    setCategory(null);
+    setPrice("");
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
@@ -161,38 +208,26 @@ export default function NewListing() {
         <Tabs>
           <TabScreen label="Items">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              {/* <TitleForm /> */}
-              {/* <PhotoSection /> */}
-              {/* <DescriptionForm /> */}
-              {/* Adding the new CategoryDropdown component */}
-              {/* <CategoryDropdown /> */}
-              {/* <PriceForm /> */}
-              {/* Adding the post button */}
-              {/* <Button
-                mode="contained"
-                style={styles.postButton}
-                onPress={() => console.log("Post Listing")}
-              >
+              <TitleForm setTitle={setTitle} />
+              <PhotoSection /> // will implement later
+              <DescriptionForm setDescription={setDescription} />
+              <CategoryDropdown setCategory={setCategory} />
+              <PriceForm setPrice={setPrice} />
+              <Button mode="contained" style={styles.postButton} onPress={handlePostListing}>
                 Post Listing
-              </Button> */}
+              </Button>
             </ScrollView>
           </TabScreen>
           <TabScreen label="Services">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              {/* <TitleForm /> */}
-              {/* <PhotoSection /> */}
-              {/* <DescriptionForm /> */}
-              {/* Adding the new CategoryDropdown component */}
-              {/* <CategoryDropdown /> */}
-              {/* <PriceForm /> */}
-              {/* Adding the post button */}
-              {/* <Button
-                mode="contained"
-                style={styles.postButton}
-                onPress={() => console.log("Post Listing")}
-              >
+              <TitleForm setTitle={setTitle} />
+              <PhotoSection />
+              <DescriptionForm setDescription={setDescription} />
+              <CategoryDropdown setCategory={setCategory} />
+              <PriceForm setPrice={setPrice} />
+              <Button mode="contained" style={styles.postButton} onPress={handlePostListing}>
                 Post Listing
-              </Button> */}
+              </Button>
             </ScrollView>
           </TabScreen>
         </Tabs>
