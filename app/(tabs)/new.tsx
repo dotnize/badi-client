@@ -1,5 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { IconButton, TextInput } from "react-native-paper";
@@ -114,9 +114,7 @@ function CategoryDropdown({
 }
 
 // New component for the price form
-function PriceForm() {
-  const [price, setPrice] = useState<string>("");
-
+function PriceForm({ setPrice }: { setPrice: React.Dispatch<React.SetStateAction<string>> }) {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Price</Text>
@@ -131,7 +129,6 @@ function PriceForm() {
           borderRadius: 4,
           width: "100%",
         }}
-        value={price}
         onChangeText={(text) => setPrice(text)}
       />
     </View>
