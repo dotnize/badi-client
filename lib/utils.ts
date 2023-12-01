@@ -12,9 +12,8 @@ export async function apiFetch<T = any>(
   const { method, body } = options;
 
   // for debugging
-  console.log(`Fetching: ${API_URL}${endpoint}\nMethod: ${method}\nJSON body:`);
-  console.log(body);
-  console.log();
+  console.log(`Fetching: ${API_URL}${endpoint}\nMethod: ${method}${body ? "\nJSON body:" : ""}`);
+  body && console.log(body);
 
   try {
     const res = await fetch(`${API_URL}${endpoint}`, {
@@ -27,6 +26,8 @@ export async function apiFetch<T = any>(
         : undefined,
       body,
     });
+    if (res.status === 204) return { data: null };
+
     const jsonRes = await res.json();
 
     if (jsonRes?.error || !res.ok) {
