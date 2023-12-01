@@ -7,7 +7,7 @@ import ConfirmModal from "../../confirm-modal";
 
 const itemPhoto = require("~/assets/Kambing.png");
 
-export default function TradeItem({ editable, wish }: { editable?: any; wish?: any }) {
+export default function InventoryItem({ editable }: { editable?: any; wish?: any }) {
   // VARIABLES
 
   // STATES
@@ -58,6 +58,7 @@ export default function TradeItem({ editable, wish }: { editable?: any; wish?: a
         title={`Item will be deleted.${"\n"}Are you sure?`}
         state={modalState}
         setState={setModalState}
+        handleOnConfirmDelete={null}
       />
       <PhotoPreview
         photo={currentPhoto}
@@ -108,8 +109,8 @@ export default function TradeItem({ editable, wish }: { editable?: any; wish?: a
           <Text style={{ marginLeft: "auto", paddingTop: 5 }}>11/27/35</Text>
         </View>
         <Text>
-          {"description" ||
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+          ut labore et dolore magna aliqua."
         </Text>
       </Card.Content>
     </Card>

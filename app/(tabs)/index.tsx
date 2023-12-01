@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { Card, IconButton, Searchbar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
-import TradeItem from "~/components/cards/home/trade-item";
+import TradeItem from "~/components/cards/home/inventory-item-card";
 import { useSession } from "~/hooks/useSession";
 
 function CardComponent() {
