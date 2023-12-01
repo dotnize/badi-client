@@ -2,13 +2,13 @@ import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { Button, IconButton, TextInput } from "react-native-paper";
+import { IconButton, TextInput } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
 interface ListItem {
   id: number;
   title: string;
-  photos: string[];
+  photos: string[]; //will implement this if nanay backend
   description: string;
   category: string;
   price: string;
@@ -58,7 +58,11 @@ function PhotoSection() {
 }
 
 // New component for the description form
-function DescriptionForm() {
+function DescriptionForm({
+  setDescription,
+}: {
+  setDescription: React.Dispatch<React.SetStateAction<string>>;
+}) {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Description</Text>
@@ -73,6 +77,7 @@ function DescriptionForm() {
           borderRadius: 4,
           width: "100%",
         }}
+        onChangeText={(text) => setDescription(text)}
       />
     </View>
   );
@@ -162,38 +167,38 @@ export default function NewListing() {
         <Tabs>
           <TabScreen label="Items">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              <TitleForm />
-              <PhotoSection />
-              <DescriptionForm />
+              {/* <TitleForm /> */}
+              {/* <PhotoSection /> */}
+              {/* <DescriptionForm /> */}
               {/* Adding the new CategoryDropdown component */}
-              <CategoryDropdown />
-              <PriceForm />
+              {/* <CategoryDropdown /> */}
+              {/* <PriceForm /> */}
               {/* Adding the post button */}
-              <Button
+              {/* <Button
                 mode="contained"
                 style={styles.postButton}
                 onPress={() => console.log("Post Listing")}
               >
                 Post Listing
-              </Button>
+              </Button> */}
             </ScrollView>
           </TabScreen>
           <TabScreen label="Services">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              <TitleForm />
-              <PhotoSection />
-              <DescriptionForm />
+              {/* <TitleForm /> */}
+              {/* <PhotoSection /> */}
+              {/* <DescriptionForm /> */}
               {/* Adding the new CategoryDropdown component */}
-              <CategoryDropdown />
-              <PriceForm />
+              {/* <CategoryDropdown /> */}
+              {/* <PriceForm /> */}
               {/* Adding the post button */}
-              <Button
+              {/* <Button
                 mode="contained"
                 style={styles.postButton}
                 onPress={() => console.log("Post Listing")}
               >
                 Post Listing
-              </Button>
+              </Button> */}
             </ScrollView>
           </TabScreen>
         </Tabs>
