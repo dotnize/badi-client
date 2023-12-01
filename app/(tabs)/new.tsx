@@ -15,7 +15,7 @@ interface ListItem {
 }
 
 // New component for the title form
-function TitleForm() {
+function TitleForm({ setTitle }: { setTitle: React.Dispatch<React.SetStateAction<string>> }) {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Title</Text>
@@ -29,6 +29,7 @@ function TitleForm() {
           borderRadius: 4,
           width: "100%",
         }}
+        onChangeText={(text) => setTitle(text)}
       />
     </View>
   );
