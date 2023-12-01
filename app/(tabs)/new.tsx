@@ -84,15 +84,17 @@ function DescriptionForm({
 }
 
 // New component for the category dropdown using react-native-element-dropdown
-function CategoryDropdown() {
+function CategoryDropdown({
+  setCategory,
+}: {
+  setCategory: React.Dispatch<React.SetStateAction<string | null>>;
+}) {
   const data = [
     { label: "Clothing", value: "clothing" },
     { label: "Gadgets", value: "gadgets" },
     { label: "Vehicles", value: "vehicles" },
     { label: "Appliances", value: "appliances" },
   ];
-
-  const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
@@ -101,15 +103,10 @@ function CategoryDropdown() {
         data={data}
         labelField="label"
         valueField="value"
-        placeholder={!selectedCategory ? "Select category" : "..."}
-        onChange={(item) => setSelectedCategory(item.value)}
+        placeholder="Select category"
+        onChange={(item) => setCategory(item.value)}
         renderLeftIcon={() => (
-          <AntDesign
-            style={styles.icon}
-            color={selectedCategory ? "blue" : "black"}
-            name="Safety"
-            size={20}
-          />
+          <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
         )}
       />
     </View>
