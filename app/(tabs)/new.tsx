@@ -5,6 +5,15 @@ import { Dropdown } from "react-native-element-dropdown";
 import { Button, IconButton, TextInput } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
+interface ListItem {
+  id: number;
+  title: string;
+  photos: string[];
+  description: string;
+  category: string;
+  price: string;
+}
+
 // New component for the title form
 function TitleForm() {
   return (
