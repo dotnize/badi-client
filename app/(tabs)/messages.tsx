@@ -73,7 +73,7 @@ export default function Messages() {
                   ? `${convo.member2?.firstName} ${convo.member2?.lastName}`
                   : `${convo.member1?.firstName} ${convo.member1?.lastName}`
               }
-              preview={convo.lastMessagePreview?.content}
+              preview={convo.lastMessagePreview?.[0].content}
             />
           </Link>
         ))}
