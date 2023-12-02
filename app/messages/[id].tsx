@@ -7,48 +7,86 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Avatar, Button, Card, IconButton, Text, TextInput } from "react-native-paper";
+import { io } from "socket.io-client";
+
 import { useSession } from "~/hooks/useSession";
-import { defaultAvatarUrl } from "~/lib/firebase";
+import { API_URL } from "~/lib/config";
+import { defaultAvatarUrl, emptyImageUrl } from "~/lib/firebase";
 import { ChatMessage, ChatRoom, Inventory } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
+
+const socket = io(API_URL, {
+  withCredentials: true,
+  autoConnect: false,
+  transports: ["websocket"],
+});
 
 export default function Convo() {
   const { id, inventoryId } = useLocalSearchParams();
   const router = useRouter();
   const { user } = useSession();
-  // If naa natay backend, pwede nato gamiton ang id ig fetch.
-
-  console.log(id); // 2
-  console.log(inventoryId); // 8
 
   const [chatroom, setChatroom] = useState<ChatRoom | undefined>(undefined);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inventory, setInventory] = useState<Inventory | undefined>(undefined);
 
+  const [messageInput, setMessageInput] = useState("");
+  const [loading, setLoading] = useState(true); // disable send button if loading
+
   useEffect(() => {
     fetchChatRoom();
-    fetchMessages();
 
     if (inventoryId) {
       fetchInventory();
     }
   }, [id, inventoryId]);
 
+  // socket.io for chatmessages
+  useEffect(() => {
+    socket.connect();
+    socket.on("connect", () => {
+      console.log("Connected to socket.io server");
+      socket.emit("joinRoom", id);
+
+      socket.on("disconnect", () => {
+        console.log("Disconnected from socket.io server");
+      });
+
+      socket.on("chat", (message: ChatMessage) => {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+
+      socket.on("latestMessages", (latestMessages: ChatMessage[]) => {
+        setMessages(latestMessages);
+      });
+
+      setLoading(false);
+    });
+
+    return () => {
+      socket.disconnect();
+      socket.removeAllListeners();
+    };
+  }, [id]);
+
+  function sendChat() {
+    if (!messageInput) return;
+
+    setLoading(true);
+
+    socket.emit("chat", messageInput);
+
+    setMessageInput("");
+    setTimeout(() => {
+      setLoading(false);
+    }, 1200); // 1.2 second cooldown to avoid issues & spam
+  }
+
   async function fetchChatRoom() {
     // Fetch chat room details based on the id
     const { data, error } = await apiFetch<ChatRoom>(`/chatroom/${id}`);
     if (data) {
       setChatroom(data);
-    } else {
-      console.log(error);
-    }
-  }
-
-  async function fetchMessages() {
-    // Fetch messages based on the chatroom id
-    const { data, error } = await apiFetch<ChatMessage[]>(`/chatmessage/room/${id}`);
-    if (data) {
-      setMessages(data);
     } else {
       console.log(error);
     }
@@ -109,7 +147,10 @@ export default function Convo() {
         {inventory && (
           <Card style={styles.card} onPress={() => null}>
             <View style={styles.cardContent}>
-              <Card.Cover style={styles.cardCover} source={{ uri: inventory.imageUrls[0] || "" }} />
+              <Card.Cover
+                style={styles.cardCover}
+                source={{ uri: inventory.imageUrls[0] || emptyImageUrl }}
+              />
               <View style={styles.textContainer}>
                 <Text style={styles.itemTitle}>{inventory.name}</Text>
                 <Text style={styles.itemDescription}>{inventory.description}</Text>
@@ -143,8 +184,14 @@ export default function Convo() {
       </View>
 
       <View style={styles.inputContainer}>
-        <TextInput mode="outlined" style={styles.input} placeholder="Type your message..." />
-        <Button mode="outlined" onPress={() => null}>
+        <TextInput
+          mode="outlined"
+          style={styles.input}
+          placeholder="Type your message..."
+          value={messageInput}
+          onChangeText={(input) => setMessageInput(input)}
+        />
+        <Button disabled={loading} mode="outlined" onPress={sendChat}>
           Send
         </Button>
       </View>
