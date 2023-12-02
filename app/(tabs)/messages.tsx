@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 import { IconButton, List, Searchbar } from "react-native-paper";
 
 import { useSession } from "~/hooks/useSession";
+import { defaultAvatarUrl } from "~/lib/firebase";
 import { ChatRoom } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
@@ -19,7 +20,7 @@ function ConvoListItem({ avatarUrl, username, preview }: ConvoListItemProps) {
     <List.Item
       title={<Text style={{ fontWeight: "600" }}>{username}</Text>}
       description={preview}
-      left={() => <List.Image variant="image" source={{ uri: avatarUrl as string }} />}
+      left={() => <List.Image variant="image" source={{ uri: avatarUrl || defaultAvatarUrl }} />}
     />
   );
 }
