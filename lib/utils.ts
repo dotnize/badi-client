@@ -2,7 +2,7 @@ import { launchImageLibraryAsync, requestMediaLibraryPermissionsAsync } from "ex
 import { Alert } from "react-native";
 
 import { API_URL } from "./config";
-import { uploadAndGetURL } from "./firebase";
+import { uploadImage } from "./firebase";
 
 interface FetchOptions {
   method: "GET" | "POST" | "PUT" | "DELETE";
@@ -58,7 +58,7 @@ export async function pickImageGetURL() {
     const result = await launchImageLibraryAsync();
 
     if (result?.assets?.[0]?.uri) {
-      const uploadedURL = await uploadAndGetURL(result.assets[0].uri);
+      const uploadedURL = await uploadImage(result.assets[0].uri);
 
       return uploadedURL;
     }

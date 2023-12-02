@@ -20,7 +20,7 @@ export const defaultAvatarUrl =
 export const emptyImageUrl =
   "https://firebasestorage.googleapis.com/v0/b/badi-ph.appspot.com/o/emptyImage.jpg?alt=media&token=a6f8ae23-2cfb-4981-8e25-178435ff32cd";
 
-export async function uploadAndGetURL(uri: string) {
+export async function uploadImage(uri: string) {
   try {
     const res = await fetch(uri);
     const blob = await res.blob();
