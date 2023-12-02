@@ -1,9 +1,8 @@
-import { Link } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
-import { useSession } from "~/hooks/useSession";
 
+import { useSession } from "~/hooks/useSession";
 import { SIZES } from "~/lib/theme";
 import { User } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
@@ -52,11 +51,9 @@ export default function Login() {
         />
       </View>
       <View>
-        <Link asChild href="/">
-          <Button style={{ width: 128 }} mode="contained" onPress={login}>
-            Login
-          </Button>
-        </Link>
+        <Button style={{ width: 128 }} mode="contained" onPress={login}>
+          Login
+        </Button>
       </View>
     </View>
   );
