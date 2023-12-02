@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { Button, IconButton, ProgressBar, Text, TextInput } from "react-native-paper";
+import { Button, HelperText, IconButton, ProgressBar, Text, TextInput } from "react-native-paper";
 import { DatePickerInput } from "react-native-paper-dates";
 import { useSession } from "~/hooks/useSession";
 import { User } from "~/lib/types";
@@ -70,6 +70,17 @@ export default function Register() {
     } else {
       setCounter(counter - 1);
     }
+  };
+
+  const isValidPassword = (password: string): boolean => {
+    const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$/;
+    const isValid = passwordRegex.test(password);
+    if (!isValid) {
+      console.log(
+        "Password must contain a special character, one capital letter, one lowercase letter, and one number"
+      );
+    }
+    return isValid;
   };
 
   return (
@@ -235,7 +246,7 @@ export default function Register() {
             </View>
           </View>
         ) : (
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, marginTop: 8 }}>
             <View>
               <TextInput
                 style={{ flex: 1 }}
@@ -247,11 +258,21 @@ export default function Register() {
                 }}
                 secureTextEntry
               />
+              {isValidPassword(password) ? (
+                <Text variant="labelMedium" style={{ padding: 8, color: "green", marginLeft: 4 }}>
+                  Password is valid
+                </Text>
+              ) : (
+                <HelperText type="error" visible={!isValidPassword(password)}>
+                  Password must be 8 characters long, contain a special character, one capital
+                  letter, one lowercase letter, and one number
+                </HelperText>
+              )}
             </View>
           </View>
         )}
         {counter === passwordScreen ? (
-          <Button onPress={register} mode="contained">
+          <Button onPress={register} mode="contained" disabled={!isValidPassword(password)}>
             Register
           </Button>
         ) : (
