@@ -125,14 +125,14 @@ export default function Convo() {
             style={[
               styles.messageStyle,
               {
-                alignSelf: message.senderId === chatroom?.member1Id ? "flex-end" : "flex-start",
-                backgroundColor: message.senderId === chatroom?.member1Id ? "#4CAF50" : "#fff",
+                alignSelf: user?.id === message.senderId ? "flex-end" : "flex-start",
+                backgroundColor: user?.id === message.senderId ? "#4CAF50" : "#fff",
               },
             ]}
           >
             <Text
               style={{
-                color: message.senderId === chatroom?.member1Id ? "#fff" : "#000",
+                color: user?.id === message.senderId ? "#fff" : "#000",
                 fontSize: 18,
               }}
             >
