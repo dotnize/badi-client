@@ -1,4 +1,8 @@
+import { launchImageLibraryAsync, requestMediaLibraryPermissionsAsync } from "expo-image-picker";
+import { Alert } from "react-native";
+
 import { API_URL } from "./config";
+import { uploadAndGetURL } from "./firebase";
 
 interface FetchOptions {
   method: "GET" | "POST" | "PUT" | "DELETE";
@@ -40,5 +44,23 @@ export async function apiFetch<T = any>(
   } catch (err) {
     console.error(err);
     return { error: (err as Error)?.message };
+  }
+}
+
+// Function to pick an image from the device's media library
+export async function pickImageGetURL() {
+  const { status } = await requestMediaLibraryPermissionsAsync();
+
+  if (status !== "granted") {
+    Alert.alert("Permission Denied", `Media library permission is required to upload images.`);
+  } else {
+    // Launch the image library and get the selected image
+    const result = await launchImageLibraryAsync();
+
+    if (result?.assets?.[0]?.uri) {
+      const uploadedURL = await uploadAndGetURL(result.assets[0].uri);
+
+      return uploadedURL;
+    }
   }
 }
