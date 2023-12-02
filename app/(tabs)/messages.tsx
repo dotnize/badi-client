@@ -1,21 +1,26 @@
 import { Link } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { IconButton, List, Searchbar } from "react-native-paper";
 
-interface Message {
+import { useSession } from "~/hooks/useSession";
+import { ChatRoom } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
+
+interface ConvoListItemProps {
   id: number;
-  avatar: string; // Update the type based on your actual data structure
-  username: string;
-  preview: string;
+  avatarUrl?: string | null;
+  username?: string;
+  preview?: string;
 }
 
-function MessageListItem({ avatar, username, preview }: Message) {
+function ConvoListItem({ id, avatarUrl, username, preview }: ConvoListItemProps) {
+  // TODO: use the "id" prop above to Link/navigate to the chatroom like /messages/:id
   return (
     <List.Item
       title={<Text style={{ fontWeight: "600" }}>{username}</Text>}
       description={preview}
-      left={() => <List.Icon icon={avatar} />}
+      left={() => <List.Icon icon={avatarUrl as string} />} // TODO: replace with avatar component para image ang mashow?
     />
   );
 }
@@ -23,16 +28,26 @@ function MessageListItem({ avatar, username, preview }: Message) {
 export default function Messages() {
   const [searchValue, setSearchValue] = useState("");
 
-  const messages: Message[] = [
-    {
-      id: 1,
-      avatar: "account",
-      username: "Liden U. Hoe",
-      preview: "You: Oy bro, tara meet up para sabotan tarung.",
-    },
-    { id: 2, avatar: "account", username: "Jameel D. Great", preview: "I love marcy <3." },
-    // Add more messages as needed
-  ];
+  // current logged-in user
+  const { user } = useSession();
+
+  const [conversations, setConversations] = useState<ChatRoom[]>([]);
+
+  async function fetchConversations() {
+    if (!user) return; // dont fetch if not logged-in
+
+    // fetch chatrooms of logged-in user id
+    const res = await apiFetch<ChatRoom[]>(`/chatroom/${user.id}`);
+    if (!res.data || res.error) {
+      console.log("No conversations found");
+    } else {
+      setConversations(res.data);
+    }
+  }
+
+  useEffect(() => {
+    fetchConversations();
+  }, []);
 
   return (
     <View>
@@ -46,13 +61,19 @@ export default function Messages() {
         <IconButton size={20} icon="bell" />
       </View>
       <View style={{ marginLeft: 18 }}>
-        {messages.map((message) => (
-          <Link href={`/messages/${message.id}`}>
-            <MessageListItem
-              id={message.id}
-              avatar={message.avatar}
-              username={message.username}
-              preview={message.preview}
+        {conversations.map((convo) => (
+          <Link href={`/messages/${convo.id}`}>
+            <ConvoListItem
+              id={convo.id}
+              avatarUrl={
+                convo.member1Id === user?.id ? convo.member2?.avatarUrl : convo.member1?.avatarUrl
+              }
+              username={
+                convo.member1Id === user?.id
+                  ? `${convo.member2?.firstName} ${convo.member2?.lastName}`
+                  : `${convo.member1?.firstName} ${convo.member1?.lastName}`
+              }
+              preview={convo.lastMessagePreview?.content}
             />
           </Link>
         ))}
