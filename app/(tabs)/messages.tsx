@@ -47,7 +47,7 @@ export default function Messages() {
 
   useEffect(() => {
     fetchConversations();
-  }, []);
+  }, [user]);
 
   return (
     <View>
