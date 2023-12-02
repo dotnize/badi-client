@@ -14,13 +14,12 @@ interface ConvoListItemProps {
   preview?: string;
 }
 
-function ConvoListItem({ id, avatarUrl, username, preview }: ConvoListItemProps) {
-  // TODO: use the "id" prop above to Link/navigate to the chatroom like /messages/:id
+function ConvoListItem({ avatarUrl, username, preview }: ConvoListItemProps) {
   return (
     <List.Item
       title={<Text style={{ fontWeight: "600" }}>{username}</Text>}
       description={preview}
-      left={() => <List.Icon icon={avatarUrl as string} />} // TODO: replace with avatar component para image ang mashow?
+      left={() => <List.Image variant="image" source={{ uri: avatarUrl as string }} />}
     />
   );
 }
@@ -37,7 +36,7 @@ export default function Messages() {
     if (!user) return; // dont fetch if not logged-in
 
     // fetch chatrooms of logged-in user id
-    const res = await apiFetch<ChatRoom[]>(`/chatroom/${user.id}`);
+    const res = await apiFetch<ChatRoom[]>(`/chatroom/user/${user.id}`);
     if (!res.data || res.error) {
       console.log("No conversations found");
     } else {
@@ -62,7 +61,7 @@ export default function Messages() {
       </View>
       <View style={{ marginLeft: 18 }}>
         {conversations.map((convo) => (
-          <Link href={`/messages/${convo.id}`}>
+          <Link key={convo.id} href={`/messages/${convo.id}`}>
             <ConvoListItem
               id={convo.id}
               avatarUrl={
