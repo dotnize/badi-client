@@ -1,6 +1,5 @@
 export interface User {
   id: number;
-  name: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -108,7 +107,7 @@ interface NotificationMatchContent {
   matchedUserId: number;
   toReceiveIds: number[];
   toSendIds: number[];
-  matchedUser?: User
+  matchedUser?: User;
   toReceive?: Inventory[];
   toSend?: Inventory[];
 }
