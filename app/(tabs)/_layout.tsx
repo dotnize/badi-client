@@ -4,7 +4,9 @@ import { View, useWindowDimensions } from "react-native";
 import { Button, Text } from "react-native-paper";
 
 import Tabs from "~/components/bottom-tabs";
+import { useSession } from "~/hooks/useSession";
 import { COLORS, SIZES } from "~/lib/theme";
+import { apiFetch } from "~/lib/utils";
 
 // TODO: minor issue, keep route state when switching navigation modes
 
@@ -12,7 +14,14 @@ export default function TabLayout() {
   const { height, width } = useWindowDimensions();
   const pathname = usePathname();
 
+  const { setUser } = useSession();
+
   const isLandscape = width > height * 1.2;
+
+  function logoutHandler() {
+    apiFetch("/auth/logout", { method: "POST" });
+    setUser(null);
+  }
 
   return isLandscape ? (
     <View
@@ -148,7 +157,10 @@ export default function TabLayout() {
           </View>
         </View>
         <View>
-          <Text>about, terms & conditions, logout, etc.</Text>
+          <Text>about, terms & conditions, etc.</Text>
+          <Button mode="text" onPress={logoutHandler}>
+            Logout
+          </Button>
         </View>
       </View>
 
