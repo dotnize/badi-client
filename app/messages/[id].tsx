@@ -76,20 +76,6 @@ export default function Convo() {
         <View style={styles.userInfo}>
           {chatroom?.member1 && chatroom?.member2 ? (
             <>
-              {/* Display details for member1 */}
-              {/* <Avatar.Image
-                size={35}
-                source={{ uri: chatroom.member1.avatarUrl || defaultAvatarUrl }}
-              />
-              <Text style={styles.boldText}>
-                {user?.id === chatroom.member1Id
-                  ? "You"
-                  : `${chatroom.member1.firstName || "Unknown"} ${
-                      chatroom.member1.lastName || "User"
-                    }`}
-              </Text> */}
-
-              {/* Display details for member2 */}
               <Avatar.Image
                 size={35}
                 source={{ uri: chatroom.member2.avatarUrl || defaultAvatarUrl }}
