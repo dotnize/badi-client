@@ -1,6 +1,5 @@
 export interface User {
   id: number;
-  name: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -83,7 +82,7 @@ export interface ChatRoom {
   member1?: User;
   member2Id: number;
   member2?: User;
-  lastMessagePreview?: ChatMessage;
+  lastMessagePreview?: ChatMessage[]; // max 1 only in the array
 }
 
 export interface ChatMessage {
@@ -108,7 +107,7 @@ interface NotificationMatchContent {
   matchedUserId: number;
   toReceiveIds: number[];
   toSendIds: number[];
-  matchedUser?: User
+  matchedUser?: User;
   toReceive?: Inventory[];
   toSend?: Inventory[];
 }

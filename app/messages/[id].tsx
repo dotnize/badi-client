@@ -7,50 +7,62 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Avatar, Button, Card, IconButton, Text, TextInput } from "react-native-paper";
-
-interface User {
-  name: string;
-  avatar: string;
-}
-
-interface Message {
-  id: number;
-  text: string;
-  sender: string;
-}
-
-interface Conversation {
-  user: User;
-  itemTitle: string;
-  itemDescription: string;
-  messages: Message[];
-}
+import { useSession } from "~/hooks/useSession";
+import { defaultAvatarUrl } from "~/lib/firebase";
+import { ChatMessage, ChatRoom, Inventory } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 
 export default function Convo() {
-  const { id } = useLocalSearchParams();
+  const { id, inventoryId } = useLocalSearchParams();
   const router = useRouter();
+  const { user } = useSession();
   // If naa natay backend, pwede nato gamiton ang id ig fetch.
 
-  const [conversation, setConversation] = useState<Conversation>({
-    user: {
-      name: "Liden U. Hoe",
-      avatar: "https://pbs.twimg.com/profile_images/1509961758022139904/fXryqX_6_400x400.jpg", // Replace with a valid URL
-    },
-    itemTitle: "Kanding",
-    itemDescription: "Kanding nga high quality.",
-    messages: [],
-  });
+  console.log(id); // 2
+  console.log(inventoryId); // 8
 
-  // Dummy data for chat messages
+  const [chatroom, setChatroom] = useState<ChatRoom | undefined>(undefined);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inventory, setInventory] = useState<Inventory | undefined>(undefined);
+
   useEffect(() => {
-    setConversation((prevConversation) => ({
-      ...prevConversation,
-      messages: [
-        { id: 1, text: "Hi bro, tagpila ning kanding", sender: "Liden U. Hoe" },
-        { id: 2, text: "Oy bro, tara meet up para sabotan tarung.", sender: "You" },
-      ],
-    }));
-  }, [id]);
+    fetchChatRoom();
+    fetchMessages();
+
+    if (inventoryId) {
+      fetchInventory();
+    }
+  }, [id, inventoryId]);
+
+  async function fetchChatRoom() {
+    // Fetch chat room details based on the id
+    const { data, error } = await apiFetch<ChatRoom>(`/chatroom/${id}`);
+    if (data) {
+      setChatroom(data);
+    } else {
+      console.log(error);
+    }
+  }
+
+  async function fetchMessages() {
+    // Fetch messages based on the chatroom id
+    const { data, error } = await apiFetch<ChatMessage[]>(`/chatmessage/room/${id}`);
+    if (data) {
+      setMessages(data);
+    } else {
+      console.log(error);
+    }
+  }
+
+  async function fetchInventory() {
+    // Fetch inventory details based on the inventoryId
+    const { data, error } = await apiFetch<Inventory>(`/inventory/${inventoryId}`);
+    if (data) {
+      setInventory(data);
+    } else {
+      console.log(error);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -60,49 +72,78 @@ export default function Convo() {
           onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))}
           style={styles.backButton}
         />
+
         <View style={styles.userInfo}>
-          <Avatar.Image size={35} source={{ uri: conversation.user.avatar }} />
-          <Text style={styles.boldText}>{conversation.user.name}</Text>
+          {chatroom?.member1 && chatroom?.member2 ? (
+            <>
+              {/* Display details for member1 */}
+              {/* <Avatar.Image
+                size={35}
+                source={{ uri: chatroom.member1.avatarUrl || defaultAvatarUrl }}
+              />
+              <Text style={styles.boldText}>
+                {user?.id === chatroom.member1Id
+                  ? "You"
+                  : `${chatroom.member1.firstName || "Unknown"} ${
+                      chatroom.member1.lastName || "User"
+                    }`}
+              </Text> */}
+
+              {/* Display details for member2 */}
+              <Avatar.Image
+                size={35}
+                source={{ uri: chatroom.member2.avatarUrl || defaultAvatarUrl }}
+              />
+              <Text style={styles.boldText}>
+                {user?.id === chatroom.member2Id
+                  ? "member2 details"
+                  : `${chatroom.member2.firstName || "Unknown"} ${
+                      chatroom.member2.lastName || "User"
+                    }`}
+              </Text>
+            </>
+          ) : (
+            <Text style={styles.boldText}>No Member</Text>
+          )}
         </View>
+
         <View style={styles.infoButtonContainer}>
           <IconButton icon="information" onPress={() => null} style={styles.infoButton} />
         </View>
       </View>
 
       <View style={styles.chatbox}>
-        <Card style={styles.card} onPress={() => null}>
-          <View style={styles.cardContent}>
-            <Card.Cover
-              style={styles.cardCover}
-              source={{
-                uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Brown-goat-award.jpg/800px-Brown-goat-award.jpg",
-              }}
-            />
-            <View style={styles.textContainer}>
-              <Text style={styles.itemTitle}>{conversation.itemTitle}</Text>
-              <Text style={styles.itemDescription}>{conversation.itemDescription}</Text>
+        {inventory && (
+          <Card style={styles.card} onPress={() => null}>
+            <View style={styles.cardContent}>
+              <Card.Cover style={styles.cardCover} source={{ uri: inventory.imageUrls[0] || "" }} />
+              <View style={styles.textContainer}>
+                <Text style={styles.itemTitle}>{inventory.name}</Text>
+                <Text style={styles.itemDescription}>{inventory.description}</Text>
+              </View>
             </View>
-          </View>
-          <IconButton icon="arrow-right" onPress={() => null} style={styles.arrowIcon} />
-        </Card>
-        {conversation.messages.map((message) => (
+            <IconButton icon="arrow-right" onPress={() => null} style={styles.arrowIcon} />
+          </Card>
+        )}
+
+        {messages.map((message) => (
           <View
             key={message.id}
             style={[
               styles.messageStyle,
               {
-                alignSelf: message.sender === "You" ? "flex-end" : "flex-start",
-                backgroundColor: message.sender === "You" ? "#4CAF50" : "#fff", // Green for sent, white for received
+                alignSelf: message.senderId === chatroom?.member1Id ? "flex-end" : "flex-start",
+                backgroundColor: message.senderId === chatroom?.member1Id ? "#4CAF50" : "#fff",
               },
             ]}
           >
             <Text
               style={{
-                color: message.sender === "You" ? "#fff" : "#000",
-                fontSize: 18 /* Adjust the font size as needed */,
+                color: message.senderId === chatroom?.member1Id ? "#fff" : "#000",
+                fontSize: 18,
               }}
             >
-              {message.text}
+              {message.content}
             </Text>
           </View>
         ))}
