@@ -78,13 +78,20 @@ export default function Convo() {
             <>
               <Avatar.Image
                 size={35}
-                source={{ uri: chatroom.member2.avatarUrl || defaultAvatarUrl }}
+                source={{
+                  uri:
+                    user?.id === chatroom.member1Id
+                      ? chatroom.member2.avatarUrl || defaultAvatarUrl
+                      : chatroom.member1.avatarUrl || defaultAvatarUrl,
+                }}
               />
               <Text style={styles.boldText}>
-                {user?.id === chatroom.member2Id
-                  ? "member2 details"
-                  : `${chatroom.member2.firstName || "Unknown"} ${
+                {user?.id === chatroom.member1Id
+                  ? `${chatroom.member2.firstName || "Unknown"} ${
                       chatroom.member2.lastName || "User"
+                    }`
+                  : `${chatroom.member1.firstName || "Unknown"} ${
+                      chatroom.member1.lastName || "User"
                     }`}
               </Text>
             </>
