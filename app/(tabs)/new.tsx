@@ -5,8 +5,16 @@ import { Dropdown } from "react-native-element-dropdown";
 import { Button, IconButton, TextInput } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
+interface ListItem {
+  title: string;
+  photos: string[]; //will implement this later
+  description: string;
+  category: string;
+  price: string;
+}
+
 // New component for the title form
-function TitleForm() {
+function TitleForm({ setTitle }: { setTitle: React.Dispatch<React.SetStateAction<string>> }) {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Title</Text>
@@ -20,6 +28,7 @@ function TitleForm() {
           borderRadius: 4,
           width: "100%",
         }}
+        onChangeText={(text) => setTitle(text)}
       />
     </View>
   );
@@ -48,7 +57,11 @@ function PhotoSection() {
 }
 
 // New component for the description form
-function DescriptionForm() {
+function DescriptionForm({
+  setDescription,
+}: {
+  setDescription: React.Dispatch<React.SetStateAction<string>>;
+}) {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Description</Text>
@@ -63,21 +76,24 @@ function DescriptionForm() {
           borderRadius: 4,
           width: "100%",
         }}
+        onChangeText={(text) => setDescription(text)}
       />
     </View>
   );
 }
 
 // New component for the category dropdown using react-native-element-dropdown
-function CategoryDropdown() {
+function CategoryDropdown({
+  setCategory,
+}: {
+  setCategory: React.Dispatch<React.SetStateAction<string | null>>;
+}) {
   const data = [
     { label: "Clothing", value: "clothing" },
     { label: "Gadgets", value: "gadgets" },
     { label: "Vehicles", value: "vehicles" },
     { label: "Appliances", value: "appliances" },
   ];
-
-  const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
@@ -86,15 +102,10 @@ function CategoryDropdown() {
         data={data}
         labelField="label"
         valueField="value"
-        placeholder={!selectedCategory ? "Select category" : "..."}
-        onChange={(item) => setSelectedCategory(item.value)}
+        placeholder="Select category"
+        onChange={(item) => setCategory(item.value)}
         renderLeftIcon={() => (
-          <AntDesign
-            style={styles.icon}
-            color={selectedCategory ? "blue" : "black"}
-            name="Safety"
-            size={20}
-          />
+          <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
         )}
       />
     </View>
@@ -102,9 +113,7 @@ function CategoryDropdown() {
 }
 
 // New component for the price form
-function PriceForm() {
-  const [price, setPrice] = useState<string>("");
-
+function PriceForm({ setPrice }: { setPrice: React.Dispatch<React.SetStateAction<string>> }) {
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8, width: "100%" }}>
       <Text style={{ fontSize: 16, marginBottom: 8 }}>Price</Text>
@@ -119,7 +128,6 @@ function PriceForm() {
           borderRadius: 4,
           width: "100%",
         }}
-        value={price}
         onChangeText={(text) => setPrice(text)}
       />
     </View>
@@ -143,6 +151,54 @@ const styles = StyleSheet.create({
 });
 
 export default function NewListing() {
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [category, setCategory] = useState<string | null>("");
+  const [price, setPrice] = useState<string>("");
+
+  const handlePostListing = async () => {
+    // Validate if all required fields are filled
+    if (!title || !description || !category || !price) {
+      console.error("Please fill in all required fields.");
+      return;
+    }
+
+    // Create a new item
+    const newItem: ListItem = {
+      title,
+      photos: [], // Placeholder for photos
+      description,
+      category,
+      price,
+    };
+
+    // Send the data to the server to create the listing
+    try {
+      const response = await fetch("your-backend-api-endpoint", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newItem),
+      });
+
+      if (response.ok) {
+        // If the request was successful, update your local state or perform other actions
+        console.log("Listing created successfully");
+      } else {
+        console.error("Failed to create listing");
+      }
+    } catch (error) {
+      console.error("Error creating listing:", error);
+    }
+
+    // Clear the form fields
+    setTitle("");
+    setDescription("");
+    setCategory(null);
+    setPrice("");
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
@@ -152,36 +208,24 @@ export default function NewListing() {
         <Tabs>
           <TabScreen label="Items">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              <TitleForm />
+              <TitleForm setTitle={setTitle} />
               <PhotoSection />
-              <DescriptionForm />
-              {/* Adding the new CategoryDropdown component */}
-              <CategoryDropdown />
-              <PriceForm />
-              {/* Adding the post button */}
-              <Button
-                mode="contained"
-                style={styles.postButton}
-                onPress={() => console.log("Post Listing")}
-              >
+              <DescriptionForm setDescription={setDescription} />
+              <CategoryDropdown setCategory={setCategory} />
+              <PriceForm setPrice={setPrice} />
+              <Button mode="contained" style={styles.postButton} onPress={handlePostListing}>
                 Post Listing
               </Button>
             </ScrollView>
           </TabScreen>
           <TabScreen label="Services">
             <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              <TitleForm />
+              <TitleForm setTitle={setTitle} />
               <PhotoSection />
-              <DescriptionForm />
-              {/* Adding the new CategoryDropdown component */}
-              <CategoryDropdown />
-              <PriceForm />
-              {/* Adding the post button */}
-              <Button
-                mode="contained"
-                style={styles.postButton}
-                onPress={() => console.log("Post Listing")}
-              >
+              <DescriptionForm setDescription={setDescription} />
+              <CategoryDropdown setCategory={setCategory} />
+              <PriceForm setPrice={setPrice} />
+              <Button mode="contained" style={styles.postButton} onPress={handlePostListing}>
                 Post Listing
               </Button>
             </ScrollView>

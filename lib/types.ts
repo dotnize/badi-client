@@ -105,9 +105,12 @@ export interface Notification {
 }
 
 interface NotificationMatchContent {
-  matchedUser: User;
-  toReceive: Inventory[];
-  toSend: Inventory[];
+  matchedUserId: number;
+  toReceiveIds: number[];
+  toSendIds: number[];
+  matchedUser?: User
+  toReceive?: Inventory[];
+  toSend?: Inventory[];
 }
 
 export interface Rating {

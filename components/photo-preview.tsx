@@ -30,7 +30,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   modalContainerStyle: {
-    height: 500,
+    height: "50%",
+    width: "100%",
     backgroundColor: "white",
   },
 });

@@ -2,15 +2,17 @@
 
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import "react-native-gesture-handler";
 import { Button, Card, DefaultTheme, Modal, Portal, Snackbar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
-import TradeItem from "~/components/cards/home/trade-item";
 import ConfirmModal from "~/components/confirm-modal";
 import PhotoPreview from "~/components/photo-preview";
 import { COLORS } from "~/lib/theme";
+import HistoryItem from "./cards/home/history-item-card";
+import InventoryItem from "./cards/home/inventory-item-card";
+import WishItem from "./cards/home/wish-item-card copy";
 
 const defaultPic = require("~/assets/liden.png");
 
@@ -27,8 +29,12 @@ const defaultCoverPic =
 export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
   // VARIABLES
   // const name = user.name etc.
+  console.log(wishes);
 
   // STATES
+  const [currentWishes, setCurrentWishes] = useState<any>(wishes);
+  console.log(wishes, currentWishes);
+
   const [name, setName] = useState("Liden U. Hoe");
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentPhoto, setCurrentPhoto] = useState<string>(defaultPfpPic);
@@ -38,12 +44,8 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
   const [isSnackBarVisible, setIsSnackBarVisible] = useState<boolean>(false);
 
   // HANDLERS
-  const saveProfileChanges = () => {
-    setIsSnackBarVisible(true);
-  };
-  const onDismissSnackBar = () => {
-    setIsSnackBarVisible(false);
-  };
+  const saveProfileChanges = () => setIsSnackBarVisible(true);
+  const onDismissSnackBar = () => setIsSnackBarVisible(false);
 
   const toggleProfileSettingsCard = () => setIsProfileSettingsCardVisible(true);
   const showConfirmModal = () => {
@@ -55,6 +57,20 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
     setCurrentPhoto(photo);
     setIsPhotoPreviewVisible(true);
   };
+
+  const [deletedItems, setDeletedItems] = useState<number[]>([]);
+  const deleteItemById = (id: number) => {
+    // Use the functional form of setDeletedItems to ensure you're working with the latest state
+    setDeletedItems((prevDeletedItems) => [...prevDeletedItems, id]);
+  };
+
+  useEffect(() => {
+    // Filter out items with IDs present in the updated deletedItems array
+    const filteredData = wishes?.filter((item: any) => !deletedItems.includes(item.id));
+
+    // Update the current wishes state
+    setCurrentWishes(filteredData);
+  }, [deletedItems, wishes]);
 
   const styles = StyleSheet.create({
     container: {
@@ -228,6 +244,7 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
         title={`Your account will be deleted.${"\n"}Are you sure?`}
         state={isConfirmModalVisible}
         setState={setIsConfirmModalVisible}
+        handleOnConfirmDelete={null}
       />
 
       <PhotoPreview
@@ -249,7 +266,7 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
 
         {isLoggedUser && (
           <View style={styles.editProfileButtons}>
-            <Link
+            {/* <Link
               asChild
               href={{
                 pathname: "/me/edit",
@@ -259,16 +276,16 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
                   coverPic: defaultCoverPic,
                 },
               }}
+            > */}
+            <Button
+              icon="pencil"
+              mode="outlined"
+              contentStyle={{ flexDirection: "row-reverse" }}
+              textColor={COLORS.primary}
             >
-              <Button
-                icon="pencil"
-                mode="outlined"
-                contentStyle={{ flexDirection: "row-reverse" }}
-                textColor={COLORS.primary}
-              >
-                Edit Profile
-              </Button>
-            </Link>
+              Edit Profile
+            </Button>
+            {/* </Link> */}
 
             <Entypo
               style={{ verticalAlign: "middle" }}
@@ -337,8 +354,10 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
   function WishesScreen() {
     return (
       <FlatList
-        data={wishes}
-        renderItem={({ item }) => <TradeItem />}
+        data={currentWishes ? currentWishes : wishes}
+        renderItem={({ item }) => (
+          <WishItem wish={item} editable={true} onDelete={() => deleteItemById(item.id)} />
+        )}
         keyExtractor={(item) => item.id.toString()}
         style={{ height: 1000, paddingVertical: 10 }}
       />
@@ -352,7 +371,7 @@ function InventoryScreen() {
   return (
     <FlatList
       data={INVENTORY}
-      renderItem={({ item }) => <TradeItem editable={true} />}
+      renderItem={({ item }) => <InventoryItem />}
       keyExtractor={(item) => item.id.toString()}
       style={{ height: 1000, paddingVertical: 10 }}
     />
@@ -363,7 +382,7 @@ function HistoryScreen() {
   return (
     <FlatList
       data={INVENTORY}
-      renderItem={({ item }) => <CardComponent content={item.content} />}
+      renderItem={({ item }) => <HistoryItem />}
       keyExtractor={(item) => item.id.toString()}
       style={{ height: 1000, paddingVertical: 10 }}
     />
