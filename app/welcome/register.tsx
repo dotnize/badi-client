@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, HelperText, IconButton, ProgressBar, Text, TextInput } from "react-native-paper";
 import { DatePickerInput } from "react-native-paper-dates";
+
 import { useSession } from "~/hooks/useSession";
 import { User } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
@@ -38,7 +39,6 @@ export default function Register() {
     });
     if (data) {
       setUser(data);
-      router.push("/");
       console.log("register complete");
     } else {
       console.log(error);

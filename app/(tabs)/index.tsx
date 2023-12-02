@@ -2,8 +2,8 @@ import { useState } from "react";
 import { View } from "react-native";
 import { Card, IconButton, Searchbar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
+
 import TradeItem from "~/components/cards/home/inventory-item-card";
-import { useSession } from "~/hooks/useSession";
 
 function CardComponent() {
   return (
@@ -19,9 +19,7 @@ function CardComponent() {
 }
 
 export default function Index() {
-  const { user } = useSession();
   const [searchValue, setSearchValue] = useState("");
-  console.log(user);
   return (
     <View>
       <View style={{ flexDirection: "row", alignItems: "center", padding: 16 }}>

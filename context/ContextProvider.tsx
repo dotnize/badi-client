@@ -1,3 +1,4 @@
+import { Redirect, usePathname } from "expo-router";
 import { useEffect, useState } from "react";
 
 import { SessionContext } from "~/context/session";
@@ -6,6 +7,7 @@ import { apiFetch } from "~/lib/utils";
 
 export default function ContextProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null | undefined>(undefined);
+  const pathname = usePathname();
 
   async function fetchUser() {
     console.log("Checking currently logged in user...");
@@ -24,5 +26,13 @@ export default function ContextProvider({ children }: { children: React.ReactNod
     fetchUser();
   }, []);
 
-  return <SessionContext.Provider value={{ user, setUser }}>{children}</SessionContext.Provider>;
+  return (
+    <SessionContext.Provider value={{ user, setUser }}>
+      {!process.env.EXPO_PUBLIC_BYPASS_AUTH &&
+        user === null &&
+        !pathname.startsWith("/welcome") && <Redirect href="/welcome" />}
+      {user?.id && pathname.startsWith("/welcome") && <Redirect href="/" />}
+      {children}
+    </SessionContext.Provider>
+  );
 }
