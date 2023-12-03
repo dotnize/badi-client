@@ -60,7 +60,7 @@ export default function Index() {
               contentContainerStyle={{ gap: 10, padding: 8 }}
               data={inventories.filter((inv) => inv.type === "item")}
               ListEmptyComponent={() => <ActivityIndicator animating />}
-              renderItem={({ item }) => <ListingCard editable={false} listing={item} />}
+              renderItem={({ item }) => <ListingCard listing={item} />}
               keyExtractor={(item) => item.id.toString()}
             />
           </TabScreen>
@@ -70,7 +70,7 @@ export default function Index() {
               contentContainerStyle={{ gap: 10, padding: 8 }}
               data={inventories.filter((inv) => inv.type === "service")}
               ListEmptyComponent={() => <ActivityIndicator animating />}
-              renderItem={({ item }) => <ListingCard editable={false} listing={item} />}
+              renderItem={({ item }) => <ListingCard listing={item} />}
               keyExtractor={(item) => item.id.toString()}
             />
           </TabScreen>
@@ -79,7 +79,7 @@ export default function Index() {
               contentContainerStyle={{ gap: 10, padding: 8 }}
               data={wishes}
               ListEmptyComponent={() => <ActivityIndicator animating />}
-              renderItem={({ item }) => <ListingCard editable={false} listing={item} />}
+              renderItem={({ item }) => <ListingCard listing={item} />}
               keyExtractor={(item) => item.id.toString()}
             />
           </TabScreen>
