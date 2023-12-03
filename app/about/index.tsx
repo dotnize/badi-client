@@ -1,21 +1,22 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Image } from "react-native";
-import { Title, Paragraph, Card } from "react-native-paper";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { Card, Paragraph, Title } from "react-native-paper";
 
+import { defaultAvatarUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
 
 const TeamMembers = [
   { name: "Leonel Baclayon", image: require("~/assets/leonel.png") },
-  { name: "Nathaniel Tampus", image: require("~/assets/liden.png") },
-  { name: "Liden Sagmon", image: require("~/assets/lidens.jpg") },
-  { name: "Jameel Ursonal", image: require("~/assets/liden.png") },
+  { name: "Nathaniel Tampus", image: { uri: defaultAvatarUrl } },
+  { name: "Liden Sagmon", image: require("~/assets/liden.jpg") },
+  { name: "Jameel Ursonal", image: { uri: defaultAvatarUrl } },
   { name: "Christian Piape", image: require("~/assets/christian.png") },
 ];
 
 const TeamMottos = [
   '"Hakuna Matata"',
-  '"Passionate about innovation and collaboration."',
-  "\"If you can't survive, just try\"",
+  '"I have a keyboard."',
+  '"If you can\'t survive, just try"',
   '"Empowering communities through technology."',
   "\"Don't worry about the things you can't control.\"",
 ];
@@ -40,10 +41,9 @@ const TeamMember = ({ member, motto }: { member: { name: string; image: any }; m
 
 const AboutUsIndex = () => (
   <ScrollView contentContainerStyle={styles.container}>
-
     {/* Top Section */}
     <Card style={styles.topSection}>
-      <Title style={styles.sectionTitle}>Learn more about us!</Title>
+      <Title style={styles.sectionTitle}>About Us</Title>
       <Image source={require("~/assets/team.png")} style={styles.topImage} />
       <Paragraph style={styles.sectionText}>
         Badi is a web and mobile platform that facilitates the barter of skills, services, and
