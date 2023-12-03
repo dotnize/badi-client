@@ -1,7 +1,7 @@
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import { IconButton, List, Searchbar } from "react-native-paper";
+import { ActivityIndicator, IconButton, List, Searchbar } from "react-native-paper";
 
 import { useSession } from "~/hooks/useSession";
 import { defaultAvatarUrl } from "~/lib/firebase";
@@ -32,12 +32,14 @@ export default function Messages() {
   const { user } = useSession();
 
   const [conversations, setConversations] = useState<ChatRoom[]>([]);
+  const [loading, setLoading] = useState(true);
 
   async function fetchConversations() {
     if (!user) return; // dont fetch if not logged-in
-
+    setLoading(true);
     // fetch chatrooms of logged-in user id
     const res = await apiFetch<ChatRoom[]>(`/chatroom/user/${user.id}`);
+    setLoading(false);
     if (!res.data || res.error) {
       console.log("No conversations found");
     } else {
@@ -60,23 +62,27 @@ export default function Messages() {
         />
         <IconButton size={20} icon="bell" />
       </View>
-      <View style={{ marginLeft: 18 }}>
-        {conversations.map((convo) => (
-          <Link key={convo.id} href={`/messages/${convo.id}`}>
-            <ConvoListItem
-              id={convo.id}
-              avatarUrl={
-                convo.member1Id === user?.id ? convo.member2?.avatarUrl : convo.member1?.avatarUrl
-              }
-              username={
-                convo.member1Id === user?.id
-                  ? `${convo.member2?.firstName} ${convo.member2?.lastName}`
-                  : `${convo.member1?.firstName} ${convo.member1?.lastName}`
-              }
-              preview={convo.lastMessagePreview?.[0]?.content}
-            />
-          </Link>
-        ))}
+      <View style={{ padding: 16 }}>
+        {loading ? (
+          <ActivityIndicator animating />
+        ) : (
+          conversations.map((convo) => (
+            <Link key={convo.id} href={`/messages/${convo.id}`}>
+              <ConvoListItem
+                id={convo.id}
+                avatarUrl={
+                  convo.member1Id === user?.id ? convo.member2?.avatarUrl : convo.member1?.avatarUrl
+                }
+                username={
+                  convo.member1Id === user?.id
+                    ? `${convo.member2?.firstName} ${convo.member2?.lastName}`
+                    : `${convo.member1?.firstName} ${convo.member1?.lastName}`
+                }
+                preview={convo.lastMessagePreview?.[0]?.content}
+              />
+            </Link>
+          ))
+        )}
       </View>
     </View>
   );

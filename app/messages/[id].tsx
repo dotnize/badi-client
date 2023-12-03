@@ -6,7 +6,15 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Avatar, Button, Card, IconButton, Text, TextInput } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Avatar,
+  Button,
+  Card,
+  IconButton,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import { io } from "socket.io-client";
 
 import { useSession } from "~/hooks/useSession";
@@ -58,9 +66,8 @@ export default function Convo() {
 
       socket.on("latestMessages", (latestMessages: ChatMessage[]) => {
         setMessages(latestMessages);
+        setLoading(false);
       });
-
-      setLoading(false);
     });
 
     return () => {
@@ -160,27 +167,31 @@ export default function Convo() {
           </Card>
         )}
 
-        {messages.map((message) => (
-          <View
-            key={message.id}
-            style={[
-              styles.messageStyle,
-              {
-                alignSelf: user?.id === message.senderId ? "flex-end" : "flex-start",
-                backgroundColor: user?.id === message.senderId ? "#4CAF50" : "#fff",
-              },
-            ]}
-          >
-            <Text
-              style={{
-                color: user?.id === message.senderId ? "#fff" : "#000",
-                fontSize: 18,
-              }}
+        {loading ? (
+          <ActivityIndicator animating />
+        ) : (
+          messages.map((message) => (
+            <View
+              key={message.id}
+              style={[
+                styles.messageStyle,
+                {
+                  alignSelf: user?.id === message.senderId ? "flex-end" : "flex-start",
+                  backgroundColor: user?.id === message.senderId ? "#4CAF50" : "#fff",
+                },
+              ]}
             >
-              {message.content}
-            </Text>
-          </View>
-        ))}
+              <Text
+                style={{
+                  color: user?.id === message.senderId ? "#fff" : "#000",
+                  fontSize: 18,
+                }}
+              >
+                {message.content}
+              </Text>
+            </View>
+          ))
+        )}
       </View>
 
       <View style={styles.inputContainer}>

@@ -1,30 +1,34 @@
 import { Image, StyleSheet, View } from "react-native";
 import { Card, Text } from "react-native-paper";
-import { COLORS } from "~/lib/theme";
-const defaultPic = require("~/assets/liden.png");
 
-export default function RatingItem({ total }: { total: number }) {
+import { defaultAvatarUrl } from "~/lib/firebase";
+import { COLORS } from "~/lib/theme";
+import { Rating } from "~/lib/types";
+
+export default function RatingCard({ item }: { item: Rating }) {
   return (
-    <Card style={{ height: "auto", margin: 8, paddingVertical: 10 }}>
+    <Card style={{ height: "auto", paddingVertical: 10 }}>
       <Card.Content>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 20 }}>
-          <Image style={styles.userPhoto} source={defaultPic} />
+          <Image
+            style={styles.userPhoto}
+            source={{ uri: item.fromUser?.avatarUrl || defaultAvatarUrl }}
+          />
           <View style={{ flex: 1 }}>
-            <Text variant="titleMedium">Liden U. Hoe</Text>
-            <Text variant="titleSmall">11/20/25</Text>
+            <Text variant="titleMedium">
+              {item.fromUser?.firstName} {item.fromUser?.lastName}
+            </Text>
+            <Text variant="titleSmall">{item.timestamp.toDateString()}</Text>
           </View>
           <View style={{ flexDirection: "row", gap: 5 }}>
-            {Array.from({ length: total }, (_, index) => (
+            {Array.from({ length: item.amount }, (_, index) => (
               <Text key={index} variant="titleLarge" style={{ color: COLORS.primary }}>
                 &#9733;
               </Text>
             ))}
           </View>
         </View>
-        <Text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua.
-        </Text>
+        <Text>{item.description}</Text>
       </Card.Content>
     </Card>
   );

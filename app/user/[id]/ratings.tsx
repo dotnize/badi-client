@@ -1,31 +1,37 @@
-// Nested in a dynamic route!
-// e.g. /user/1/ratings, /user/8/ratings, etc.
+// URL: /me/ratings
 
-// Use the useLocalSearchParams hook from expo-router to get the id from the URL.
 import { useLocalSearchParams } from "expo-router";
-import { View } from "react-native";
-import { Text } from "react-native-paper";
+import { useEffect, useState } from "react";
+import { FlatList } from "react-native";
 
-/**
- * Since ang My Profile Ratings og Other User Ratings kay similar ra, naa koy suggestion:
- *
- * Pwede mo magcreate og reusable component (himo mog new file sa "components" folder)
- * nga moaccept og "id" prop
- * - if other user ratings, gamiton ang useLocalSearchParams() hook.
- * - else if my profile ratings, gamiton ang logged-in user id (via a custom hook or context)
- *
- * then kana nga reusable component kay gamiton both sa /user/[id]/ratings og /me/ratings nga routes.
- * @jameel @leonel
- * Sabotan nya ni nato sa discord. Chat sad mo sa server anytime if naa mo questions.
- */
+import RatingCard from "~/components/cards/profile/rating-card";
+import { Rating } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 
-export default function OtherUserRatings() {
+export default function MyRatings() {
   const { id } = useLocalSearchParams();
-  // ipass ang id sa reusable component
+
+  const [ratings, setRatings] = useState<Rating[]>([]);
+
+  async function fetchRatings() {
+    const { data, error } = await apiFetch<Rating[]>(`/rating/user/${id}`);
+    if (error || !data) {
+      console.log(error || "No ratings found");
+    } else if (data) {
+      setRatings(data);
+    }
+  }
+
+  useEffect(() => {
+    fetchRatings();
+  }, []);
 
   return (
-    <View>
-      <Text>OtherUserRatings for user id: {id}</Text>
-    </View>
+    <FlatList
+      contentContainerStyle={{ gap: 10, padding: 8, flex: 1 }}
+      data={ratings}
+      renderItem={({ item }) => <RatingCard item={item} />}
+      keyExtractor={(item) => item.id.toString()}
+    />
   );
 }

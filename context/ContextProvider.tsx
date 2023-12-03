@@ -28,7 +28,7 @@ export default function ContextProvider({ children }: { children: React.ReactNod
 
   return (
     <SessionContext.Provider value={{ user, setUser }}>
-      {!process.env.EXPO_PUBLIC_BYPASS_AUTH &&
+      {process.env.EXPO_PUBLIC_BYPASS_AUTH !== "true" &&
         user === null &&
         !pathname.startsWith("/welcome") && <Redirect href="/welcome" />}
       {user?.id && pathname.startsWith("/welcome") && <Redirect href="/" />}

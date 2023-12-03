@@ -1,67 +1,95 @@
-import { useState } from "react";
-import { View } from "react-native";
-import { Card, IconButton, Searchbar, Text } from "react-native-paper";
+import { Link, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { FlatList, View } from "react-native";
+import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
-import TradeItem from "~/components/cards/home/inventory-item-card";
-
-function CardComponent() {
-  return (
-    <Card style={{ height: 200 }}>
-      <Card.Content>
-        <Text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua.
-        </Text>
-      </Card.Content>
-    </Card>
-  );
-}
+import ListingCard from "~/components/cards/listing-card";
+import { Inventory, Wish } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 
 export default function Index() {
-  const [searchValue, setSearchValue] = useState("");
+  const { category, services, items, query } = useLocalSearchParams();
+
+  const [searchValue, setSearchValue] = useState((query as string) || "");
+  const [inventories, setInventories] = useState<Inventory[]>([]);
+  const [wishes, setWishes] = useState<Wish[]>([]);
+
+  async function fetchInventories() {
+    const { data, error } = await apiFetch<Inventory[]>("/inventory");
+
+    if (error) {
+      console.log(error);
+    } else {
+      setInventories(data || []);
+    }
+  }
+
+  async function fetchWishes() {
+    const { data, error } = await apiFetch<Wish[]>("/wish");
+
+    if (error) {
+      console.log(error);
+    } else {
+      setWishes(data || []);
+    }
+  }
+
+  useEffect(() => {
+    fetchInventories();
+    fetchWishes();
+  }, []);
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View style={{ flexDirection: "row", alignItems: "center", padding: 16 }}>
         <Searchbar
+          mode="bar"
           placeholder="Search..."
           value={searchValue}
-          onChangeText={(query) => setSearchValue(query)}
+          onChangeText={setSearchValue}
           style={{ flex: 1 }}
+          right={() => (
+            <Link href="/search" asChild>
+              <IconButton icon="filter" />
+            </Link>
+          )}
         />
-        <IconButton size={20} icon="bell" />
       </View>
       <TabsProvider defaultIndex={0}>
-        <Tabs
-        // uppercase={false} // true/false | default=true (on material v2) | labels are uppercase
-        // showTextLabel={false} // true/false | default=false (KEEP PROVIDING LABEL WE USE IT AS KEY INTERNALLY + SCREEN READERS)
-        // iconPosition // leading, top | default=leading
-        // style={{ backgroundColor:'#fff' }} // works the same as AppBar in react-native-paper
-        // dark={false} // works the same as AppBar in react-native-paper
-        // theme={} // works the same as AppBar in react-native-paper
-        // mode="scrollable" // fixed, scrollable | default=fixed
-        // showLeadingSpace={true} //  (default=true) show leading space in scrollable tabs inside the header
-        // disableSwipe={false} // (default=false) disable swipe to left/right gestures
-        >
-          <TabScreen label="Items">
-            <View style={{ flex: 1 }}>
-              <View style={{ gap: 8, padding: 8, flex: 1 }}>
-                <TradeItem />
-                <CardComponent />
-              </View>
-            </View>
-          </TabScreen>
-
-          <TabScreen label="Services">
-            <View style={{ gap: 8, padding: 8, flex: 1 }}>
-              <CardComponent />
-            </View>
+        <Tabs>
+          <TabScreen label="Inventories">
+            <FlatList
+              contentContainerStyle={{ gap: 10, padding: 8 }}
+              data={inventories
+                .filter((inventory) =>
+                  (category as string) ? inventory.keywords.includes(category as string) : true
+                )
+                .filter((inventory) =>
+                  searchValue
+                    ? inventory.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+                      inventory.keywords.includes(searchValue.toLowerCase())
+                    : true
+                )
+                .filter((inventory) =>
+                  (services as string) && !items ? inventory.type === "service" : true
+                )
+                .filter((inventory) =>
+                  (items as string) && !services ? inventory.type === "item" : true
+                )}
+              ListEmptyComponent={() => <ActivityIndicator animating />}
+              renderItem={({ item }) => <ListingCard listing={item} />}
+              keyExtractor={(item) => item.id.toString()}
+            />
           </TabScreen>
           <TabScreen label="Wishes">
-            <View style={{ gap: 8, padding: 8, flex: 1 }}>
-              <CardComponent />
-              <CardComponent />
-            </View>
+            <FlatList
+              contentContainerStyle={{ gap: 10, padding: 8 }}
+              data={wishes}
+              ListEmptyComponent={() => <ActivityIndicator animating />}
+              renderItem={({ item }) => <ListingCard listing={item} />}
+              keyExtractor={(item) => item.id.toString()}
+            />
           </TabScreen>
         </Tabs>
       </TabsProvider>
