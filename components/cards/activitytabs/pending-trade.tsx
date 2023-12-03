@@ -1,56 +1,44 @@
 import { Link } from "expo-router";
-import { useState } from "react";
 import { Image, Pressable, View } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { useTabIndex } from "react-native-paper-tabs";
-import PhotoPreview from "~/components/photo-preview";
 
 const itemPhoto = require("~/assets/Kambing.png");
 
-export default function PendingTradeCard() {
+interface TradeCardProps {
+  tradeGroupid: number;
+  user1FirstName: string;
+  user2FirstName: string;
+  user1profileUrl: string;
+  user2profileUrl: string;
+}
+
+export default function PendingTradeCard({
+  tradeGroupid,
+  user1FirstName,
+  user2FirstName,
+  user1profileUrl,
+  user2profileUrl,
+}: TradeCardProps) {
   const tabIndex = useTabIndex();
-  const tempId = 1 + Math.floor(Math.random() * 100); // TODO: replace with legit id
-  const whatTab = tabIndex === 0 ? `/trades/${tempId}` : `/offers/${tempId}`;
+  const whatTab = tabIndex === 0 ? `/trades/${tradeGroupid}` : `/offers/${tradeGroupid}`;
 
   // STATES
-  const [modalState, setModalState] = useState(false);
-  const [currentPhoto, setCurrentPhoto] = useState<string>(itemPhoto);
-  const apple =
-    "https://imgs.search.brave.com/PPT7-9-VZfK62z3KLwnDVV7uDqWLEqE3D7lnmjF6EVk/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvNDU4/NjE3NzE3L3Bob3Rv/L2FwcGxlLWluYy1s/b2dvLmpwZz9zPTYx/Mng2MTImdz0wJms9/MjAmYz1sVTd5SWZQ/OUM0RlRzbmRlQWxu/em5raFowUjhsc1Ni/ODZtd3V0U2M2UmU0/PQ";
-  const [isPhotoPreviewVisibile, setIsPhotoPreviewVisible] = useState<boolean>(false);
 
-  const handleOnEditItem = () => {};
-  const handleOnDeleteItem = () => {
-    setModalState(true);
-  };
-
-  const onPreviewPhoto = (photo: string) => {
-    setCurrentPhoto(photo);
-    setIsPhotoPreviewVisible(true);
-  };
   return (
     <Link href={whatTab}>
       <View style={{ flex: 1, width: "100%" }}>
         <Card style={{ height: "auto", margin: 8, paddingBottom: 10 }}>
-          {/* MODALS */}
-
-          <PhotoPreview
-            photo={currentPhoto}
-            state={isPhotoPreviewVisibile}
-            setState={setIsPhotoPreviewVisible}
-          />
-
-          {/* MODALS END */}
-
           <View
             style={{
               flexDirection: "row",
               flex: 1,
               marginBottom: 10,
               backgroundColor: "grey",
+              gap: 4,
             }}
           >
-            <Pressable style={{ flex: 1, height: 200 }} onPress={() => onPreviewPhoto(itemPhoto)}>
+            <Pressable style={{ flex: 1, height: 200 }}>
               <Image
                 style={{
                   flex: 1,
@@ -58,10 +46,10 @@ export default function PendingTradeCard() {
                   width: "100%",
                   resizeMode: "cover",
                 }}
-                source={itemPhoto}
+                source={{ uri: user1profileUrl }}
               />
             </Pressable>
-            <Pressable style={{ flex: 1, height: 200 }} onPress={() => onPreviewPhoto(apple)}>
+            <Pressable style={{ flex: 1, height: 200 }}>
               <Image
                 style={{
                   flex: 1,
@@ -69,7 +57,7 @@ export default function PendingTradeCard() {
                   width: "100%",
                   resizeMode: "cover",
                 }}
-                source={{ uri: apple }}
+                source={{ uri: user2profileUrl }}
               />
             </Pressable>
           </View>
@@ -84,11 +72,12 @@ export default function PendingTradeCard() {
               }}
             >
               <View>
-                <Text variant="headlineSmall">Liden x Nize</Text>
+                <Text variant="headlineSmall">
+                  {user1FirstName} x {user2FirstName}
+                </Text>
               </View>
               <Text style={{ marginLeft: "auto", paddingTop: 5 }}>11/27/35</Text>
             </View>
-            <Text>An apple for a goat</Text>
           </Card.Content>
         </Card>
       </View>
