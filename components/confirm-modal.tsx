@@ -6,7 +6,8 @@ type ConfirmModalType = {
   title: string;
   state: boolean;
   setState: React.Dispatch<SetStateAction<boolean>>;
-  handleOnConfirmDelete: any;
+  handleOnConfirmDelete: () => void;
+  onRequestClose: () => void;
 };
 
 export default function ConfirmModal({
@@ -14,6 +15,7 @@ export default function ConfirmModal({
   state,
   setState,
   handleOnConfirmDelete,
+  onRequestClose,
 }: ConfirmModalType) {
   const handleOnConfirm = () => {
     handleOnConfirmDelete();
@@ -24,7 +26,7 @@ export default function ConfirmModal({
     <Portal>
       <Modal
         visible={state}
-        onDismiss={() => setState(false)}
+        onDismiss={onRequestClose}
         contentContainerStyle={styles.modalContainerStyle}
       >
         <Text variant="headlineSmall" style={{ justifyContent: "center", textAlign: "center" }}>
@@ -35,7 +37,7 @@ export default function ConfirmModal({
           <Button style={{ flex: 1 }} mode="contained" onPress={handleOnConfirm}>
             Confirm
           </Button>
-          <Button style={{ flex: 1 }} mode="outlined" onPress={() => setState(false)}>
+          <Button style={{ flex: 1 }} mode="outlined" onPress={onRequestClose}>
             Cancel
           </Button>
         </View>
