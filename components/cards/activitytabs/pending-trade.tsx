@@ -3,8 +3,6 @@ import { Image, Pressable, View } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { useTabIndex } from "react-native-paper-tabs";
 
-const itemPhoto = require("~/assets/Kambing.png");
-
 interface TradeCardProps {
   tradeGroupid: number;
   user1FirstName: string;

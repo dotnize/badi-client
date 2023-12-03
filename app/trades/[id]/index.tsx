@@ -21,6 +21,7 @@ export default function ActiveTrade() {
   const [tradeInventory, setTradeInventory] = useState<TradeInventory[]>([]);
   const [tradeGroup, setTradeGroup] = useState<TradeGroup | undefined>(undefined);
 
+  //id used from localsearch params see /components/cards/active-trade
   async function getTradeGroup() {
     const { data, error } = await apiFetch<TradeGroup>(`/tradegroup/${id}`);
 
@@ -31,6 +32,8 @@ export default function ActiveTrade() {
     }
   }
   // If naa natay backend, pwede nato gamiton ang id ig fetch.
+  //id used from localsearch params see /components/cards/active-trade
+
   async function getTradeInventory() {
     const { data, error } = await apiFetch<TradeInventory[]>(`/tradeinventory/group/${id}`);
 
@@ -48,6 +51,7 @@ export default function ActiveTrade() {
     }
   }, [user?.id]);
 
+  //for the progress bar completed count / total count (ex. if 2 items only and 1 is completed 1 is not, 50% completed)
   useEffect(() => {
     const completedCount = tradeInventory.filter((trade) => trade.isCompleted).length;
     const totalCount = tradeInventory.length;
