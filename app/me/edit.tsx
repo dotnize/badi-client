@@ -1,57 +1,48 @@
 // URL: /me/edit
 
-import * as ImagePicker from "expo-image-picker";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useState } from "react";
-import { Alert, Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
-import { COLORS } from "~/lib/theme";
 
-type SearchParams = {
-  name: string;
-  pfpPic: string;
-  coverPic: string;
-  location: string;
-};
+import { useSession } from "~/hooks/useSession";
+import { defaultAvatarUrl } from "~/lib/firebase";
+import { COLORS } from "~/lib/theme";
+import { User } from "~/lib/types";
+import { apiFetch, pickImageGetURL } from "~/lib/utils";
 
 export default function EditProfile() {
-  // use fetch to get the currentUser
+  const { user, setUser } = useSession();
 
-  // VARIABLES
-  // const params = useLocalSearchParams() as SearchParams;
+  const [firstName, setFirstName] = useState(user?.firstName);
+  const [lastName, setLastName] = useState(user?.lastName);
+  const [location, setLocation] = useState(user?.location);
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || null);
+  const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatarUrl || "");
 
-  const fName = "Liden U.",
-    lName = "Hoe",
-    loc = "Cebu";
+  async function selectImage() {
+    const uploadedURL = await pickImageGetURL();
+    if (uploadedURL) setAvatarUrl(uploadedURL);
+  }
 
-  // STATES
-  const [firstName, setFirstName] = useState(fName);
-  const [lastName, setLastName] = useState(lName);
-  const [location, setLocation] = useState(loc);
-  const [pfpPicChange, setPfpPicChange] = useState<string>();
-  const [coverPicChange, setCoverPicChange] = useState<string>();
+  async function saveChanges() {
+    if (!user || !firstName || !lastName || !location) return;
 
-  // HANDLERS
-  // Function to pick an image from the device's media library
-  const pickImage = async (urlPic: string) => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const newUser: User = { ...user, firstName, lastName, location, phoneNumber, avatarUrl };
 
-    if (status !== "granted") {
-      Alert.alert("Permission Denied", `Sorry, we need cameraroll permission to upload images.`);
+    const { data, error } = await apiFetch<User>(`/user/${user.id}`, {
+      method: "PUT",
+      body: JSON.stringify(newUser),
+    });
+
+    if (error || !data) {
+      console.log(error || "Something went wrong while updating user profile");
     } else {
-      // Launch the image library and get the selected image
-      const result = await ImagePicker.launchImageLibraryAsync();
-
-      if (result?.assets?.[0]?.uri) {
-        // If an image is selected (not cancelled), update the file state variable
-        if (urlPic === "profile") {
-          setPfpPicChange(result?.assets?.[0]?.uri);
-        } else if (urlPic === "background") {
-          setCoverPicChange(result?.assets?.[0]?.uri);
-        }
-      }
+      setUser(data);
+      // eslint-disable-next-line no-unused-expressions
+      router.canGoBack() ? router.back() : router.push("/me");
     }
-  };
+  }
 
   return (
     <View style={{ flex: 1, padding: 20, gap: 15 }}>
@@ -62,7 +53,7 @@ export default function EditProfile() {
         mode="outlined"
         style={styles.editNameInput}
         value={firstName}
-        onChangeText={(text) => setFirstName(text)}
+        onChangeText={setFirstName}
       />
       <TextInput
         selectTextOnFocus
@@ -71,7 +62,7 @@ export default function EditProfile() {
         mode="outlined"
         style={styles.editNameInput}
         value={lastName}
-        onChangeText={(text) => setLastName(text)}
+        onChangeText={setLastName}
       />
       <TextInput
         selectTextOnFocus
@@ -80,7 +71,16 @@ export default function EditProfile() {
         mode="outlined"
         style={styles.editNameInput}
         value={location}
-        onChangeText={(text) => setLocation(text)}
+        onChangeText={setLocation}
+      />
+      <TextInput
+        selectTextOnFocus
+        textColor="#555"
+        label="Phone number"
+        mode="outlined"
+        style={styles.editNameInput}
+        value={phoneNumber || ""}
+        onChangeText={setPhoneNumber}
       />
       <View style={styles.editProfileLabels}>
         <Text variant="titleMedium">Profile Picture</Text>
@@ -88,34 +88,18 @@ export default function EditProfile() {
           mode="contained"
           style={styles.editProfilePicButton}
           textColor={COLORS.primary}
-          onPress={() => pickImage("profile")}
+          onPress={selectImage}
         >
           Edit
         </Button>
       </View>
 
-      <Image style={styles.editProfilePic} source={{ uri: pfpPicChange }} />
-
-      <View style={styles.editProfileLabels}>
-        <Text variant="titleMedium">Background Picture</Text>
-        <Button
-          mode="contained"
-          style={styles.editProfilePicButton}
-          textColor={COLORS.primary}
-          onPress={() => pickImage("background")}
-        >
-          Edit
-        </Button>
-      </View>
-
-      <Image style={styles.backgroundPic} source={{ uri: coverPicChange }} />
+      <Image style={styles.editProfilePic} source={{ uri: avatarUrl || defaultAvatarUrl }} />
 
       <View style={{ marginTop: "auto", gap: 5 }}>
-        <Link asChild href="/me">
-          <Button style={styles.saveChangesButton} mode="contained">
-            Save Profile Changes
-          </Button>
-        </Link>
+        <Button onPress={saveChanges} style={styles.saveChangesButton} mode="contained">
+          Save Profile Changess
+        </Button>
 
         <Link asChild href="/me">
           <Button style={styles.saveChangesButton} buttonColor={COLORS.secondary} mode="contained">
@@ -128,14 +112,6 @@ export default function EditProfile() {
 }
 
 const styles = StyleSheet.create({
-  backgroundPic: {
-    resizeMode: "contain",
-    alignSelf: "center",
-    backgroundColor: "#e0e0e0",
-    height: 200,
-    width: "100%",
-  },
-
   editProfileLabels: {
     marginHorizontal: 10,
     alignItems: "center",
