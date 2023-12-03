@@ -1,10 +1,36 @@
+import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 import ActiveTradeCard from "~/components/cards/activitytabs/active-trade";
 import PendingTradeCard from "~/components/cards/activitytabs/pending-trade";
+import { useSession } from "~/hooks/useSession";
+import { defaultAvatarUrl } from "~/lib/firebase";
+import { TradeGroup } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 
 export default function Activity() {
+  const { user } = useSession();
+
+  const [trades, setTrades] = useState<TradeGroup[]>([]);
+
+  async function getTradeGroup() {
+    const { data, error } = await apiFetch<TradeGroup[]>(`/tradegroup/user/${user?.id}`);
+
+    if (error) {
+      console.log(error);
+    } else {
+      setTrades(data || []);
+      console.log(data);
+    }
+  }
+
+  useEffect(() => {
+    if (user?.id) {
+      getTradeGroup();
+    }
+  }, [user?.id]);
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
@@ -26,11 +52,18 @@ export default function Activity() {
           <TabScreen label="Active">
             <View style={{ flex: 1 }}>
               <ScrollView style={{ flex: 1, padding: 8 }}>
-                <ActiveTradeCard />
-                <ActiveTradeCard />
-                <ActiveTradeCard />
-                <ActiveTradeCard />
-                <ActiveTradeCard />
+                {trades
+                  .filter((trade) => trade.status === "active")
+                  .map((trade, index) => (
+                    <ActiveTradeCard
+                      key={index}
+                      tradeGroupId={trade.id}
+                      user1FirstName={trade.user1?.firstName || ""}
+                      user2FirstName={trade.user2?.firstName || ""}
+                      user1profileUrl={trade.user1?.avatarUrl || defaultAvatarUrl}
+                      user2profileUrl={trade.user1?.avatarUrl || defaultAvatarUrl}
+                    />
+                  ))}
               </ScrollView>
             </View>
           </TabScreen>
@@ -38,11 +71,18 @@ export default function Activity() {
           <TabScreen label="Pending">
             <View style={{ flex: 1 }}>
               <ScrollView style={{ flex: 1, padding: 8 }}>
-                <PendingTradeCard />
-                <PendingTradeCard />
-                <PendingTradeCard />
-                <PendingTradeCard />
-                <PendingTradeCard />
+                {trades
+                  .filter((trade) => trade.status === "pending")
+                  .map((trade, index) => (
+                    <PendingTradeCard
+                      key={index}
+                      tradeGroupid={trade.id}
+                      user1FirstName={trade.user1?.firstName || ""}
+                      user2FirstName={trade.user2?.firstName || ""}
+                      user1profileUrl={trade.user1?.avatarUrl || defaultAvatarUrl}
+                      user2profileUrl={trade.user1?.avatarUrl || defaultAvatarUrl}
+                    />
+                  ))}
               </ScrollView>
             </View>
           </TabScreen>
