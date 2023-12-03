@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 import { ActivityIndicator, IconButton, Searchbar } from "react-native-paper";
@@ -9,11 +9,9 @@ import { Inventory, Wish } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
 export default function Index() {
-  const { category, service, item, wish } = useLocalSearchParams();
-  // TODO: handle filtering
-  console.log(category, service, item, wish);
+  const { category, services, items, query } = useLocalSearchParams();
 
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState((query as string) || "");
   const [inventories, setInventories] = useState<Inventory[]>([]);
   const [wishes, setWishes] = useState<Wish[]>([]);
 
@@ -46,29 +44,39 @@ export default function Index() {
     <View style={{ flex: 1 }}>
       <View style={{ flexDirection: "row", alignItems: "center", padding: 16 }}>
         <Searchbar
+          mode="bar"
           placeholder="Search..."
           value={searchValue}
-          onChangeText={(query) => setSearchValue(query)}
+          onChangeText={setSearchValue}
           style={{ flex: 1 }}
+          right={() => (
+            <Link href="/search" asChild>
+              <IconButton icon="filter" />
+            </Link>
+          )}
         />
-        <IconButton size={20} icon="bell" />
       </View>
       <TabsProvider defaultIndex={0}>
         <Tabs>
-          <TabScreen label="Items">
+          <TabScreen label="Inventories">
             <FlatList
               contentContainerStyle={{ gap: 10, padding: 8 }}
-              data={inventories.filter((inv) => inv.type === "item")}
-              ListEmptyComponent={() => <ActivityIndicator animating />}
-              renderItem={({ item }) => <ListingCard listing={item} />}
-              keyExtractor={(item) => item.id.toString()}
-            />
-          </TabScreen>
-
-          <TabScreen label="Services">
-            <FlatList
-              contentContainerStyle={{ gap: 10, padding: 8 }}
-              data={inventories.filter((inv) => inv.type === "service")}
+              data={inventories
+                .filter((inventory) =>
+                  (category as string) ? inventory.keywords.includes(category as string) : true
+                )
+                .filter((inventory) =>
+                  searchValue
+                    ? inventory.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+                      inventory.keywords.includes(searchValue.toLowerCase())
+                    : true
+                )
+                .filter((inventory) =>
+                  (services as string) && !items ? inventory.type === "service" : true
+                )
+                .filter((inventory) =>
+                  (items as string) && !services ? inventory.type === "item" : true
+                )}
               ListEmptyComponent={() => <ActivityIndicator animating />}
               renderItem={({ item }) => <ListingCard listing={item} />}
               keyExtractor={(item) => item.id.toString()}
