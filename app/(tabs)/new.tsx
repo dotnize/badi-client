@@ -1,10 +1,12 @@
 import { AntDesign } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useState } from "react";
 import { Image, ScrollView, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Chip, RadioButton, Text, TextInput } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
+import { useSession } from "~/hooks/useSession";
 import { emptyImageUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
 import { Inventory, Wish } from "~/lib/types";
@@ -15,18 +17,19 @@ const availableCategories = [
   { label: "Accessories", value: "accessories" },
   { label: "Bags", value: "bags" },
   { label: "Books", value: "books" },
-  { label: "Hobbies and Stationary", value: "hobbies" },
-  { label: "Hardware and Applicances", value: "appliances" },
+  { label: "Hobbies", value: "hobbies" },
+  { label: "Applicances", value: "appliances" },
   { label: "Gadgets", value: "gadgets" },
   { label: "Vehicles", value: "vehicles" },
   { label: "Shoes", value: "shoes" },
-  { label: "Sports and Travel", value: "sportstravel" },
+  { label: "Sports", value: "sports" },
 ];
 
 function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
+  const { user } = useSession();
+
   // TODO: support multiple images
   const [imageUrl, setImageUrl] = useState<string>("");
-
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [category, setCategory] = useState<string>("");
@@ -40,7 +43,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
   const [currentKeyword, setCurrentKeyword] = useState<string>("");
 
   async function postListing() {
-    if (!name || !description || !category || !imageUrl || !type) return;
+    if (!name || !description || !category || !imageUrl || !type || !preferredOffer) return;
     const finalKeywords = [category, ...keywords];
 
     let newListing: Partial<Inventory> = {
@@ -52,7 +55,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
     };
 
     if (listingType === "inventory") {
-      newListing = { ...newListing, location, preferredOffer };
+      newListing = { ...newListing, location: location || user?.location, preferredOffer };
     }
 
     const { data, error } = await apiFetch<Inventory | Wish>(`/${listingType}`, {
@@ -64,6 +67,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
       console.log(error || "Something went wrong while posting listing");
     } else {
       console.log("Successfully posted listing");
+      router.replace("/");
     }
   }
 
@@ -116,7 +120,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
       <View style={{ gap: 2 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text>Image:</Text>
-          <Button mode="contained" onPress={selectImage}>
+          <Button mode="contained-tonal" onPress={selectImage}>
             Select Image
           </Button>
         </View>
@@ -189,7 +193,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
             <TextInput
               value={preferredOffer}
               onChangeText={setPreferredOffer}
-              label="Describe your preferred offer (optional)"
+              label="Describe your preferred offer"
             />
           </View>
         </>

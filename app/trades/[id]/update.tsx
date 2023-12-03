@@ -3,47 +3,86 @@
 
 // Use the useLocalSearchParams hook from expo-router to get the id from the URL.
 
-import { useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { Image, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Text, TextInput } from "react-native-paper";
+import { useSession } from "~/hooks/useSession";
+import { TradeInventory } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 
 export default function PostTradeProgress() {
   const { id } = useLocalSearchParams();
-  // If naa natay backend, pwede nato gamiton ang id ig fetch.
+  const { user } = useSession();
+
+  const [tradeInventory, setTradeInventory] = useState<TradeInventory[]>([]);
+  const [items, setItems] = useState<{ label: string | undefined; value: string }[]>([]);
   const [details, setDetails] = useState("");
   const [value, setValue] = useState<string | null>(null);
   const [isFocus, setIsFocus] = useState(false);
-  const [quantity, setQuantity] = useState(0);
+  const [incrementQuantity, setIncrementQuantity] = useState(0);
+  // If naa natay backend, pwede nato gamiton ang id ig fetch.
 
-  const incrementQuantity = () => {
-    if (quantity !== -1 && quantity < 100) {
-      setQuantity((prevQuantity) => prevQuantity + 1);
-      console.log(quantity);
+  async function getTradeInventory() {
+    const { data, error } = await apiFetch<TradeInventory[]>(`/tradeinventory/group/${id}`);
+    if (error) {
+      console.log(error);
     } else {
-      setQuantity(100);
+      if (data) {
+        const filteredData = data.filter(
+          (trade) => trade.senderId === user?.id && !trade.isCompleted
+        );
+        setTradeInventory(filteredData);
+      }
+    }
+  }
+  useEffect(() => {
+    if (user?.id) {
+      getTradeInventory();
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    const formattedItems = tradeInventory.map((trade, index) => ({
+      label: trade.inventory?.name,
+      value: String(trade.id),
+    }));
+    setItems(formattedItems);
+  }, [tradeInventory]);
+
+  async function updateTradeInventory() {
+    const { data, error } = await apiFetch<TradeInventory>(`/tradeinventory/${value}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        incrementQuantity,
+      }),
+    });
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+      router.replace(`/trades/${id}`);
+    }
+  }
+
+  const increment = () => {
+    if (incrementQuantity !== -1 && incrementQuantity < Number.MAX_SAFE_INTEGER) {
+      setIncrementQuantity((prevQuantity) => prevQuantity + 1);
+      console.log(incrementQuantity);
+    } else {
+      setIncrementQuantity(Number.MAX_SAFE_INTEGER);
     }
   };
 
-  const decrementQuantity = () => {
-    if (quantity !== 0 && quantity > -1) {
-      setQuantity((prevQuantity) => prevQuantity - 1);
-      console.log(quantity);
+  const decrement = () => {
+    if (incrementQuantity !== 0 && incrementQuantity > -1) {
+      setIncrementQuantity((prevQuantity) => prevQuantity - 1);
+      console.log(incrementQuantity);
     } else {
-      setQuantity(0);
+      setIncrementQuantity(0);
     }
   };
-  const items = [
-    { label: "Kanding", value: "1" },
-    { label: "Kabayo", value: "2" },
-    { label: "Itik", value: "3" },
-    { label: "Item 4", value: "4" },
-    { label: "Item 5", value: "5" },
-    { label: "Item 6", value: "6" },
-    { label: "Item 7", value: "7" },
-    { label: "Item 8", value: "8" },
-  ];
 
   const renderLabel = () => {
     if (value || isFocus) {
@@ -134,11 +173,11 @@ export default function PostTradeProgress() {
         >
           <Text>Quantity</Text>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Button mode="contained" style={{ height: 40 }} onPress={incrementQuantity}>
+            <Button mode="contained" style={{ height: 40 }} onPress={increment}>
               +
             </Button>
-            <Text variant="titleMedium">{quantity}</Text>
-            <Button mode="contained" style={{ height: 40 }} onPress={decrementQuantity}>
+            <Text variant="titleMedium">{incrementQuantity}</Text>
+            <Button mode="contained" style={{ height: 40 }} onPress={decrement}>
               -
             </Button>
           </View>
@@ -146,7 +185,9 @@ export default function PostTradeProgress() {
       </View>
 
       <View style={{ width: "100%" }}>
-        <Button mode="contained">Post Transaction Progress</Button>
+        <Button mode="contained" onPress={updateTradeInventory}>
+          Post Transaction Progress
+        </Button>
       </View>
     </View>
   );

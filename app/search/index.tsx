@@ -8,7 +8,6 @@ import { Chip, IconButton, RadioButton, Searchbar } from "react-native-paper";
 export default function Search() {
   const [itemsChip, setItemsChip] = useState<string | null>(null);
   const [servicesChip, setServicesChip] = useState<string | null>(null);
-  const [wishesChip, setWishesChip] = useState<string | null>(null);
   const [selectedRadioButton, setSelectedRadioButton] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -17,14 +16,14 @@ export default function Search() {
     [1, "Accessories"],
     [2, "Bags"],
     [3, "Books"],
-    [4, "Hobbies and Stationary"],
+    [4, "Hobbies"],
   ]);
   const radioButtonsData2 = new Map<number, string>([
-    [5, "Hardware and Applicances"],
+    [5, "Appliances"],
     [6, "Gadgets"],
     [7, "Vehicles"],
     [8, "Shoes"],
-    [9, "Sports and Travel"],
+    [9, "Sports"],
   ]);
 
   const filterButton = () => {
@@ -37,9 +36,6 @@ export default function Search() {
     }
     if (servicesChip) {
       queryParams.set("services", "true");
-    }
-    if (wishesChip) {
-      queryParams.set("wishes", "true");
     }
     if (selectedRadioButton) {
       const category =
@@ -93,18 +89,6 @@ export default function Search() {
           selected={servicesChip === "Services"}
         >
           Services
-        </Chip>
-        <Chip
-          onPress={() => {
-            if (wishesChip === "Wishes") {
-              setWishesChip(null);
-            } else {
-              setWishesChip("Wishes");
-            }
-          }}
-          selected={wishesChip === "Wishes"}
-        >
-          Wishes
         </Chip>
       </View>
       <View style={{ flexDirection: "row" }}>
