@@ -1,435 +1,179 @@
-// hello guyss
-
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import "react-native-gesture-handler";
-import { Button, Card, DefaultTheme, Modal, Portal, Snackbar, Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
-import ConfirmModal from "~/components/confirm-modal";
+
+import ListingCard from "~/components/cards/listing-card";
 import PhotoPreview from "~/components/photo-preview";
+import { useSession } from "~/hooks/useSession";
+import { defaultAvatarUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
-import HistoryItem from "./cards/home/history-item-card";
-import InventoryItem from "./cards/home/inventory-item-card";
-import WishItem from "./cards/home/wish-item-card copy";
+import type { Inventory, User, Wish } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 
-const defaultPic = require("~/assets/liden.png");
+export default function ProfileContent({ userId }: { userId: number }) {
+  const session = useSession();
+  const isLoggedUser = userId === session.user?.id;
 
-const theme = {
-  ...DefaultTheme,
-  colors: COLORS,
-};
+  const [user, setUser] = useState<User | undefined>(undefined);
+  const [inventory, setInventory] = useState<Inventory[]>([]);
+  const [wishes, setWishes] = useState<Wish[]>([]);
 
-const defaultPfpPic =
-  "https://pbs.twimg.com/profile_images/1402484552195481600/i0GBotgY_400x400.jpg";
-const defaultCoverPic =
-  "https://www.adorama.com/alc/wp-content/uploads/2018/11/landscape-photography-tips-yosemite-valley-feature.jpg";
+  async function fetchOtherUser() {
+    const { data, error } = await apiFetch<User>(`/user/${userId}`);
+    if (error || !data) {
+      console.log(error || "No user found");
+    } else if (data) {
+      setUser(data);
+    }
+  }
 
-export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
-  // VARIABLES
-  // const name = user.name etc.
-  console.log(wishes);
+  async function fetchInventory() {
+    const { data, error } = await apiFetch<Inventory[]>(`/inventory/user/${userId}`);
+    if (error || !data) {
+      console.log(error || "No inventory found");
+    } else if (data) {
+      setInventory(data);
+    }
+  }
 
-  // STATES
-  const [currentWishes, setCurrentWishes] = useState<any>(wishes);
-  console.log(wishes, currentWishes);
-
-  const [name, setName] = useState("Liden U. Hoe");
-  const scrollViewRef = useRef<ScrollView>(null);
-  const [currentPhoto, setCurrentPhoto] = useState<string>(defaultPfpPic);
-  const [isPhotoPreviewVisibile, setIsPhotoPreviewVisible] = useState<boolean>(false);
-  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState<boolean>(false);
-  const [isProfileSettingsCardVisible, setIsProfileSettingsCardVisible] = useState(false);
-  const [isSnackBarVisible, setIsSnackBarVisible] = useState<boolean>(false);
-
-  // HANDLERS
-  const saveProfileChanges = () => setIsSnackBarVisible(true);
-  const onDismissSnackBar = () => setIsSnackBarVisible(false);
-
-  const toggleProfileSettingsCard = () => setIsProfileSettingsCardVisible(true);
-  const showConfirmModal = () => {
-    setIsProfileSettingsCardVisible(false);
-    setIsConfirmModalVisible(true);
-  };
-
-  const onPreviewPhoto = (photo: string) => {
-    setCurrentPhoto(photo);
-    setIsPhotoPreviewVisible(true);
-  };
-
-  const [deletedItems, setDeletedItems] = useState<number[]>([]);
-  const deleteItemById = (id: number) => {
-    // Use the functional form of setDeletedItems to ensure you're working with the latest state
-    setDeletedItems((prevDeletedItems) => [...prevDeletedItems, id]);
-  };
+  async function fetchWishes() {
+    const { data, error } = await apiFetch<Wish[]>(`/wish/user/${userId}`);
+    if (error || !data) {
+      console.log(error || "No wishes found");
+    } else if (data) {
+      setWishes(data);
+    }
+  }
 
   useEffect(() => {
-    // Filter out items with IDs present in the updated deletedItems array
-    const filteredData = wishes?.filter((item: any) => !deletedItems.includes(item.id));
+    if (session.user !== undefined) {
+      if (!isLoggedUser) {
+        fetchOtherUser();
+        console.log("fetching other user");
+      } else {
+        setUser(session.user as User);
+      }
+      fetchInventory();
+      fetchWishes();
+    }
+  }, [session.user]);
 
-    // Update the current wishes state
-    setCurrentWishes(filteredData);
-  }, [deletedItems, wishes]);
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#FBF9F1",
-    },
-    photoPreview: {
-      resizeMode: "contain",
-      width: "100%",
-      height: "100%",
-    },
-    backgroundPic: {
-      resizeMode: "cover",
-      alignSelf: "center",
-      backgroundColor: "#e0e0e0",
-      height: 200,
-      width: "100%",
-    },
-    profilePic: {
-      resizeMode: "cover",
-      borderRadius: 100,
-      height: 150,
-      width: 150,
-      // borderWidth: 6,
-      // borderColor: "white",
-    },
-    profilePicButton: {
-      position: "absolute",
-      top: 120, // if header not shown
-      // top: 170,
-      left: 25,
-      // borderWidth: 5,
-      // borderColor: COLORS.surface,
-    },
-    profileTexts: {
-      marginHorizontal: 25,
-      marginTop: isLoggedUser ? 0 : 80,
-      marginBottom: 10,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-    editProfileLabels: {
-      marginHorizontal: 10,
-      alignItems: "center",
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    profileName: {
-      fontWeight: "bold",
-      fontFamily: "arial",
-      fontSize: 30,
-      color: "black",
-    },
-    profileRatingLabel: {
-      fontWeight: "bold",
-      fontFamily: "arial",
-      fontSize: 20,
-      color: "black",
-    },
-    editProfileButtons: {
-      alignSelf: "flex-end",
-      margin: 20,
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 10,
-    },
-    editProfilePicButton: {
-      alignSelf: "flex-end",
-      backgroundColor: "rgb(234,239,224)",
-    },
-    editProfileModal: {
-      margin: 20,
-      gap: 10,
-    },
-
-    modalContainerStyle: {
-      backgroundColor: "white",
-      paddingHorizontal: 20,
-      paddingVertical: 40,
-      maxHeight: "80%",
-      overflow: "scroll",
-      gap: 30,
-      borderRadius: 10,
-    },
-    editNameInput: {
-      marginVertical: 20,
-      backgroundColor: "white",
-      fontSize: 20,
-    },
-    editProfilePic: {
-      resizeMode: "cover",
-      borderRadius: 100,
-      height: 150,
-      width: 150,
-      alignSelf: "center",
-      backgroundColor: "#f0f0f0",
-      borderWidth: 6,
-      borderColor: "white",
-    },
-    saveChangesButton: {
-      borderRadius: 0,
-      width: "100%",
-      alignSelf: "center",
-      fontWeight: "bold",
-    },
-
-    logo: {
-      width: 66,
-      height: 58,
-    },
-    item: {
-      backgroundColor: "#f9c2ff",
-      padding: 20,
-      marginVertical: 8,
-      marginHorizontal: 16,
-    },
-    title: {
-      fontSize: 32,
-    },
-  });
+  const [photoPreview, setPhotoPreview] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <Portal>
-        <Snackbar
-          theme={theme}
-          style={{ marginBottom: 100 }}
-          visible={isSnackBarVisible}
-          duration={2000}
-          onDismiss={onDismissSnackBar}
-          onIconPress={onDismissSnackBar}
-        >
-          Profile Saved!
-        </Snackbar>
-
-        <Modal
-          onDismiss={() => setIsProfileSettingsCardVisible(false)}
-          visible={isProfileSettingsCardVisible}
-          theme={{
-            colors: {
-              backdrop: "transparent",
-              surface: "white",
-            },
-          }}
-          contentContainerStyle={{
-            position: "absolute",
-            alignSelf: "flex-end",
-            padding: 5,
-            borderRadius: 5,
-            top: 265,
-            right: 20,
-            zIndex: 999,
-            backgroundColor: COLORS.surface,
-          }}
-        >
-          <Button
-            style={{ backgroundColor: COLORS.surface }}
-            textColor="black"
-            icon="account-remove"
-            mode="contained"
-            onPress={showConfirmModal}
-          >
-            Delete Account
-          </Button>
-        </Modal>
-      </Portal>
-
+    <View style={{ flex: 1 }}>
       {/* MODALS */}
-      <ConfirmModal
-        title={`Your account will be deleted.${"\n"}Are you sure?`}
-        state={isConfirmModalVisible}
-        setState={setIsConfirmModalVisible}
-        handleOnConfirmDelete={null}
-      />
-
       <PhotoPreview
-        photo={currentPhoto}
-        state={isPhotoPreviewVisibile}
-        setState={setIsPhotoPreviewVisible}
+        photo={user?.avatarUrl || defaultAvatarUrl}
+        state={photoPreview}
+        setState={setPhotoPreview}
       />
-
       {/*  MODALS END*/}
 
       <ScrollView style={{ flex: 1 }}>
-        <Pressable onPress={() => onPreviewPhoto(defaultCoverPic)}>
-          <Image style={styles.backgroundPic} source={{ uri: defaultCoverPic }} />
-        </Pressable>
+        <View style={{ height: 128 }} />
 
-        <Pressable style={styles.profilePicButton} onPress={() => onPreviewPhoto(defaultPfpPic)}>
-          <Image style={styles.profilePic} source={{ uri: defaultPfpPic }} />
+        <Pressable style={styles.profilePicButton} onPress={() => setPhotoPreview(true)}>
+          <Image style={styles.profilePic} source={{ uri: user?.avatarUrl || defaultAvatarUrl }} />
         </Pressable>
 
         {isLoggedUser && (
           <View style={styles.editProfileButtons}>
-            {/* <Link
-              asChild
-              href={{
-                pathname: "/me/edit",
-                params: {
-                  name: name,
-                  pfpPic: defaultPfpPic,
-                  coverPic: defaultCoverPic,
-                },
-              }}
-            > */}
-            <Button
-              icon="pencil"
-              mode="outlined"
-              contentStyle={{ flexDirection: "row-reverse" }}
-              textColor={COLORS.primary}
-            >
-              Edit Profile
-            </Button>
-            {/* </Link> */}
-
-            <Entypo
-              style={{ verticalAlign: "middle" }}
-              name="dots-three-vertical"
-              size={18}
-              color="black"
-              onPress={toggleProfileSettingsCard}
-            />
+            <Link asChild href="/me/edit">
+              <Button
+                icon="pencil"
+                mode="outlined"
+                contentStyle={{ flexDirection: "row-reverse" }}
+                textColor={COLORS.primary}
+              >
+                Edit Profile
+              </Button>
+            </Link>
           </View>
         )}
 
-        <View style={styles.profileTexts}>
-          <Text variant="headlineMedium">Liden U. Hoe</Text>
-          <Link href={{ pathname: "/me/ratings" }}>
+        <View
+          style={{
+            marginHorizontal: 25,
+            marginTop: isLoggedUser ? 0 : 80,
+            marginBottom: 10,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text variant="headlineMedium">
+            {user?.firstName} {user?.lastName}
+          </Text>
+          <Link href={isLoggedUser ? `/me/ratings` : `/user/${userId}/ratings`}>
             <Text variant="titleMedium">
-              &#9733; &#9733; &#9733; (69) &nbsp;
+              &#9733; {user?.averageRating} &nbsp;
               <AntDesign name="infocirlceo" size={18} style={{ verticalAlign: "middle" }} />
             </Text>
           </Link>
         </View>
 
         {!isLoggedUser && (
-          <Button style={{ marginHorizontal: 10 }} mode="contained">
+          /* TODO: message endpoint also */
+          <Button style={{ marginHorizontal: 10, marginBottom: 12 }} mode="contained">
             Message
           </Button>
-
-          //   <Link
-          //       asChild
-          //       href={{
-          //         pathname: "/me/edit",
-          //         params: {
-          //           name: name,
-          //           pfpPic: defaultPfpPic,
-          //           coverPic: defaultCoverPic,
-          //         },
-          //       }}
-          //     >
-          //       <Button
-          //         icon="pencil"
-          //         mode="outlined"
-          //         contentStyle={{ flexDirection: "row-reverse" }}
-          //         textColor={COLORS.primary}
-          //       >
-          //         Edit Profile
-          //       </Button>
-          //     </Link>
         )}
 
         <TabsProvider defaultIndex={0}>
           <Tabs style={{ backgroundColor: "transparent" }}>
             <TabScreen label="Inventory">
-              <InventoryScreen />
+              <FlatList
+                contentContainerStyle={{ gap: 10, padding: 8 }}
+                data={inventory}
+                renderItem={({ item }) => <ListingCard listing={item} />}
+                keyExtractor={(item) => item.id.toString()}
+              />
             </TabScreen>
             <TabScreen label="Wishes">
-              <WishesScreen />
+              <FlatList
+                contentContainerStyle={{ gap: 10, padding: 8 }}
+                data={wishes}
+                renderItem={({ item }) => <ListingCard listing={item} />}
+                keyExtractor={(item) => item.id.toString()}
+              />
             </TabScreen>
             <TabScreen label="History">
-              <HistoryScreen />
+              <Text>todo</Text>
             </TabScreen>
           </Tabs>
         </TabsProvider>
       </ScrollView>
     </View>
   );
-
-  function WishesScreen() {
-    return (
-      <FlatList
-        data={currentWishes ? currentWishes : wishes}
-        renderItem={({ item }) => (
-          <WishItem wish={item} editable={true} onDelete={() => deleteItemById(item.id)} />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        style={{ height: 1000, paddingVertical: 10 }}
-      />
-    );
-  }
 }
 
-// TAB CONTENTS
-
-function InventoryScreen() {
-  return (
-    <FlatList
-      data={INVENTORY}
-      renderItem={({ item }) => <InventoryItem />}
-      keyExtractor={(item) => item.id.toString()}
-      style={{ height: 1000, paddingVertical: 10 }}
-    />
-  );
-}
-
-function HistoryScreen() {
-  return (
-    <FlatList
-      data={INVENTORY}
-      renderItem={({ item }) => <HistoryItem />}
-      keyExtractor={(item) => item.id.toString()}
-      style={{ height: 1000, paddingVertical: 10 }}
-    />
-  );
-}
-
-type CardProps = { content: string };
-function CardComponent(props: CardProps) {
-  return (
-    <Card style={{ height: 200, backgroundColor: "rgb(243, 246, 235)", margin: 8 }}>
-      <Card.Content>
-        <Text style={{ color: "black" }}>{props.content}</Text>
-      </Card.Content>
-    </Card>
-  );
-}
-
-// CARD CONTENT SAMPLE DATA
-const INVENTORY = [
-  {
-    id: 1,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+const styles = StyleSheet.create({
+  profilePic: {
+    resizeMode: "cover",
+    borderRadius: 100,
+    height: 150,
+    width: 150,
+    // borderWidth: 6,
+    // borderColor: "white",
   },
-  {
-    id: 2,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  profilePicButton: {
+    position: "absolute",
+    top: 48, // if header not shown
+    // top: 170,
+    left: 25,
+    // borderWidth: 5,
+    // borderColor: COLORS.surface,
   },
-  {
-    id: 3,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  editProfileButtons: {
+    alignSelf: "flex-end",
+    margin: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
-  {
-    id: 4,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  },
-  {
-    id: 5,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  },
-  {
-    id: 6,
-    content:
-      "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  },
-];
+});
