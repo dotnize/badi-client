@@ -200,8 +200,14 @@ function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
         </>
       )}
 
-      <Button onPress={saveChanges} mode="contained">
+      <Button onPress={() => {}} mode="contained">
         Save Changes
+      </Button>
+      <Button onPress={() => {}} mode="contained" buttonColor={COLORS.error}>
+        Delete Listing
+      </Button>
+      <Button onPress={() => {}} mode="contained" buttonColor={COLORS.secondary}>
+        Cancel Changes
       </Button>
     </ScrollView>
   );

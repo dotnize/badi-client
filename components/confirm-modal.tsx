@@ -7,7 +7,7 @@ type ConfirmModalType = {
   state: boolean;
   setState: React.Dispatch<SetStateAction<boolean>>;
   handleOnConfirmDelete: () => void;
-  onRequestClose: () => void;
+  onRequestClose?: () => void;
 };
 
 export default function ConfirmModal({
