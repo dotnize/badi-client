@@ -1,15 +1,50 @@
-import { ScrollView, View } from "react-native";
+import { Link } from "expo-router";
+import { useEffect, useState } from "react";
+import { FlatList, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 import ActiveTradeCard from "~/components/cards/activitytabs/active-trade";
 import PendingTradeCard from "~/components/cards/activitytabs/pending-trade";
+import { apiFetch } from "~/lib/utils";
 
 export default function Activity() {
+  const [tradeGroup, setTradeGroup] = useState();
+  const [tradeInventory, setTradeInventory] = useState();
+
+  async function fetchTradeGroup() {
+    const { data, error } = await apiFetch(`/tradegroup/user/1`);
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("tradegroup by ", data);
+      setTradeGroup(data);
+    }
+  }
+
+  async function fetchTradeInventory() {
+    const { data, error } = await apiFetch(`/tradeinventory/group/1`);
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("tradeinventory by ", data);
+      setTradeInventory(data);
+    }
+  }
+
+  useEffect(() => {
+    fetchTradeGroup();
+    fetchTradeInventory();
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
         <Text variant="titleMedium">Trade Activities</Text>
-        <IconButton style={{ position: "absolute", right: 0 }} icon="bell" />
+        <Link asChild href="/notifications">
+          <IconButton style={{ position: "absolute", right: 0 }} icon="bell" />
+        </Link>
       </View>
       <TabsProvider defaultIndex={0}>
         <Tabs
@@ -25,25 +60,41 @@ export default function Activity() {
         >
           <TabScreen label="Active">
             <View style={{ flex: 1 }}>
-              <ScrollView style={{ flex: 1, padding: 8 }}>
+              <FlatList
+                data={tradeInventory}
+                renderItem={({ item }) => (
+                  <ActiveTradeCard item={item} onDelete={() => alert("rtgr")} />
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                style={{ height: 1000, paddingVertical: 10 }}
+              />
+              {/* <ScrollView style={{ flex: 1, padding: 8 }}>
                 <ActiveTradeCard />
                 <ActiveTradeCard />
                 <ActiveTradeCard />
                 <ActiveTradeCard />
                 <ActiveTradeCard />
-              </ScrollView>
+              </ScrollView> */}
             </View>
           </TabScreen>
 
           <TabScreen label="Pending">
             <View style={{ flex: 1 }}>
-              <ScrollView style={{ flex: 1, padding: 8 }}>
+              <FlatList
+                data={tradeGroup}
+                renderItem={({ item }) => (
+                  <PendingTradeCard item={item} onDelete={() => alert("rtgr")} />
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                style={{ height: 1000, paddingVertical: 10 }}
+              />
+              {/* <ScrollView style={{ flex: 1, padding: 8 }}>
                 <PendingTradeCard />
                 <PendingTradeCard />
                 <PendingTradeCard />
                 <PendingTradeCard />
                 <PendingTradeCard />
-              </ScrollView>
+              </ScrollView> */}
             </View>
           </TabScreen>
         </Tabs>

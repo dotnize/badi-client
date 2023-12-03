@@ -1,8 +1,8 @@
 // hello guyss
 
 import { AntDesign, Entypo } from "@expo/vector-icons";
-import { Link } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { Link, useRouter } from "expo-router";
+import { useState } from "react";
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import "react-native-gesture-handler";
 import { Button, Card, DefaultTheme, Modal, Portal, Snackbar, Text } from "react-native-paper";
@@ -10,33 +10,23 @@ import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 import ConfirmModal from "~/components/confirm-modal";
 import PhotoPreview from "~/components/photo-preview";
 import { COLORS } from "~/lib/theme";
-import HistoryItem from "./cards/home/history-item-card";
+import { Inventory, Wish } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 import InventoryItem from "./cards/home/inventory-item-card";
-import WishItem from "./cards/home/wish-item-card copy";
-
-const defaultPic = require("~/assets/liden.png");
-
+import WishItem from "./cards/home/wish-item-card";
 const theme = {
   ...DefaultTheme,
   colors: COLORS,
 };
 
+const defaultPic = require("~/assets/liden.png");
 const defaultPfpPic =
-  "https://pbs.twimg.com/profile_images/1402484552195481600/i0GBotgY_400x400.jpg";
-const defaultCoverPic =
-  "https://www.adorama.com/alc/wp-content/uploads/2018/11/landscape-photography-tips-yosemite-valley-feature.jpg";
-
-export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
-  // VARIABLES
-  // const name = user.name etc.
-  console.log(wishes);
+  "https://img.freepik.com/premium-vector/flat-instagram-icons-notifications_619991-50.jpg";
+const defaultCoverPic = "https://i.stack.imgur.com/lubGc.jpg";
+export default function ProfileContent({ user, isLoggedUser, wishes, inventory }: any) {
+  const router = useRouter();
 
   // STATES
-  const [currentWishes, setCurrentWishes] = useState<any>(wishes);
-  console.log(wishes, currentWishes);
-
-  const [name, setName] = useState("Liden U. Hoe");
-  const scrollViewRef = useRef<ScrollView>(null);
   const [currentPhoto, setCurrentPhoto] = useState<string>(defaultPfpPic);
   const [isPhotoPreviewVisibile, setIsPhotoPreviewVisible] = useState<boolean>(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState<boolean>(false);
@@ -58,20 +48,16 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
     setIsPhotoPreviewVisible(true);
   };
 
-  const [deletedItems, setDeletedItems] = useState<number[]>([]);
-  const deleteItemById = (id: number) => {
-    // Use the functional form of setDeletedItems to ensure you're working with the latest state
-    setDeletedItems((prevDeletedItems) => [...prevDeletedItems, id]);
+  const handleOnDeleteAccount = async () => {
+    const { data, error } = await apiFetch(`/user/1`, { method: "DELETE" });
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+      router.push("/welcome");
+    }
   };
-
-  useEffect(() => {
-    // Filter out items with IDs present in the updated deletedItems array
-    const filteredData = wishes?.filter((item: any) => !deletedItems.includes(item.id));
-
-    // Update the current wishes state
-    setCurrentWishes(filteredData);
-  }, [deletedItems, wishes]);
-
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -94,6 +80,7 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
       borderRadius: 100,
       height: 150,
       width: 150,
+      backgroundColor: "white",
       // borderWidth: 6,
       // borderColor: "white",
     },
@@ -102,8 +89,6 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
       top: 120, // if header not shown
       // top: 170,
       left: 25,
-      // borderWidth: 5,
-      // borderColor: COLORS.surface,
     },
     profileTexts: {
       marginHorizontal: 25,
@@ -244,7 +229,7 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
         title={`Your account will be deleted.${"\n"}Are you sure?`}
         state={isConfirmModalVisible}
         setState={setIsConfirmModalVisible}
-        handleOnConfirmDelete={null}
+        handleOnConfirmDelete={handleOnDeleteAccount}
       />
 
       <PhotoPreview
@@ -266,26 +251,26 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
 
         {isLoggedUser && (
           <View style={styles.editProfileButtons}>
-            {/* <Link
+            <Link
               asChild
               href={{
                 pathname: "/me/edit",
-                params: {
-                  name: name,
-                  pfpPic: defaultPfpPic,
-                  coverPic: defaultCoverPic,
-                },
+                // params: {
+                //   name: name,
+                //   pfpPic: defaultPfpPic,
+                //   coverPic: defaultCoverPic,
+                // },
               }}
-            > */}
-            <Button
-              icon="pencil"
-              mode="outlined"
-              contentStyle={{ flexDirection: "row-reverse" }}
-              textColor={COLORS.primary}
             >
-              Edit Profile
-            </Button>
-            {/* </Link> */}
+              <Button
+                icon="pencil"
+                mode="outlined"
+                contentStyle={{ flexDirection: "row-reverse" }}
+                textColor={COLORS.primary}
+              >
+                Edit Profile
+              </Button>
+            </Link>
 
             <Entypo
               style={{ verticalAlign: "middle" }}
@@ -298,17 +283,19 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
         )}
 
         <View style={styles.profileTexts}>
-          <Text variant="headlineMedium">Liden U. Hoe</Text>
+          <Text variant="headlineMedium">
+            {user.firstName} {user.lastName}
+          </Text>
           <Link href={{ pathname: "/me/ratings" }}>
             <Text variant="titleMedium">
-              &#9733; &#9733; &#9733; (69) &nbsp;
+              Ratings ({user.averageRating || 0}){" "}
               <AntDesign name="infocirlceo" size={18} style={{ verticalAlign: "middle" }} />
             </Text>
           </Link>
         </View>
 
         {!isLoggedUser && (
-          <Button style={{ marginHorizontal: 10 }} mode="contained">
+          <Button style={{ margin: 10 }} mode="contained">
             Message
           </Button>
 
@@ -337,10 +324,10 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
         <TabsProvider defaultIndex={0}>
           <Tabs style={{ backgroundColor: "transparent" }}>
             <TabScreen label="Inventory">
-              <InventoryScreen />
+              <InventoryScreen inventory={inventory} />
             </TabScreen>
             <TabScreen label="Wishes">
-              <WishesScreen />
+              <WishesScreen wishes={wishes} />
             </TabScreen>
             <TabScreen label="History">
               <HistoryScreen />
@@ -350,45 +337,109 @@ export default function ProfileContent({ user, isLoggedUser, wishes }: any) {
       </ScrollView>
     </View>
   );
-
-  function WishesScreen() {
-    return (
-      <FlatList
-        data={currentWishes ? currentWishes : wishes}
-        renderItem={({ item }) => (
-          <WishItem wish={item} editable={true} onDelete={() => deleteItemById(item.id)} />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        style={{ height: 1000, paddingVertical: 10 }}
-      />
-    );
-  }
 }
 
 // TAB CONTENTS
 
-function InventoryScreen() {
+function InventoryScreen({ inventory }: { inventory: Inventory[] }) {
+  const [currentInventory, setCurrentInventory] = useState(inventory);
+  const deleteItemById = async (id: number) => {
+    const newInventory = currentInventory.filter(
+      (currentInventory: Inventory) => currentInventory.id !== id
+    );
+    setCurrentInventory(newInventory);
+
+    const { data, error } = await apiFetch(`/inventory/${id}`, { method: "DELETE" });
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+    }
+  };
+
   return (
-    <FlatList
-      data={INVENTORY}
-      renderItem={({ item }) => <InventoryItem />}
-      keyExtractor={(item) => item.id.toString()}
-      style={{ height: 1000, paddingVertical: 10 }}
-    />
+    <>
+      {currentInventory ? (
+        <>
+          <FlatList
+            data={currentInventory}
+            renderItem={({ item }) => (
+              <InventoryItem
+                editable={true}
+                inventory={item}
+                onDelete={() => deleteItemById(item.id)}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            style={{ height: 1000, paddingVertical: 10 }}
+          />
+        </>
+      ) : (
+        <>
+          <NoContent message="No inventories" />
+        </>
+      )}
+    </>
   );
 }
 
 function HistoryScreen() {
   return (
-    <FlatList
-      data={INVENTORY}
-      renderItem={({ item }) => <HistoryItem />}
-      keyExtractor={(item) => item.id.toString()}
-      style={{ height: 1000, paddingVertical: 10 }}
-    />
+    <NoContent message="No History." />
+    // <FlatList
+    //   data={INVENTORY}
+    //   renderItem={({ item }) => <HistoryItem editable={true} />}
+    //   keyExtractor={(item) => item.id.toString()}
+    //   style={{ height: 1000, paddingVertical: 10 }}
+    // />
   );
 }
 
+function WishesScreen({ wishes }: { wishes: Wish[] }) {
+  const [currentWishes, setCurrentWishes] = useState(wishes);
+  const deleteItemById = async (id: number) => {
+    const newWishes = currentWishes.filter((currentWishes: Wish) => currentWishes.id !== id);
+    setCurrentWishes(newWishes);
+
+    const { data, error } = await apiFetch(`/wish/${id}`, { method: "DELETE" });
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+    }
+  };
+
+  return (
+    <>
+      {currentWishes ? (
+        <>
+          <FlatList
+            data={currentWishes}
+            renderItem={({ item }) => (
+              <WishItem wish={item} editable={true} onDelete={() => deleteItemById(item.id)} />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            style={{ height: 1000, paddingVertical: 10 }}
+          />
+        </>
+      ) : (
+        <>
+          <NoContent message="No wishes" />
+        </>
+      )}
+    </>
+  );
+}
+
+function NoContent({ message }: { message: string }) {
+  return (
+    <View style={{ height: 400, justifyContent: "center", alignItems: "center" }}>
+      <Text>{message}</Text>
+    </View>
+  );
+}
 type CardProps = { content: string };
 function CardComponent(props: CardProps) {
   return (

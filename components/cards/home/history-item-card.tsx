@@ -9,7 +9,7 @@ import PhotoPreview from "~/components/photo-preview";
 
 const itemPhoto = require("~/assets/Kambing.png");
 
-export default function HistoryItem() {
+export default function HistoryItem({ editable = false }: { editable?: any }) {
   const tabIndex = useTabIndex();
   const tempId = 1 + Math.floor(Math.random() * 100); // TODO: replace with legit id
   const whatTab = tabIndex === 0 ? `/trades/${tempId}` : `/offers/${tempId}`;
@@ -35,20 +35,22 @@ export default function HistoryItem() {
     <Link href={whatTab}>
       <View style={{ flex: 1, width: "100%" }}>
         <Card style={{ height: "auto", margin: 8, paddingBottom: 10 }}>
-          <View
-            style={{
-              position: "absolute",
-              top: 5,
-              right: 10,
-              justifyContent: "flex-end",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 10,
-              zIndex: 999,
-            }}
-          >
-            <MaterialIcons name="cancel" size={24} color="BLACK" onPress={handleOnDeleteItem} />
-          </View>
+          {editable && (
+            <View
+              style={{
+                position: "absolute",
+                top: 5,
+                right: 10,
+                justifyContent: "flex-end",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                zIndex: 999,
+              }}
+            >
+              <MaterialIcons name="cancel" size={24} color="BLACK" onPress={handleOnDeleteItem} />
+            </View>
+          )}
           {/* MODALS */}
 
           <PhotoPreview

@@ -1,10 +1,30 @@
+import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import ProfileContent from "~/components/profile-content";
+import { API_URL } from "~/lib/config";
 
 export default function MyProfile() {
-  // a call to get the data of user:
-  // values needed: name, ratings, pfppic, coverpic, inventoryList, wishesList, historyList
-  const user = "sample"; // a call to db that returns a user type values needed
-  const isLoggeduser = false; // a call to check if user is the loggedinUser
+  const { id } = useLocalSearchParams();
+  const [user, setUser] = useState<null | object>(null);
 
-  return <ProfileContent user={user} isLoggedUser={isLoggeduser} />;
+  async function fetchUser() {
+    const res = await fetch(`${API_URL}/user/${id}`);
+    if (!res.ok) return setUser(null);
+
+    const data = await res.json();
+
+    if (!data) {
+      console.log("sadge");
+      setUser(null);
+    } else {
+      console.log("User", typeof data, data);
+      setUser(data);
+    }
+  }
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  return user && <ProfileContent user={user} />;
 }

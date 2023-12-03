@@ -7,7 +7,7 @@ import PhotoPreview from "~/components/photo-preview";
 
 const itemPhoto = require("~/assets/Kambing.png");
 
-export default function ActiveTradeCard() {
+export default function ActiveTradeCard({ item, onDelete }: any) {
   const tabIndex = useTabIndex();
   const tempId = 1 + Math.floor(Math.random() * 100); // TODO: replace with legit id
   const whatTab = tabIndex === 0 ? `/trades/${tempId}` : `/offers/${tempId}`;

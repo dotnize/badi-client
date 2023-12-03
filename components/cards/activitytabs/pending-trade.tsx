@@ -7,7 +7,7 @@ import PhotoPreview from "~/components/photo-preview";
 
 const itemPhoto = require("~/assets/Kambing.png");
 
-export default function PendingTradeCard() {
+export default function PendingTradeCard({ item, onDelete }: any) {
   const tabIndex = useTabIndex();
   const tempId = 1 + Math.floor(Math.random() * 100); // TODO: replace with legit id
   const whatTab = tabIndex === 0 ? `/trades/${tempId}` : `/offers/${tempId}`;
@@ -84,11 +84,13 @@ export default function PendingTradeCard() {
               }}
             >
               <View>
-                <Text variant="headlineSmall">Liden x Nize</Text>
+                <Text variant="headlineSmall">
+                  {item.user1.firstName} & {item.user2.firstName}
+                </Text>
               </View>
-              <Text style={{ marginLeft: "auto", paddingTop: 5 }}>11/27/35</Text>
+              <Text style={{ marginLeft: "auto", paddingTop: 5 }}>{item.status}</Text>
             </View>
-            <Text>An apple for a goat</Text>
+            {/* <Text>An apple for a goat</Text> */}
           </Card.Content>
         </Card>
       </View>
