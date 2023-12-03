@@ -27,6 +27,7 @@
 3. Create a `.env` file at the root directory of the project with the following content:
    ```sh
    EXPO_PUBLIC_API_URL=http://localhost:3001 # replace with your backend URL/port
+   EXPO_PUBLIC_BYPASS_AUTH=false # use true to access the app without logging in
    ```
 4. Run the project:
    ```sh

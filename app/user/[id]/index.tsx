@@ -1,8 +1,13 @@
 import { useLocalSearchParams } from "expo-router";
+<<<<<<< HEAD
 import { useEffect, useState } from "react";
+=======
+
+>>>>>>> main
 import ProfileContent from "~/components/profile-content";
 import { API_URL } from "~/lib/config";
 
+<<<<<<< HEAD
 export default function MyProfile() {
   const { id } = useLocalSearchParams();
   const [user, setUser] = useState<null | object>(null);
@@ -27,4 +32,13 @@ export default function MyProfile() {
   }, []);
 
   return user && <ProfileContent user={user} />;
+=======
+export default function OtherUserProfile() {
+  const { id } = useLocalSearchParams();
+
+  // eslint-disable-next-line radix
+  const idFromUrl = parseInt(id as string);
+
+  return <ProfileContent userId={idFromUrl} />;
+>>>>>>> main
 }

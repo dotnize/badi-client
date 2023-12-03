@@ -3,8 +3,9 @@
 import * as ImagePicker from "expo-image-picker";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
+
 import { COLORS } from "~/lib/theme";
 import { User } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
@@ -82,22 +83,29 @@ export default function EditProfile() {
   const pickImage = async (urlPic: string) => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (status !== "granted") {
-      Alert.alert("Permission Denied", `Sorry, we need cameraroll permission to upload images.`);
+    if (error || !data) {
+      console.log(error || "Something went wrong while updating user profile");
     } else {
-      // Launch the image library and get the selected image
-      const result = await ImagePicker.launchImageLibraryAsync();
-
-      if (result?.assets?.[0]?.uri) {
-        // If an image is selected (not cancelled), update the file state variable
-        if (urlPic === "profile") {
-          setPfpPicChange(result?.assets?.[0]?.uri);
-        } else if (urlPic === "background") {
-          setCoverPicChange(result?.assets?.[0]?.uri);
-        }
-      }
+      setUser(data);
+      // eslint-disable-next-line no-unused-expressions
+      router.replace("/me");
     }
   };
+
+  async function deleteAccount() {
+    if (!user) return;
+
+    const { data, error } = await apiFetch<User>(`/user/${user.id}`, {
+      method: "DELETE",
+    });
+
+    if (error || !data) {
+      console.log(error || "Something went wrong while deleting user profile");
+    } else {
+      apiFetch("/auth/logout", { method: "POST" });
+      setUser(null);
+    }
+  }
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 20, gap: 15 }}>
@@ -205,14 +213,6 @@ export default function EditProfile() {
 }
 
 const styles = StyleSheet.create({
-  backgroundPic: {
-    resizeMode: "contain",
-    alignSelf: "center",
-    backgroundColor: "#e0e0e0",
-    height: 200,
-    width: "100%",
-  },
-
   editProfileLabels: {
     marginHorizontal: 10,
     alignItems: "center",

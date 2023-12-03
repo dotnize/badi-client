@@ -36,8 +36,6 @@ const { LightTheme } = adaptNavigationTheme({
 //   initialRouteName: "(tabs)",
 // };
 
-//const user = undefined; // TEMPORARY
-
 export default function RootLayout() {
   const router = useRouter();
   const { height, width } = useWindowDimensions();

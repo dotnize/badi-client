@@ -2,22 +2,48 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { Button, IconButton, ProgressBar, Text, TextInput } from "react-native-paper";
+import { Button, HelperText, IconButton, ProgressBar, Text, TextInput } from "react-native-paper";
 import { DatePickerInput } from "react-native-paper-dates";
 
-export default function Register() {
-  const router = useRouter();
+import { useSession } from "~/hooks/useSession";
+import { User } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 
+export default function Register() {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setlastName] = useState("");
   const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
+  const [location, setLocation] = useState("");
   const [mobileNum, setmobileNum] = useState("");
-  const [counter, setCounter] = useState(0);
   const [inputDate, setInputDate] = useState<Date | undefined>(undefined);
-  const [value, setValue] = useState<string | null>(null);
+
+  const router = useRouter();
+  const [counter, setCounter] = useState(0);
   const [isFocus, setIsFocus] = useState(false);
+
+  const { setUser } = useSession();
+
+  async function register() {
+    const { data, error } = await apiFetch<User>(`/auth/register`, {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        firstName,
+        lastName,
+        password,
+        gender,
+        location,
+      }),
+    });
+    if (data) {
+      setUser(data);
+      console.log("register complete");
+    } else {
+      console.log(error);
+    }
+  }
 
   const items = [
     { label: "Male", value: "male" },
@@ -36,7 +62,6 @@ export default function Register() {
     } else {
       setCounter(counter + 1);
     }
-    console.log(counter);
   };
 
   const backScreen = () => {
@@ -45,6 +70,17 @@ export default function Register() {
     } else {
       setCounter(counter - 1);
     }
+  };
+
+  const isValidPassword = (password: string): boolean => {
+    const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$/;
+    const isValid = passwordRegex.test(password);
+    if (!isValid) {
+      console.log(
+        "Password must contain a special character, one capital letter, one lowercase letter, and one number"
+      );
+    }
+    return isValid;
   };
 
   return (
@@ -133,7 +169,7 @@ export default function Register() {
                 }}
                 maxHeight={250}
                 data={items}
-                value={value}
+                value={gender}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 labelField="label"
@@ -141,7 +177,7 @@ export default function Register() {
                 placeholder={!isFocus ? "Select your gender" : "..."}
                 selectedTextStyle={{ fontSize: 14 }}
                 onChange={(item) => {
-                  setValue(item.value);
+                  setGender(item.value);
                   setIsFocus(false);
                 }}
               />
@@ -198,11 +234,19 @@ export default function Register() {
         ) : counter === locationScreen ? (
           <View style={{ flex: 1 }}>
             <View>
-              <TextInput style={{ flex: 1 }} mode="outlined" label="Location" />
+              <TextInput
+                style={{ flex: 1 }}
+                mode="outlined"
+                label="Location"
+                value={location}
+                onChangeText={(text) => {
+                  setLocation(text);
+                }}
+              />
             </View>
           </View>
         ) : (
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, marginTop: 8 }}>
             <View>
               <TextInput
                 style={{ flex: 1 }}
@@ -214,12 +258,28 @@ export default function Register() {
                 }}
                 secureTextEntry
               />
+              {isValidPassword(password) ? (
+                <Text variant="labelMedium" style={{ padding: 8, color: "green", marginLeft: 4 }}>
+                  Password is valid
+                </Text>
+              ) : (
+                <HelperText type="error" visible={!isValidPassword(password)}>
+                  Password must be 8 characters long, contain a special character, one capital
+                  letter, one lowercase letter, and one number
+                </HelperText>
+              )}
             </View>
           </View>
         )}
-        <Button onPress={continueScreen} mode="contained">
-          Continue
-        </Button>
+        {counter === passwordScreen ? (
+          <Button onPress={register} mode="contained" disabled={!isValidPassword(password)}>
+            Register
+          </Button>
+        ) : (
+          <Button onPress={continueScreen} mode="contained">
+            Continue
+          </Button>
+        )}
       </View>
     </View>
   );

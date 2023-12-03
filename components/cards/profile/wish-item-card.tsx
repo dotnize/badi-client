@@ -33,7 +33,7 @@ export default function WishItem({ editable, wish, onDelete }: any) {
   };
 
   function viewItem(id: number) {
-    route.push({ pathname: `/listings/${id}`, params: { url: "wishes" } });
+    route.push({ pathname: `/listings/${id}`, params: { url: "wish" } });
   }
 
   return (

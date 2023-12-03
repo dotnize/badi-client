@@ -1,10 +1,12 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link, Slot, usePathname } from "expo-router";
-import { View, useWindowDimensions } from "react-native";
+import { Image, View, useWindowDimensions } from "react-native";
 import { Button, Text } from "react-native-paper";
 
 import Tabs from "~/components/bottom-tabs";
+import { useSession } from "~/hooks/useSession";
 import { COLORS, SIZES } from "~/lib/theme";
+import { apiFetch } from "~/lib/utils";
 
 // TODO: minor issue, keep route state when switching navigation modes
 
@@ -12,7 +14,14 @@ export default function TabLayout() {
   const { height, width } = useWindowDimensions();
   const pathname = usePathname();
 
+  const { setUser } = useSession();
+
   const isLandscape = width > height * 1.2;
+
+  function logoutHandler() {
+    apiFetch("/auth/logout", { method: "POST" });
+    setUser(null);
+  }
 
   return isLandscape ? (
     <View
@@ -24,12 +33,18 @@ export default function TabLayout() {
       }}
     >
       <View style={{ justifyContent: "space-evenly", width: 192 }}>
-        <View style={{ gap: SIZES[12] }}>
-          <View>
-            <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
-              Badi (or logo here)
-            </Text>
+        <View style={{ gap: SIZES[4] }}>
+          <View
+            style={{
+              paddingHorizontal: SIZES[0.5],
+            }}
+          >
+            <Image
+              style={{ width: 48, height: 48, resizeMode: "contain" }}
+              source={require("~/assets/badi.svg")}
+            />
           </View>
+
           <View style={{ gap: 4 }}>
             <Link replace asChild href="/">
               <Button
@@ -147,8 +162,24 @@ export default function TabLayout() {
             </Link>
           </View>
         </View>
-        <View>
-          <Text>about, terms & conditions, logout, etc.</Text>
+        <View style={{ gap: SIZES[2] }}>
+          <View style={{ gap: SIZES[1] }}>
+            <Link href="/about">About us</Link>
+            <Link href="/dashboard">Dashboard</Link>
+            <Link href="terms">Terms and Conditions</Link>
+          </View>
+
+          <Button
+            onPress={logoutHandler}
+            textColor={COLORS.onSurface}
+            icon={({ color }) => <MaterialCommunityIcons name="logout" size={24} color={color} />}
+            mode="text"
+            contentStyle={{ justifyContent: "flex-start", width: "100%", height: 42 }}
+          >
+            <Text style={{ paddingLeft: 4 }} variant="titleSmall">
+              Logout
+            </Text>
+          </Button>
         </View>
       </View>
 

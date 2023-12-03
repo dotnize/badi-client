@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import ProfileContent from "~/components/profile-content";
 import { apiFetch } from "~/lib/utils";
 

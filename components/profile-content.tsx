@@ -13,7 +13,8 @@ import { COLORS } from "~/lib/theme";
 import { Inventory, Wish } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 import InventoryItem from "./cards/home/inventory-item-card";
-import WishItem from "./cards/home/wish-item-card";
+import WishItem from "./cards/profile/wish-item-card";
+
 const theme = {
   ...DefaultTheme,
   colors: COLORS,

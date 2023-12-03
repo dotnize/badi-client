@@ -1,6 +1,7 @@
 import { SetStateAction } from "react";
 import { Image, StyleSheet } from "react-native";
 import { Modal, Portal } from "react-native-paper";
+import { COLORS } from "~/lib/theme";
 
 type PhotoPreviewType = {
   photo: string;
@@ -32,6 +33,6 @@ const styles = StyleSheet.create({
   modalContainerStyle: {
     height: "50%",
     width: "100%",
-    backgroundColor: "white",
+    backgroundColor: COLORS.backdrop,
   },
 });
