@@ -17,14 +17,14 @@ export default function Search() {
     [1, "Accessories"],
     [2, "Bags"],
     [3, "Books"],
-    [4, "Hobbies and Stationary"],
+    [4, "Hobbies"],
   ]);
   const radioButtonsData2 = new Map<number, string>([
-    [5, "Hardware and Applicances"],
+    [5, "Appliances"],
     [6, "Gadgets"],
     [7, "Vehicles"],
     [8, "Shoes"],
-    [9, "Sports and Travel"],
+    [9, "Sports"],
   ]);
 
   const filterButton = () => {

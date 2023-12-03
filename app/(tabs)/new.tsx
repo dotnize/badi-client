@@ -15,12 +15,12 @@ const availableCategories = [
   { label: "Accessories", value: "accessories" },
   { label: "Bags", value: "bags" },
   { label: "Books", value: "books" },
-  { label: "Hobbies and Stationary", value: "hobbies" },
-  { label: "Hardware and Applicances", value: "appliances" },
+  { label: "Hobbies", value: "hobbies" },
+  { label: "Applicances", value: "appliances" },
   { label: "Gadgets", value: "gadgets" },
   { label: "Vehicles", value: "vehicles" },
   { label: "Shoes", value: "shoes" },
-  { label: "Sports and Travel", value: "sportstravel" },
+  { label: "Sports", value: "sports" },
 ];
 
 function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
