@@ -1,4 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useState } from "react";
 import { Image, ScrollView, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
@@ -66,6 +67,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
       console.log(error || "Something went wrong while posting listing");
     } else {
       console.log("Successfully posted listing");
+      router.replace("/");
     }
   }
 
