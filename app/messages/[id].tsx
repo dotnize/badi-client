@@ -1,7 +1,7 @@
 // Dynamic route!
 // e.g. /messages/1, /messages/8, etc.
 
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
@@ -14,8 +14,8 @@ import {
   TextInput,
 } from "react-native-paper";
 import { io } from "socket.io-client";
-import ConfirmModal from "~/components/confirm-modal"; // Adjust the import path as needed
 
+import ConfirmModal from "~/components/confirm-modal"; // Adjust the import path as needed
 import { useSession } from "~/hooks/useSession";
 import { API_URL } from "~/lib/config";
 import { defaultAvatarUrl, emptyImageUrl } from "~/lib/firebase";
@@ -30,7 +30,6 @@ const socket = io(API_URL, {
 
 export default function Convo() {
   const { id, inventoryId } = useLocalSearchParams();
-  const router = useRouter();
   const { user } = useSession();
 
   const [chatroom, setChatroom] = useState<ChatRoom | undefined>(undefined);
@@ -96,25 +95,24 @@ export default function Convo() {
     setDeleteModalVisible(true);
   }
 
-function handleDeleteConfirm() {
-  console.log("Confirmed Deletion for Message ID:", selectedMessageId);
+  function handleDeleteConfirm() {
+    console.log("Confirmed Deletion for Message ID:", selectedMessageId);
 
-  if (selectedMessageId !== null) {
-    socket.emit("deleteChat", selectedMessageId);
-    setDeleteModalVisible(false);
+    if (selectedMessageId !== null) {
+      socket.emit("deleteChat", selectedMessageId);
+      setDeleteModalVisible(false);
+    }
   }
-}
 
-// function deleteChat(messageId: number) {
-//   try {
-//     console.log("Deleting message with ID:", messageId);
-//     // Notify the server to delete the message from the chat room
-//     socket.emit("deleteChat", messageId);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
-
+  // function deleteChat(messageId: number) {
+  //   try {
+  //     console.log("Deleting message with ID:", messageId);
+  //     // Notify the server to delete the message from the chat room
+  //     socket.emit("deleteChat", messageId);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   async function fetchChatRoom() {
     // Fetch chat room details based on the id
@@ -232,7 +230,6 @@ function handleDeleteConfirm() {
           state={deleteModalVisible}
           setState={setDeleteModalVisible}
           handleOnConfirmDelete={handleDeleteConfirm}
-          onRequestClose={() => setDeleteModalVisible(false)}
         />
       </View>
 
