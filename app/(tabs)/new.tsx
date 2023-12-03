@@ -5,6 +5,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import { Button, Chip, RadioButton, Text, TextInput } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
+import { useSession } from "~/hooks/useSession";
 import { emptyImageUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
 import { Inventory, Wish } from "~/lib/types";
@@ -24,9 +25,10 @@ const availableCategories = [
 ];
 
 function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
+  const { user } = useSession();
+
   // TODO: support multiple images
   const [imageUrl, setImageUrl] = useState<string>("");
-
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [category, setCategory] = useState<string>("");
@@ -40,7 +42,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
   const [currentKeyword, setCurrentKeyword] = useState<string>("");
 
   async function postListing() {
-    if (!name || !description || !category || !imageUrl || !type) return;
+    if (!name || !description || !category || !imageUrl || !type || !preferredOffer) return;
     const finalKeywords = [category, ...keywords];
 
     let newListing: Partial<Inventory> = {
@@ -52,7 +54,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
     };
 
     if (listingType === "inventory") {
-      newListing = { ...newListing, location, preferredOffer };
+      newListing = { ...newListing, location: location || user?.location, preferredOffer };
     }
 
     const { data, error } = await apiFetch<Inventory | Wish>(`/${listingType}`, {
@@ -189,7 +191,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
             <TextInput
               value={preferredOffer}
               onChangeText={setPreferredOffer}
-              label="Describe your preferred offer (optional)"
+              label="Describe your preferred offer"
             />
           </View>
         </>
