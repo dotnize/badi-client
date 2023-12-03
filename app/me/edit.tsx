@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 
+import ConfirmModal from "~/components/confirm-modal";
 import { useSession } from "~/hooks/useSession";
 import { defaultAvatarUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
@@ -19,6 +20,8 @@ export default function EditProfile() {
   const [location, setLocation] = useState(user?.location);
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || null);
   const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatarUrl || "");
+
+  const [deleteModal, setDeleteModal] = useState(false);
 
   async function selectImage() {
     const uploadedURL = await pickImageGetURL();
@@ -40,12 +43,33 @@ export default function EditProfile() {
     } else {
       setUser(data);
       // eslint-disable-next-line no-unused-expressions
-      router.canGoBack() ? router.back() : router.push("/me");
+      router.replace("/me");
+    }
+  }
+
+  async function deleteAccount() {
+    if (!user) return;
+
+    const { data, error } = await apiFetch<User>(`/user/${user.id}`, {
+      method: "DELETE",
+    });
+
+    if (error || !data) {
+      console.log(error || "Something went wrong while deleting user profile");
+    } else {
+      apiFetch("/auth/logout", { method: "POST" });
+      setUser(null);
     }
   }
 
   return (
     <View style={{ flex: 1, padding: 20, gap: 15 }}>
+      <ConfirmModal
+        title="Are you sure you want to delete your account?"
+        state={deleteModal}
+        setState={setDeleteModal}
+        handleOnConfirmDelete={deleteAccount}
+      />
       <TextInput
         selectTextOnFocus
         textColor="#555"
@@ -99,6 +123,15 @@ export default function EditProfile() {
       <View style={{ marginTop: "auto", gap: 5 }}>
         <Button onPress={saveChanges} style={styles.saveChangesButton} mode="contained">
           Save Profile Changess
+        </Button>
+
+        <Button
+          onPress={() => setDeleteModal(true)}
+          style={{ width: "100%" }}
+          textColor="white"
+          buttonColor={COLORS.error}
+        >
+          Delete Account
         </Button>
 
         <Link asChild href="/me">
