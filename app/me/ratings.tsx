@@ -1,31 +1,39 @@
 // URL: /me/ratings
 
-import { ScrollView } from "react-native-gesture-handler";
-import RatingItem from "~/components/cards/rating/rating-item";
+import { useEffect, useState } from "react";
+import { FlatList } from "react-native";
 
-/**
- * Since ang My Profile Ratings og Other User Ratings kay similar ra, naa koy suggestion:
- *
- * Pwede mo magcreate og reusable component (himo mog new file sa "components" folder)
- * nga moaccept og "id" prop
- * - if other user ratings, gamiton ang useLocalSearchParams() hook.
- * - else if my profile ratings, gamiton ang logged-in user id (via a custom hook or context)
- *
- * then kana nga reusable component kay gamiton both sa /user/me/ratings og /me/ratings nga routes.
- * @jameel @leonel
- * Sabotan nya ni nato sa discord. Chat sad mo sa server anytime if naa mo questions.
- */
+import RatingCard from "~/components/cards/profile/rating-card";
+import { useSession } from "~/hooks/useSession";
+import { Rating } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 
 export default function MyRatings() {
-  // para makuha ang logged-in user id, maghimo ra nya kog custom hook if nana tay backend -nize
+  const { user } = useSession();
+
+  const [ratings, setRatings] = useState<Rating[]>([]);
+
+  async function fetchRatings() {
+    if (!user) return;
+
+    const { data, error } = await apiFetch<Rating[]>(`/rating/user/${user.id}`);
+    if (error || !data) {
+      console.log(error || "No ratings found");
+    } else if (data) {
+      setRatings(data);
+    }
+  }
+
+  useEffect(() => {
+    fetchRatings();
+  }, [user]);
 
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <RatingItem total={5} />
-      <RatingItem total={2} />
-      <RatingItem total={3} />
-      <RatingItem total={4} />
-      <RatingItem total={4} />
-    </ScrollView>
+    <FlatList
+      contentContainerStyle={{ gap: 10, padding: 8, flex: 1 }}
+      data={ratings}
+      renderItem={({ item }) => <RatingCard item={item} />}
+      keyExtractor={(item) => item.id.toString()}
+    />
   );
 }
