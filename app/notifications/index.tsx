@@ -1,21 +1,26 @@
 // URL: /notifications
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Avatar, Card, IconButton } from "react-native-paper";
+import { Avatar, Card, IconButton, Paragraph, Title } from "react-native-paper";
+import { apiFetch } from "~/lib/utils";
 
-interface NotificationCardProps {
+interface Notification {
   id: number;
   type: string;
   content: {
-    // Adjust the structure based on your JSON structure for content
-    // Example: Adjust this based on your JSON structure: title: string; message: string;
+    title: string;
+    description: string;
+    // ... other properties based on your JSON structure
   };
-  timestamp: string; // Assuming timestamp is a string, adjust accordingly
+  timestamp: string;
   is_read: boolean;
   is_deleted: boolean;
   user_id: number;
-  userName: string; // Adding userName to represent the user's name
+  userName: string;
+}
+
+interface NotificationCardProps extends Notification {
   onRemove: (id: number) => void;
 }
 
@@ -33,38 +38,57 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   <Card style={styles.card}>
     <Card.Content style={styles.cardContent}>
       <Avatar.Icon size={48} icon="account-circle" />
-      <View style={styles.textContainer}></View>
+      <View style={styles.textContainer}>
+        <Title>{userName}</Title>
+        <Paragraph>{content.title}</Paragraph>
+        <Paragraph>{content.description}</Paragraph>
+        <Paragraph>{timestamp}</Paragraph>
+      </View>
       <IconButton icon="close" onPress={() => onRemove(id)} />
     </Card.Content>
   </Card>
 );
 
 export default function Notifications() {
-  // const [notifications, setNotifications] = useState();
-  // const removeNotification = (id: number) => {
-  //   const updatedNotifications = notifications.filter((notification) => notification.id !== id);
-  //   setNotifications(updatedNotifications);
-  // };
-  // const clearAllNotifications = () => {
-  //   setNotifications([]);
-  // };
-  // return (
-  //   <View style={styles.container}>
-  //     <View style={styles.headerContainer}>
-  //       <Title style={styles.header}>Notifications</Title>
-  //       <Button onPress={clearAllNotifications}>Clear All</Button>
-  //     </View>
-  //     {notifications.map((notification) => (
-  //       <NotificationCard
-  //         key={notification.id}
-  //         id={notification.id}
-  //         title={notification.title}
-  //         content={notification.content}
-  //         onRemove={removeNotification}
-  //       />
-  //     ))}
-  //   </View>
-  // );
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  const removeNotification = (id: number) => {
+    const updatedNotifications = notifications.filter((notification) => notification.id !== id);
+    setNotifications(updatedNotifications);
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+  };
+
+  useEffect(() => {
+    // Fetch notifications when the component mounts
+    async function fetchNotifications() {
+      try {
+        const { data, error } = await apiFetch<Notification[]>("/notification/user/1");
+        console.log(data); // Log the response to inspect its structure
+
+        if (error) {
+          console.error(error);
+        } else {
+          setNotifications(data || []);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchNotifications();
+  }, []); // Empty dependency array ensures this effect runs only once on mount
+
+  return (
+    <View style={styles.container}>
+      {/* (unchanged) */}
+      {notifications.map((notification) => (
+        <NotificationCard key={notification.id} {...notification} onRemove={removeNotification} />
+      ))}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
