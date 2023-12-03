@@ -116,7 +116,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
       <View style={{ gap: 2 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text>Image:</Text>
-          <Button mode="contained" onPress={selectImage}>
+          <Button mode="contained-tonal" onPress={selectImage}>
             Select Image
           </Button>
         </View>
