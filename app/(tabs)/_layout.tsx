@@ -164,9 +164,35 @@ export default function TabLayout() {
         </View>
         <View style={{ gap: SIZES[2] }}>
           <View style={{ gap: SIZES[1] }}>
-            <Link href="/about">About us</Link>
-            <Link href="/dashboard">Dashboard</Link>
-            <Link href="terms">Terms and Conditions</Link>
+            <Link href="/dashboard" asChild>
+              <Button
+                textColor={COLORS.onSurface}
+                icon={({ color }) => (
+                  <MaterialCommunityIcons name="view-dashboard" size={24} color={color} />
+                )}
+                mode="text"
+                contentStyle={{ justifyContent: "flex-start", width: "100%", height: 42 }}
+              >
+                <Text style={{ paddingLeft: 4 }} variant="titleSmall">
+                  Dashboard
+                </Text>
+              </Button>
+            </Link>
+            <Link href="/about" asChild>
+              <Button
+                textColor={COLORS.onSurface}
+                icon={({ color }) => (
+                  <MaterialCommunityIcons name="information" size={24} color={color} />
+                )}
+                mode="text"
+                contentStyle={{ justifyContent: "flex-start", width: "100%", height: 42 }}
+              >
+                <Text style={{ paddingLeft: 4 }} variant="titleSmall">
+                  About Us
+                </Text>
+              </Button>
+            </Link>
+            {/* <Link href="/terms">Terms and Conditions</Link> */}
           </View>
 
           <Button

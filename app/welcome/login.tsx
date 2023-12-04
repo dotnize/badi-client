@@ -1,6 +1,7 @@
+import { router } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Image, View } from "react-native";
+import { Button, IconButton, Text, TextInput } from "react-native-paper";
 
 import { useSession } from "~/hooks/useSession";
 import { SIZES } from "~/lib/theme";
@@ -30,9 +31,19 @@ export default function Login() {
   }
   return (
     <View style={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
-      <View>
-        <Text variant="displayMedium" style={{ textAlign: "center" }}>
-          LOGIN
+      <View style={{ position: "absolute", top: 16, left: 0 }}>
+        <IconButton
+          onPress={() => (router.canGoBack() ? router.back() : router.replace("/welcome"))}
+          icon="arrow-left"
+        />
+      </View>
+      <View style={{ gap: 16 }}>
+        <Image
+          source={require("~/assets/badi.svg")}
+          style={{ resizeMode: "contain", width: 128, height: 128 }}
+        />
+        <Text variant="headlineMedium" style={{ textAlign: "center" }}>
+          Login
         </Text>
       </View>
       <View style={{ padding: SIZES[20], gap: SIZES[5] }}>

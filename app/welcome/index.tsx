@@ -8,7 +8,10 @@ export default function WelcomeIndex() {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 16, gap: 64 }}>
       {/* temp logo */}
-      <Image source={require("~/assets/adaptive-icon.png")} style={{ width: 256, height: 256 }} />
+      <Image
+        source={require("~/assets/badi.svg")}
+        style={{ resizeMode: "contain", width: 256, height: 256 }}
+      />
       <View style={{ justifyContent: "center", gap: 16 }}>
         <Text style={{ fontWeight: "bold", textAlign: "center" }} variant="displaySmall">
           Welcome to Badi
