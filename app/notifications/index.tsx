@@ -1,23 +1,19 @@
-// URL: /notifications
-
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Avatar, Card, IconButton, Paragraph, Title } from "react-native-paper";
+import { Avatar, Button, Card, IconButton, Paragraph, Title } from "react-native-paper";
 import { apiFetch } from "~/lib/utils";
 
 interface Notification {
   id: number;
   type: string;
   content: {
+    user: string;
     title: string;
     description: string;
-    // ... other properties based on your JSON structure
   };
   timestamp: string;
-  is_read: boolean;
   is_deleted: boolean;
   user_id: number;
-  userName: string;
 }
 
 interface NotificationCardProps extends Notification {
@@ -26,21 +22,16 @@ interface NotificationCardProps extends Notification {
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
   id,
-  type,
   content,
   timestamp,
-  is_read,
-  is_deleted,
-  user_id,
-  userName,
   onRemove,
 }) => (
   <Card style={styles.card}>
     <Card.Content style={styles.cardContent}>
       <Avatar.Icon size={48} icon="account-circle" />
       <View style={styles.textContainer}>
-        <Title>{userName}</Title>
-        <Paragraph>{content.title}</Paragraph>
+        <Title style={styles.itemTitle}>{content.title}</Title>
+        <Paragraph style={styles.textUser}>Posted by: {content.user}</Paragraph>
         <Paragraph>{content.description}</Paragraph>
         <Paragraph>{timestamp}</Paragraph>
       </View>
@@ -52,9 +43,37 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 export default function Notifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const removeNotification = (id: number) => {
-    const updatedNotifications = notifications.filter((notification) => notification.id !== id);
-    setNotifications(updatedNotifications);
+  // function for tinuoray na delete
+  // const removeNotification = async (id: number) => {
+  //   try {
+  //     // Make a DELETE request to the server to delete the notification
+  //     await apiFetch(`/notification/${id}`, { method: "DELETE" });
+
+  //     // Update the local state to remove the notification
+  //     const updatedNotifications = notifications.filter((notification) => notification.id !== id);
+  //     setNotifications(updatedNotifications);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  //soft delete
+  const removeNotification = async (id: number) => {
+    try {
+      // Make a PUT request to update the is_deleted property
+      await apiFetch(`/notification/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ is_deleted: true }), // Update is_deleted to true
+      });
+
+      // Update the local state to reflect the soft delete
+      const updatedNotifications = notifications.map((notification) =>
+        notification.id === id ? { ...notification, is_deleted: true } : notification
+      );
+      setNotifications(updatedNotifications);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const clearAllNotifications = () => {
@@ -83,7 +102,10 @@ export default function Notifications() {
 
   return (
     <View style={styles.container}>
-      {/* (unchanged) */}
+      <View style={styles.headerContainer}>
+        <Title style={styles.header}>Notifications</Title>
+        <Button onPress={clearAllNotifications}>Clear All</Button>
+      </View>
       {notifications.map((notification) => (
         <NotificationCard key={notification.id} {...notification} onRemove={removeNotification} />
       ))}
@@ -116,5 +138,11 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     marginLeft: 16,
+  },
+  textUser: {
+    marginTop: -6,
+  },
+  itemTitle: {
+    fontWeight: "500",
   },
 });
