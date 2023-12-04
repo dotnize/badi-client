@@ -43,30 +43,13 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 export default function Notifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  // function for tinuoray na delete
-  // const removeNotification = async (id: number) => {
-  //   try {
-  //     // Make a DELETE request to the server to delete the notification
-  //     await apiFetch(`/notification/${id}`, { method: "DELETE" });
-
-  //     // Update the local state to remove the notification
-  //     const updatedNotifications = notifications.filter((notification) => notification.id !== id);
-  //     setNotifications(updatedNotifications);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  //soft delete
   const removeNotification = async (id: number) => {
     try {
-      // Make a PUT request to update the is_deleted property
       await apiFetch(`/notification/${id}`, {
         method: "PUT",
-        body: JSON.stringify({ is_deleted: true }), // Update is_deleted to true
+        body: JSON.stringify({ is_deleted: true }),
       });
 
-      // Update the local state to reflect the soft delete
       const updatedNotifications = notifications.map((notification) =>
         notification.id === id ? { ...notification, is_deleted: true } : notification
       );
@@ -81,11 +64,9 @@ export default function Notifications() {
   };
 
   useEffect(() => {
-    // Fetch notifications when the component mounts
     async function fetchNotifications() {
       try {
         const { data, error } = await apiFetch<Notification[]>("/notification/user/1");
-        console.log(data); // Log the response to inspect its structure
 
         if (error) {
           console.error(error);
@@ -98,7 +79,10 @@ export default function Notifications() {
     }
 
     fetchNotifications();
-  }, []); // Empty dependency array ensures this effect runs only once on mount
+  }, []);
+
+  // Filter out notifications with is_deleted set to true
+  const filteredNotifications = notifications.filter((notification) => !notification.is_deleted);
 
   return (
     <View style={styles.container}>
@@ -106,7 +90,7 @@ export default function Notifications() {
         <Title style={styles.header}>Notifications</Title>
         <Button onPress={clearAllNotifications}>Clear All</Button>
       </View>
-      {notifications.map((notification) => (
+      {filteredNotifications.map((notification) => (
         <NotificationCard key={notification.id} {...notification} onRemove={removeNotification} />
       ))}
     </View>
