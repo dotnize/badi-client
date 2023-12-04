@@ -124,9 +124,16 @@ export default function ListingDetails() {
         </Link>
 
         <View style={{ width: "100%", gap: 8 }}>
-          <Button mode="contained">
-            {inventory?.userId === user?.id ? "Edit Listing" : "Create Offer"}
-          </Button>
+          <Link
+            asChild
+            href={
+              inventory?.userId === user?.id ? `/listings/edit/${id}` : `/offers/create?id=${id}`
+            }
+          >
+            <Button mode="contained">
+              {inventory?.userId === user?.id ? "Edit Listing" : "Create Offer"}
+            </Button>
+          </Link>
           {inventory?.userId !== user?.id && (
             <Button onPress={findChatroom} mode="elevated">
               Message
