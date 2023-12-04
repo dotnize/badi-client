@@ -3,14 +3,14 @@
 
 // Use the useLocalSearchParams hook from expo-router to get the id from the URL.
 
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, ScrollView, View } from "react-native";
 import { Avatar, Button, Chip, Text } from "react-native-paper";
 
 import { useSession } from "~/hooks/useSession";
 import { COLORS } from "~/lib/theme";
-import { Inventory } from "~/lib/types";
+import { ChatRoom, Inventory } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
 export default function ListingDetails() {
@@ -33,6 +33,19 @@ export default function ListingDetails() {
   useEffect(() => {
     fetchInventory();
   }, [id]);
+
+  async function findChatroom() {
+    const { data, error } = await apiFetch<ChatRoom>(`/chatroom`, {
+      method: "POST",
+      body: JSON.stringify({ member1Id: user?.id, member2Id: inventory?.userId }),
+    });
+
+    if (error || !data) {
+      console.log(error || "Something went wrong while fetching chatroom");
+    } else {
+      router.push(`/messages/${data?.id}`);
+    }
+  }
 
   return (
     <View style={{ flex: 1, height: "100%", padding: 8, gap: 8 }}>
@@ -71,7 +84,7 @@ export default function ListingDetails() {
         </View>
         <View>
           <Text variant="bodyLarge" style={{ fontWeight: "bold" }}>
-            Preferred Offer: {<Text variant="titleLarge">{inventory?.preferredOffer}</Text>}
+            Preferred Offer: <Text variant="titleLarge">{inventory?.preferredOffer}</Text>
           </Text>
         </View>
       </ScrollView>
@@ -112,9 +125,13 @@ export default function ListingDetails() {
 
         <View style={{ width: "100%", gap: 8 }}>
           <Button mode="contained">
-            {inventory?.user?.id === user?.id ? "Edit Offer" : "Create Offer"}
+            {inventory?.userId === user?.id ? "Edit Listing" : "Create Offer"}
           </Button>
-          <Button mode="elevated">Message</Button>
+          {inventory?.userId !== user?.id && (
+            <Button onPress={findChatroom} mode="elevated">
+              Message
+            </Button>
+          )}
         </View>
       </View>
     </View>
