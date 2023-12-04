@@ -43,21 +43,36 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 export default function Notifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
+  // function for tinuoray na delete
   const removeNotification = async (id: number) => {
     try {
-      await apiFetch(`/notification/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({ is_deleted: true }),
-      });
+      // Make a DELETE request to the server to delete the notification
+      await apiFetch(`/notification/${id}`, { method: "DELETE" });
 
-      const updatedNotifications = notifications.map((notification) =>
-        notification.id === id ? { ...notification, is_deleted: true } : notification
-      );
+      // Update the local state to remove the notification
+      const updatedNotifications = notifications.filter((notification) => notification.id !== id);
       setNotifications(updatedNotifications);
     } catch (error) {
       console.error(error);
     }
   };
+
+  //for soft delete *i give up*
+  // const removeNotification = async (id: number) => {
+  //   try {
+  //     await apiFetch(`/notification/${id}`, {
+  //       method: "PUT",
+  //       body: JSON.stringify({ is_deleted: true }),
+  //     });
+
+  //     const updatedNotifications = notifications.map((notification) =>
+  //       notification.id === id ? { ...notification, is_deleted: true } : notification
+  //     );
+  //     setNotifications(updatedNotifications);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const clearAllNotifications = () => {
     setNotifications([]);
