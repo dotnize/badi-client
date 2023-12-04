@@ -67,7 +67,7 @@ export default function PostTradeProgress() {
     } else {
       console.log(data);
       router.back();
-      router.back();
+      router.replace(`/trades/${id}`);
     }
   }
 
