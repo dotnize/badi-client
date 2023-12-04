@@ -166,7 +166,7 @@ export default function TabLayout() {
           <View style={{ gap: SIZES[1] }}>
             <Link href="/about">About us</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="terms">Terms and Conditions</Link>
+            {/* <Link href="/terms">Terms and Conditions</Link> */}
           </View>
 
           <Button
