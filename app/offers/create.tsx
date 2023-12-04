@@ -8,6 +8,7 @@ import { Avatar, Button, Card, IconButton, Modal, Portal, Text } from "react-nat
 
 import ItemsCard from "~/components/cards/offer/select-item";
 import { useSession } from "~/hooks/useSession";
+import { emptyImageUrl } from "~/lib/firebase";
 import { Inventory, TradeInventory } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
@@ -117,7 +118,10 @@ export default function CreateOffer() {
           <Card key={i} elevation={2} style={{ margin: 8 }}>
             <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <View style={{ flexDirection: "row", gap: 12 }}>
-                <Avatar.Image size={72} source={require("~/assets/adaptive-icon.png")} />
+                <Avatar.Image
+                  size={72}
+                  source={{ uri: item.inventory?.imageUrls[0] || emptyImageUrl }}
+                />
                 <View style={{ gap: 5 }}>
                   <Text variant="titleSmall">{item.inventory?.name}</Text>
                   <Text variant="labelSmall">from {item.inventory?.user?.firstName}</Text>
@@ -213,7 +217,10 @@ export default function CreateOffer() {
           <Card key={i} elevation={2} style={{ margin: 8 }}>
             <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <View style={{ flexDirection: "row", gap: 12 }}>
-                <Avatar.Image size={72} source={require("~/assets/adaptive-icon.png")} />
+                <Avatar.Image
+                  size={72}
+                  source={{ uri: item.inventory?.imageUrls[0] || emptyImageUrl }}
+                />
                 <View style={{ gap: 5 }}>
                   <Text variant="titleSmall">{item.inventory?.name}</Text>
                   <Text variant="labelSmall">from {user?.firstName}</Text>

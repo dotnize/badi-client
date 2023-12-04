@@ -43,7 +43,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
   const [currentKeyword, setCurrentKeyword] = useState<string>("");
 
   async function postListing() {
-    if (!name || !description || !category || !imageUrl || !type || !preferredOffer) return;
+    if (!name || !description || !category || !imageUrl || !type) return;
     const finalKeywords = [category, ...keywords];
 
     let newListing: Partial<Inventory> = {
@@ -55,6 +55,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
     };
 
     if (listingType === "inventory") {
+      if (!preferredOffer) return;
       newListing = { ...newListing, location: location || user?.location, preferredOffer };
     }
 
