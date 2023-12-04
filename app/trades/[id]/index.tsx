@@ -4,16 +4,60 @@
 // Use the useLocalSearchParams hook from expo-router to get the id from the URL.
 
 import { Link, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, ProgressBar, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 import ActiveUserItem from "~/components/cards/activetrade/active-inventory";
+import { useSession } from "~/hooks/useSession";
+import { TradeGroup, TradeInventory } from "~/lib/types";
+import { apiFetch } from "~/lib/utils";
 
 export default function ActiveTrade() {
+  const { user } = useSession();
   const { id } = useLocalSearchParams();
   const [percent, setPercent] = useState(0);
+
+  const [tradeInventory, setTradeInventory] = useState<TradeInventory[]>([]);
+  const [tradeGroup, setTradeGroup] = useState<TradeGroup | undefined>(undefined);
+
+  //id used from localsearch params see /components/cards/active-trade
+  async function getTradeGroup() {
+    const { data, error } = await apiFetch<TradeGroup>(`/tradegroup/${id}`);
+
+    if (error) {
+      console.log(error);
+    } else {
+      setTradeGroup(data || undefined);
+    }
+  }
   // If naa natay backend, pwede nato gamiton ang id ig fetch.
+  //id used from localsearch params see /components/cards/active-trade
+
+  async function getTradeInventory() {
+    const { data, error } = await apiFetch<TradeInventory[]>(`/tradeinventory/group/${id}`);
+
+    if (error) {
+      console.log(error);
+    } else {
+      setTradeInventory(data || []);
+    }
+  }
+
+  useEffect(() => {
+    if (user?.id) {
+      getTradeInventory();
+      getTradeGroup();
+    }
+  }, [user?.id]);
+
+  //for the progress bar completed count / total count (ex. if 2 items only and 1 is completed 1 is not, 50% completed)
+  useEffect(() => {
+    const completedCount = tradeInventory.filter((trade) => trade.isCompleted).length;
+    const totalCount = tradeInventory.length;
+    const percentCompleted = totalCount > 0 ? Math.floor((completedCount / totalCount) * 100) : 0;
+    setPercent(percentCompleted);
+  }, [tradeInventory]);
 
   return (
     <View style={{ flex: 1, padding: 8 }}>
@@ -45,12 +89,22 @@ export default function ActiveTrade() {
             <TabScreen label="Ongoing">
               <View style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1, padding: 8 }} showsVerticalScrollIndicator={false}>
-                  <ActiveUserItem />
-                  <ActiveUserItem />
-                  <ActiveUserItem />
-                  <ActiveUserItem />
-                  <ActiveUserItem />
-                  <ActiveUserItem />
+                  {tradeInventory
+                    .filter((trade) => !trade.isCompleted)
+                    .map((trade, index) => (
+                      // Replace `ActiveUserItem` with the component you want to render for each ongoing trade
+                      <ActiveUserItem
+                        key={index}
+                        imageUrls={trade.inventory?.imageUrls[0] || ""}
+                        itemName={trade.inventory?.name || ""}
+                        remaining={(trade.totalQuantity - trade.completedQuantity).toString()}
+                        receiver={
+                          trade.senderId === tradeGroup?.user1Id
+                            ? `to ${tradeGroup?.user2?.firstName}` || ""
+                            : `from ${tradeGroup?.user1?.firstName}` || ""
+                        }
+                      />
+                    ))}
                 </ScrollView>
               </View>
             </TabScreen>
@@ -58,11 +112,22 @@ export default function ActiveTrade() {
             <TabScreen label="Completed">
               <View style={{ flex: 1 }}>
                 <ScrollView style={{ flex: 1, padding: 8 }}>
-                  <ActiveUserItem />
-                  <ActiveUserItem />
-                  <ActiveUserItem />
-                  <ActiveUserItem />
-                  <ActiveUserItem />
+                  {tradeInventory
+                    .filter((trade) => trade.isCompleted)
+                    .map((trade, index) => (
+                      // Replace `ActiveUserItem` with the component you want to render for each ongoing trade
+                      <ActiveUserItem
+                        key={index}
+                        imageUrls={trade.inventory?.imageUrls[0] || ""}
+                        itemName={trade.inventory?.name || ""}
+                        remaining={trade.isCompleted === true ? "Completed" : ""}
+                        receiver={
+                          trade.senderId === tradeGroup?.user1Id
+                            ? `to ${tradeGroup?.user2?.firstName}` || ""
+                            : `from ${tradeGroup?.user1?.firstName}` || ""
+                        }
+                      />
+                    ))}
                 </ScrollView>
               </View>
             </TabScreen>

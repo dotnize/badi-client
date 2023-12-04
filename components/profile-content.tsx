@@ -1,5 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import "react-native-gesture-handler";
@@ -11,7 +11,7 @@ import PhotoPreview from "~/components/photo-preview";
 import { useSession } from "~/hooks/useSession";
 import { defaultAvatarUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
-import type { Inventory, User, Wish } from "~/lib/types";
+import type { ChatRoom, Inventory, User, Wish } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
 export default function ProfileContent({ userId }: { userId: number }) {
@@ -21,6 +21,19 @@ export default function ProfileContent({ userId }: { userId: number }) {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [inventory, setInventory] = useState<Inventory[]>([]);
   const [wishes, setWishes] = useState<Wish[]>([]);
+
+  async function findChatroom() {
+    const { data, error } = await apiFetch<ChatRoom>(`/chatroom`, {
+      method: "POST",
+      body: JSON.stringify({ member1Id: session.user?.id, member2Id: userId }),
+    });
+
+    if (error || !data) {
+      console.log(error || "Something went wrong while fetching chatroom");
+    } else {
+      router.push(`/messages/${data?.id}`);
+    }
+  }
 
   async function fetchOtherUser() {
     const { data, error } = await apiFetch<User>(`/user/${userId}`);
@@ -118,8 +131,11 @@ export default function ProfileContent({ userId }: { userId: number }) {
         </View>
 
         {!isLoggedUser && (
-          /* TODO: message endpoint also */
-          <Button style={{ marginHorizontal: 10, marginBottom: 12 }} mode="contained">
+          <Button
+            onPress={findChatroom}
+            style={{ marginHorizontal: 10, marginBottom: 12 }}
+            mode="contained"
+          >
             Message
           </Button>
         )}

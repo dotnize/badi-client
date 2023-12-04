@@ -25,7 +25,7 @@ const availableCategories = [
   { label: "Sports", value: "sports" },
 ];
 
-function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
+function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
   const { user } = useSession();
 
   // TODO: support multiple images
@@ -42,7 +42,8 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
 
   const [currentKeyword, setCurrentKeyword] = useState<string>("");
 
-  async function postListing() {
+  async function saveChanges() {
+    // need pa ni usbon
     if (!name || !description || !category || !imageUrl || !type || !preferredOffer) return;
     const finalKeywords = [category, ...keywords];
 
@@ -199,33 +200,26 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
         </>
       )}
 
-      <Button onPress={postListing} mode="contained">
-        Post Listing
+      <Button onPress={() => {}} mode="contained">
+        Save Changes
+      </Button>
+      <Button onPress={() => {}} mode="contained" buttonColor={COLORS.error}>
+        Delete Listing
+      </Button>
+      <Button onPress={() => {}} mode="contained" buttonColor={COLORS.secondary}>
+        Cancel Changes
       </Button>
     </ScrollView>
   );
 }
 
-export default function CreateNewListingScreen() {
+export default function EditListingScreen() {
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
       <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
-        <Text style={{ fontSize: 16, marginBottom: 4 }}>Create New Listing</Text>
+        <Text style={{ fontSize: 16, marginBottom: 4 }}>Edit Listing</Text>
       </View>
-      <TabsProvider defaultIndex={0}>
-        <Tabs>
-          <TabScreen label="Inventory">
-            <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              <NewListing listingType="inventory" />
-            </ScrollView>
-          </TabScreen>
-          <TabScreen label="Wish">
-            <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
-              <NewListing listingType="wish" />
-            </ScrollView>
-          </TabScreen>
-        </Tabs>
-      </TabsProvider>
-    </View>
+      <EditListing listingType="inventory" />
+    </ScrollView>
   );
 }

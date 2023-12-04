@@ -53,11 +53,11 @@ export default function ListingCard({ listing }: { listing: Inventory | Wish }) 
                       {" "}
                       &#9733; {user.averageRating}
                     </Text>
-                    <Text variant="titleSmall" style={{ paddingHorizontal: 10, color: "grey" }}>
-                      |
-                    </Text>
                   </>
                 )}
+                <Text variant="titleSmall" style={{ paddingHorizontal: 10, color: "grey" }}>
+                  |
+                </Text>
 
                 <Text variant="titleSmall" style={{ color: "grey" }}>
                   {location}

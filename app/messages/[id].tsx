@@ -1,9 +1,7 @@
 // Dynamic route!
 // e.g. /messages/1, /messages/8, etc.
 
-// Use the useLocalSearchParams hook from expo-router to get the id from the URL.
-
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
@@ -17,6 +15,7 @@ import {
 } from "react-native-paper";
 import { io } from "socket.io-client";
 
+import ConfirmModal from "~/components/confirm-modal"; // Adjust the import path as needed
 import { useSession } from "~/hooks/useSession";
 import { API_URL } from "~/lib/config";
 import { defaultAvatarUrl, emptyImageUrl } from "~/lib/firebase";
@@ -31,7 +30,6 @@ const socket = io(API_URL, {
 
 export default function Convo() {
   const { id, inventoryId } = useLocalSearchParams();
-  const router = useRouter();
   const { user } = useSession();
 
   const [chatroom, setChatroom] = useState<ChatRoom | undefined>(undefined);
@@ -40,6 +38,8 @@ export default function Convo() {
 
   const [messageInput, setMessageInput] = useState("");
   const [loading, setLoading] = useState(true); // disable send button if loading
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchChatRoom();
@@ -89,6 +89,31 @@ export default function Convo() {
     }, 1200); // 1.2 second cooldown to avoid issues & spam
   }
 
+  function handleDeletePress(messageId: number) {
+    console.log("Selected Message ID for deletion:", messageId);
+    setSelectedMessageId(messageId);
+    setDeleteModalVisible(true);
+  }
+
+  function handleDeleteConfirm() {
+    console.log("Confirmed Deletion for Message ID:", selectedMessageId);
+
+    if (selectedMessageId !== null) {
+      socket.emit("deleteChat", selectedMessageId);
+      setDeleteModalVisible(false);
+    }
+  }
+
+  // function deleteChat(messageId: number) {
+  //   try {
+  //     console.log("Deleting message with ID:", messageId);
+  //     // Notify the server to delete the message from the chat room
+  //     socket.emit("deleteChat", messageId);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
   async function fetchChatRoom() {
     // Fetch chat room details based on the id
     const { data, error } = await apiFetch<ChatRoom>(`/chatroom/${id}`);
@@ -112,12 +137,11 @@ export default function Convo() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <IconButton
+        {/* <IconButton
           icon="arrow-left"
           onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))}
           style={styles.backButton}
-        />
-
+        /> */}
         <View style={styles.userInfo}>
           {chatroom?.member1 && chatroom?.member2 ? (
             <>
@@ -188,10 +212,25 @@ export default function Convo() {
                 }}
               >
                 {message.content}
+                {user?.id === message.senderId && (
+                  <IconButton
+                    icon="delete"
+                    onPress={() => handleDeletePress(message.id)}
+                    style={{ marginLeft: "auto", padding: 0 }}
+                  />
+                )}
               </Text>
             </View>
           ))
         )}
+
+        {/* Delete confirmation modal */}
+        <ConfirmModal
+          title="Are you sure you want to delete this message?"
+          state={deleteModalVisible}
+          setState={setDeleteModalVisible}
+          handleOnConfirmDelete={handleDeleteConfirm}
+        />
       </View>
 
       <View style={styles.inputContainer}>
@@ -221,7 +260,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    // marginBottom: 16,
     height: 70,
   },
   backButton: {
@@ -238,7 +276,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 10,
   },
-
   infoButton: {
     marginRight: 0,
   },
@@ -248,40 +285,34 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: 16,
-    height: 100, // Specify the desired height
+    height: 100,
     backgroundColor: "#fff",
   },
-
   cardContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
-
   cardCover: {
-    width: 100, // Adjust the width of the picture
-    height: 100, // Use "100%" to take the full height of the card
+    width: 100,
+    height: 100,
   },
-
   textContainer: {
     flex: 1,
     marginLeft: 16,
   },
-
   itemTitle: {
     fontSize: 18,
     fontWeight: "bold",
   },
-
   itemDescription: {
     marginTop: 8,
     color: "#888",
   },
-
   arrowIcon: {
     position: "absolute",
-    right: 10, // Adjust the right position as needed
-    bottom: 28, // Adjust the bottom position as needed
+    right: 10,
+    bottom: 28,
   },
   chatbox: {
     flex: 1,
@@ -298,16 +329,15 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    margin: 5, // Adjust the margin as needed
-    fontSize: 16, // Adjust the font size as needed
+    margin: 5,
+    fontSize: 16,
     width: 100,
-    // Adjust the width as needed
   },
   messageStyle: {
     marginBottom: 8,
     padding: 10,
     borderRadius: 5,
-    maxWidth: "100%", // Full width
+    maxWidth: "100%",
     boxSizing: "border-box",
   },
 });
