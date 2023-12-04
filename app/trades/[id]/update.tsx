@@ -22,6 +22,7 @@ export default function PostTradeProgress() {
   const [value, setValue] = useState<string | null>(null);
   const [isFocus, setIsFocus] = useState(false);
   const [incrementQuantity, setIncrementQuantity] = useState(0);
+
   // If naa natay backend, pwede nato gamiton ang id ig fetch.
 
   async function getTradeInventory() {
@@ -37,6 +38,7 @@ export default function PostTradeProgress() {
       }
     }
   }
+
   useEffect(() => {
     if (user?.id) {
       getTradeInventory();

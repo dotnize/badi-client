@@ -20,7 +20,9 @@ export default function ActiveUserItem({
         <View style={{ flexDirection: "row", gap: 12 }}>
           <Avatar.Image size={72} source={{ uri: imageUrls }} />
           <View style={{ gap: 5 }}>
-            <Text variant="titleSmall">{itemName}</Text>
+            <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+              {itemName}
+            </Text>
             <Text variant="labelSmall">{receiver}</Text>
           </View>
         </View>

@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
@@ -35,7 +36,9 @@ export default function Activity() {
     <View style={{ flex: 1 }}>
       <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
         <Text variant="titleMedium">Trade Activities</Text>
-        <IconButton style={{ position: "absolute", right: 0 }} icon="bell" />
+        <Link asChild href="/notifications">
+          <IconButton style={{ position: "absolute", right: 0 }} icon="bell" />
+        </Link>
       </View>
       <TabsProvider defaultIndex={0}>
         <Tabs
