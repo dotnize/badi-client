@@ -9,8 +9,9 @@ import { Image, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Text, TextInput } from "react-native-paper";
 import { useSession } from "~/hooks/useSession";
+import { emptyImageUrl } from "~/lib/firebase";
 import { TradeInventory } from "~/lib/types";
-import { apiFetch } from "~/lib/utils";
+import { apiFetch, pickImageGetURL } from "~/lib/utils";
 
 export default function PostTradeProgress() {
   const { id } = useLocalSearchParams();
@@ -22,6 +23,7 @@ export default function PostTradeProgress() {
   const [value, setValue] = useState<string | null>(null);
   const [isFocus, setIsFocus] = useState(false);
   const [incrementQuantity, setIncrementQuantity] = useState(0);
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   // If naa natay backend, pwede nato gamiton ang id ig fetch.
 
@@ -64,6 +66,7 @@ export default function PostTradeProgress() {
       console.log(error);
     } else {
       console.log(data);
+      router.back();
       router.replace(`/trades/${id}`);
     }
   }
@@ -108,6 +111,11 @@ export default function PostTradeProgress() {
     return null;
   };
 
+  async function selectImage() {
+    const uploadedURL = await pickImageGetURL();
+    if (uploadedURL) setImageUrl(uploadedURL);
+  }
+
   return (
     <View style={{ flex: 1, padding: 8, gap: 8 }}>
       <View style={{ width: "100%", flex: 1, gap: 12 }}>
@@ -146,9 +154,14 @@ export default function PostTradeProgress() {
         </View>
 
         <View style={{ width: "100%" }}>
-          <Text>Photos</Text>
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text>Photos</Text>
+            <Button mode="contained" onPress={selectImage}>
+              Add image
+            </Button>
+          </View>
           <Image
-            source={require("~/assets/adaptive-icon.png")}
+            source={{ uri: imageUrl || emptyImageUrl }}
             style={{ width: 256, height: 256, alignSelf: "center" }}
           />
         </View>

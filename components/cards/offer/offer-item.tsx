@@ -4,6 +4,7 @@ import { Avatar, Card, IconButton, Text } from "react-native-paper";
 
 export default function PendingOfferItem() {
   const [remaning, setRemaining] = useState(0);
+
   return (
     <Card elevation={2} style={{ margin: 8 }}>
       <Card.Content style={{ flexDirection: "row", justifyContent: "space-between" }}>

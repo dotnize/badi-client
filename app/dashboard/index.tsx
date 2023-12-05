@@ -1,7 +1,7 @@
 import { Platform, View } from "react-native";
 import { Button } from "react-native-paper";
-
 import { VictoryChart, VictoryLine } from "victory";
+import { useSession } from "~/hooks/useSession";
 
 const sampleData = [
   { x: 1, y: 2 },
@@ -11,6 +11,8 @@ const sampleData = [
 ];
 
 export default function Dashboard() {
+  const { user } = useSession();
+
   return (
     <View>
       <VictoryChart>
