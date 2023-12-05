@@ -10,6 +10,7 @@ interface Notification {
     user: string;
     title: string;
     description: string;
+    image: string;
   };
   timestamp: string;
   is_deleted: boolean;
@@ -28,7 +29,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 }) => (
   <Card style={styles.card}>
     <Card.Content style={styles.cardContent}>
-      <Avatar.Icon size={48} icon="account-circle" />
+      <Avatar.Image size={80} source={{ uri: content.image }} />
       <View style={styles.textContainer}>
         <Title style={styles.itemTitle}>{content.title}</Title>
         <Paragraph style={styles.textUser}>Posted by: {content.user}</Paragraph>
