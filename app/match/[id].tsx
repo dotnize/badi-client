@@ -6,7 +6,7 @@
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Card, Paragraph, Text, Title } from "react-native-paper";
+import { Button, Card, Paragraph, Text, Title } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 import { COLORS } from "~/lib/theme";
 import { apiFetch } from "~/lib/utils";
@@ -34,9 +34,12 @@ interface CardComponentProps {
     image: string;
   };
   timestamp: string;
+  is_deleted: boolean;
+  user_id: number;
+  onDelete: (id: number) => void;
 }
 
-const CardComponent: React.FC<CardComponentProps> = ({ id, content, timestamp }) => (
+const CardComponent: React.FC<CardComponentProps> = ({ id, content, timestamp, onDelete }) => (
   <Card style={styles.card}>
     <Card.Cover source={{ uri: content.image }} style={styles.cardImage} />
     <Card.Content style={styles.cardContent}>
@@ -48,12 +51,25 @@ const CardComponent: React.FC<CardComponentProps> = ({ id, content, timestamp })
         {content.description}
       </Paragraph>
     </Card.Content>
+      <Card.Actions>
+        <Button onPress={() => onDelete(id)}>Delete</Button>
+      </Card.Actions>
   </Card>
 );
 
 export default function MatchFound() {
   const { id } = useLocalSearchParams();
   const [matches, setMatches] = useState<Match[]>([]);
+
+  const deleteMatch = async (matchId: number) => {
+    try {
+      await apiFetch(`/notification/${matchId}`, { method: "DELETE" });
+      const updatedMatches = matches.filter((match) => match.id !== matchId);
+      setMatches(updatedMatches);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -86,7 +102,7 @@ export default function MatchFound() {
               contentContainerStyle={styles.scrollViewContent}
             >
               {matches.map((match) => (
-                <CardComponent key={match.id} {...match} />
+                <CardComponent key={match.id} {...match} onDelete={deleteMatch} />
               ))}
             </ScrollView>
           </TabScreen>
@@ -97,7 +113,7 @@ export default function MatchFound() {
               contentContainerStyle={styles.scrollViewContent}
             >
               {matches.map((match) => (
-                <CardComponent key={match.id} {...match} />
+                <CardComponent key={match.id} {...match} onDelete={deleteMatch} />
               ))}
             </ScrollView>
           </TabScreen>
