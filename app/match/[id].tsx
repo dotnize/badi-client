@@ -4,14 +4,73 @@
 // Use the useLocalSearchParams hook from expo-router to get the id from the URL>
 
 import { useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Card, Paragraph, Text, Title } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 import { COLORS } from "~/lib/theme";
+import { apiFetch } from "~/lib/utils";
+
+interface Match {
+  id: number;
+  type: string;
+  content: {
+    user: string;
+    title: string;
+    description: string;
+    image: string;
+  };
+  timestamp: string;
+  is_deleted: boolean;
+  user_id: number;
+}
+
+interface CardComponentProps {
+  id: number;
+  content: {
+    user: string;
+    title: string;
+    description: string;
+    image: string;
+  };
+  timestamp: string;
+}
+
+const CardComponent: React.FC<CardComponentProps> = ({ id, content, timestamp }) => (
+  <Card style={styles.card}>
+    <Card.Cover source={{ uri: content.image }} style={styles.cardImage} />
+    <Card.Content style={styles.cardContent}>
+      <Title style={styles.cardTitle}>{content.title}</Title>
+      <Text numberOfLines={1} style={{ color: "grey" }}>
+        {content.user} &#9733;&#9733;&#9733;&#9733; 4.7 (51)
+      </Text>
+      <Paragraph style={styles.cardParagraph} numberOfLines={3}>
+        {content.description}
+      </Paragraph>
+    </Card.Content>
+  </Card>
+);
 
 export default function MatchFound() {
   const { id } = useLocalSearchParams();
+  const [matches, setMatches] = useState<Match[]>([]);
+
+  useEffect(() => {
+    const fetchMatches = async () => {
+      try {
+        const { data, error } = await apiFetch<Match[]>(`/notification/user/${id}`);
+        if (error) {
+          console.error(error);
+        } else {
+          setMatches(data || []);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchMatches();
+  }, [id]);
 
   return (
     <TabsProvider>
@@ -26,15 +85,8 @@ export default function MatchFound() {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContent}
             >
-              {sampleData.map((item) => (
-                <CardComponent
-                  key={item.id}
-                  id={item.id}
-                  title={item.title}
-                  username={item.username}
-                  content={item.content}
-                  imageSource={item.imageSource}
-                />
+              {matches.map((match) => (
+                <CardComponent key={match.id} {...match} />
               ))}
             </ScrollView>
           </TabScreen>
@@ -44,15 +96,8 @@ export default function MatchFound() {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContent}
             >
-              {sampleData.map((item) => (
-                <CardComponent
-                  key={item.id}
-                  id={item.id}
-                  title={item.title}
-                  username={item.username}
-                  content={item.content}
-                  imageSource={item.imageSource}
-                />
+              {matches.map((match) => (
+                <CardComponent key={match.id} {...match} />
               ))}
             </ScrollView>
           </TabScreen>
@@ -61,37 +106,6 @@ export default function MatchFound() {
     </TabsProvider>
   );
 }
-
-// Create a separate CardComponent for reusability
-
-interface CardComponentProps {
-  id: string; // Assuming id is of type string
-  title: string;
-  username: string;
-  content: string;
-  imageSource: number; // Assuming imageSource is a number (asset)
-}
-
-const CardComponent: React.FC<CardComponentProps> = ({
-  id,
-  title,
-  username,
-  content,
-  imageSource,
-}) => (
-  <Card style={styles.card}>
-    <Card.Cover source={imageSource} style={styles.cardImage} />
-    <Card.Content style={styles.cardContent}>
-      <Title style={styles.cardTitle}>{title}</Title>
-      <Text numberOfLines={1} style={{ color: "grey" }}>
-        {username} &#9733;&#9733;&#9733;&#9733; 4.7 (51)
-      </Text>
-      <Paragraph style={styles.cardParagraph} numberOfLines={3}>
-        {content}
-      </Paragraph>
-    </Card.Content>
-  </Card>
-);
 
 const styles = StyleSheet.create({
   container: {
@@ -135,52 +149,3 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 });
-
-// not finished, will change later to correspond with the actual database
-
-// just a sample data,
-const sampleData = [
-  {
-    id: "1",
-    title: "Listing #1",
-    username: "jameel123",
-    content:
-      "Very good kanding, used only once. Shiny and lightweight kanding. Very good kanding, used only once. Shiny and lightweight kanding.Very good kanding, used only once. Shiny and lightweight kanding.Very good kanding, used only once. Shiny and lightweight kanding.  Very good kanding, used only once. Shiny and lightweight kanding.",
-    imageSource: require("assets/Kambing.png"),
-  },
-  {
-    id: "2",
-    title: "Card 1",
-    username: "User 1",
-    content: "Content for Card 1",
-    imageSource: require("assets/Kambing.png"),
-  },
-  {
-    id: "3",
-    title: "Card 1",
-    username: "User 1",
-    content: "Content for Card 1",
-    imageSource: require("assets/Kambing.png"),
-  },
-  {
-    id: "4",
-    title: "Card 1",
-    username: "User 1",
-    content: "Content for Card 1",
-    imageSource: require("assets/Kambing.png"),
-  },
-  {
-    id: "5",
-    title: "Card 1",
-    username: "User 1",
-    content: "Content for Card 1",
-    imageSource: require("assets/Kambing.png"),
-  },
-  {
-    id: "6",
-    title: "Card 1",
-    username: "User 1",
-    content: "Content for Card 1",
-    imageSource: require("assets/Kambing.png"),
-  },
-];
