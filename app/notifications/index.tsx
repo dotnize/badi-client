@@ -1,28 +1,40 @@
-// URL: /notifications
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Avatar, Button, Card, IconButton, Paragraph, Title } from "react-native-paper";
+import { apiFetch } from "~/lib/utils";
 
-const initialNotifications = [
-  { id: 1, title: "Liden", content: "has sent you an offer!" },
-  { id: 2, title: "Leonel", content: "Looking for a secondhand airplane." },
-];
-
-interface NotificationCardProps {
+interface Notification {
   id: number;
-  title: string;
-  content: string;
+  type: string;
+  content: {
+    user: string;
+    title: string;
+    description: string;
+    image: string;
+  };
+  timestamp: string;
+  is_deleted: boolean;
+  user_id: number;
+}
+
+interface NotificationCardProps extends Notification {
   onRemove: (id: number) => void;
 }
 
-const NotificationCard: React.FC<NotificationCardProps> = ({ id, title, content, onRemove }) => (
+const NotificationCard: React.FC<NotificationCardProps> = ({
+  id,
+  content,
+  timestamp,
+  onRemove,
+}) => (
   <Card style={styles.card}>
     <Card.Content style={styles.cardContent}>
-      <Avatar.Icon size={48} icon="account-circle" />
+      <Avatar.Image size={80} source={{ uri: content.image }} />
       <View style={styles.textContainer}>
-        <Title>{title}</Title>
-        <Paragraph>{content}</Paragraph>
+        <Title style={styles.itemTitle}>{content.title}</Title>
+        <Paragraph style={styles.textUser}>Posted by: {content.user}</Paragraph>
+        <Paragraph>{content.description}</Paragraph>
+        <Paragraph>{timestamp}</Paragraph>
       </View>
       <IconButton icon="close" onPress={() => onRemove(id)} />
     </Card.Content>
@@ -30,16 +42,63 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ id, title, content,
 );
 
 export default function Notifications() {
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const removeNotification = (id: number) => {
-    const updatedNotifications = notifications.filter((notification) => notification.id !== id);
-    setNotifications(updatedNotifications);
+  // function for tinuoray na delete
+  const removeNotification = async (id: number) => {
+    try {
+      // Make a DELETE request to the server to delete the notification
+      await apiFetch(`/notification/${id}`, { method: "DELETE" });
+
+      // Update the local state to remove the notification
+      const updatedNotifications = notifications.filter((notification) => notification.id !== id);
+      setNotifications(updatedNotifications);
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  //for soft delete *i give up*
+  // const removeNotification = async (id: number) => {
+  //   try {
+  //     await apiFetch(`/notification/${id}`, {
+  //       method: "PUT",
+  //       body: JSON.stringify({ is_deleted: true }),
+  //     });
+
+  //     const updatedNotifications = notifications.map((notification) =>
+  //       notification.id === id ? { ...notification, is_deleted: true } : notification
+  //     );
+  //     setNotifications(updatedNotifications);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const clearAllNotifications = () => {
     setNotifications([]);
   };
+
+  useEffect(() => {
+    async function fetchNotifications() {
+      try {
+        const { data, error } = await apiFetch<Notification[]>("/notification/user/1");
+
+        if (error) {
+          console.error(error);
+        } else {
+          setNotifications(data || []);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchNotifications();
+  }, []);
+
+  // Filter out notifications with is_deleted set to true
+  const filteredNotifications = notifications.filter((notification) => !notification.is_deleted);
 
   return (
     <View style={styles.container}>
@@ -47,14 +106,8 @@ export default function Notifications() {
         <Title style={styles.header}>Notifications</Title>
         <Button onPress={clearAllNotifications}>Clear All</Button>
       </View>
-      {notifications.map((notification) => (
-        <NotificationCard
-          key={notification.id}
-          id={notification.id}
-          title={notification.title}
-          content={notification.content}
-          onRemove={removeNotification}
-        />
+      {filteredNotifications.map((notification) => (
+        <NotificationCard key={notification.id} {...notification} onRemove={removeNotification} />
       ))}
     </View>
   );
@@ -85,5 +138,11 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     marginLeft: 16,
+  },
+  textUser: {
+    marginTop: -6,
+  },
+  itemTitle: {
+    fontWeight: "500",
   },
 });
