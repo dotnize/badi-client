@@ -43,7 +43,9 @@ const CardComponent: React.FC<CardComponentProps> = ({ id, content, timestamp, o
   <Card style={styles.card}>
     <Card.Cover source={{ uri: content.image }} style={styles.cardImage} />
     <Card.Content style={styles.cardContent}>
-      <Title style={styles.cardTitle}>{content.title}</Title>
+      <Title style={styles.cardTitle} numberOfLines={1}>
+        {content.title}
+      </Title>
       <Text numberOfLines={1} style={{ color: "grey" }}>
         {content.user} &#9733;&#9733;&#9733;&#9733; 4.7 (51)
       </Text>
@@ -51,9 +53,9 @@ const CardComponent: React.FC<CardComponentProps> = ({ id, content, timestamp, o
         {content.description}
       </Paragraph>
     </Card.Content>
-      <Card.Actions>
-        <Button onPress={() => onDelete(id)}>Delete</Button>
-      </Card.Actions>
+    <Card.Actions>
+      <Button onPress={() => onDelete(id)}>Delete</Button>
+    </Card.Actions>
   </Card>
 );
 
@@ -139,13 +141,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     marginBottom: -4,
   },
   cardParagraph: {
     fontSize: 12,
     paddingTop: 4,
+    height: 40,
   },
   scrollViewContent: {
     flexDirection: "row",
