@@ -216,14 +216,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
-  deleteAccountModalContainer: {
-    position: "absolute",
-    alignSelf: "flex-end",
-    padding: 5,
-    borderRadius: 5,
-    top: 265,
-    right: 20,
-    zIndex: 999,
-    backgroundColor: COLORS.surface,
-  },
 });
