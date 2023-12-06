@@ -22,7 +22,7 @@ export default function Activity() {
       console.log(error);
     } else {
       setTrades(data || []);
-      console.log(data);
+      console.log("fef", data);
     }
   }
 
@@ -77,14 +77,7 @@ export default function Activity() {
                 {trades
                   .filter((trade) => trade.status === "pending")
                   .map((trade, index) => (
-                    <PendingTradeCard
-                      key={index}
-                      tradeGroupid={trade.id}
-                      user1FirstName={trade.user1?.firstName || ""}
-                      user2FirstName={trade.user2?.firstName || ""}
-                      user1profileUrl={trade.user1?.avatarUrl || defaultAvatarUrl}
-                      user2profileUrl={trade.user1?.avatarUrl || defaultAvatarUrl}
-                    />
+                    <PendingTradeCard key={index} trade={trade} />
                   ))}
               </ScrollView>
             </View>

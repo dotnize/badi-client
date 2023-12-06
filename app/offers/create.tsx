@@ -25,6 +25,7 @@ const containerStyle: ViewStyle = {
 export default function CreateOffer() {
   const { user } = useSession();
   const { id, offerId } = useLocalSearchParams();
+
   // TODO: offerId for edit counter offer
 
   const [myInventories, setMyInventories] = useState<Inventory[]>([]);

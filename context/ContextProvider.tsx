@@ -11,7 +11,7 @@ export default function ContextProvider({ children }: { children: React.ReactNod
 
   async function fetchUser() {
     console.log("Checking currently logged in user...");
-    const res = await apiFetch<User>(`/auth`);
+    const res = await apiFetch<User>(`/user/2`);
 
     if (!res.data || !res.data.id || res.error) {
       console.log("No logged-in user, session user is null!");
