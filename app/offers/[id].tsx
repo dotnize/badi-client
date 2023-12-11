@@ -75,7 +75,7 @@ export default function PendingOffer() {
         console.log(error);
       } else {
         setOtherUser(data);
-        console.log('Other User:', data);
+        console.log('Other User:', data); 
       }
     }
     
