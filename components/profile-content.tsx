@@ -9,9 +9,9 @@ import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 import ListingCard from "~/components/cards/listing-card";
 import PhotoPreviewModal from "~/components/photo-preview";
 import { useSession } from "~/hooks/useSession";
-import { defaultAvatarUrl, emptyImageUrl } from "~/lib/firebase";
+import { defaultAvatarUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
-import type { ChatRoom, Inventory, User, Wish } from "~/lib/types";
+import type { ChatRoom, Inventory, Rating, User, Wish } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
 export default function ProfileContent({ userId }: { userId: number }) {
@@ -21,6 +21,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [inventory, setInventory] = useState<Inventory[]>([]);
   const [wishes, setWishes] = useState<Wish[]>([]);
+  const [ratings, setRatings] = useState<Rating[]>([]);
 
   async function findChatroom() {
     const { data, error } = await apiFetch<ChatRoom>(`/chatroom`, {
@@ -34,6 +35,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
       router.push(`/messages/${data?.id}`);
     }
   }
+
 
   async function fetchOtherUser() {
     const { data, error } = await apiFetch<User>(`/user/${userId}`);
@@ -62,6 +64,17 @@ export default function ProfileContent({ userId }: { userId: number }) {
     }
   }
 
+  async function fetchRatings() {
+    if (!user) return;
+
+    const { data, error } = await apiFetch<Rating[]>(`/rating/user/${userId}`);
+    if (error || !data) {
+      console.log(error || "No ratings found");
+    } else if (data) {
+      setRatings(data);
+    }
+  }
+
   useEffect(() => {
     if (session.user !== undefined) {
       if (!isLoggedUser) {
@@ -72,6 +85,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
       }
       fetchInventory();
       fetchWishes();
+      fetchRatings();
     }
   }, [session.user]);
 
@@ -88,9 +102,9 @@ export default function ProfileContent({ userId }: { userId: number }) {
       <PhotoPreviewModal photo={photo} state={photoPreview} setState={setPhotoPreview} />
 
       <ScrollView style={{ flex: 1 }}>
-        <Pressable onPress={() => handlePhotoPreview(emptyImageUrl)}>
-          <Image style={styles.backgroundPic} source={{ uri: emptyImageUrl }} />
-        </Pressable>
+        
+        <View style={styles.backgroundPic}/>
+        
 
         <Pressable
           style={styles.profilePicContainer}
@@ -116,7 +130,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
 
         <View
           style={{
-            marginHorizontal: 25,
+            marginHorizontal: 15,
             marginTop: isLoggedUser ? 0 : 80,
             marginBottom: 10,
             flexDirection: "row",
@@ -129,7 +143,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
           </Text>
           <Link href={isLoggedUser ? `/me/ratings` : `/user/${userId}/ratings`}>
             <Text variant="titleMedium">
-              Ratings ({user?.averageRating || 0}) &nbsp;
+              &#9734; &#9734; &#9734; &#9734; &#9734; ({ratings.length || 0}) &nbsp;
               <AntDesign name="infocirlceo" size={18} style={{ verticalAlign: "middle" }} />
             </Text>
           </Link>
@@ -203,11 +217,12 @@ const styles = StyleSheet.create({
     left: 25,
   },
   backgroundPic: {
-    resizeMode: "cover",
-    alignSelf: "center",
-    backgroundColor: "#e0e0e0",
+    // resizeMode: "cover",
+    // alignSelf: "center",
+    backgroundColor: COLORS.primary,
     height: 200,
     width: "100%",
+
   },
   editProfileButtons: {
     alignSelf: "flex-end",

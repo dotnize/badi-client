@@ -23,118 +23,110 @@ import { apiFetch } from "~/lib/utils";
 export default function PendingOffer() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const { user: currentUser } = useSession();
-  const [trade, setTrade] = useState<TradeInventory[] | null>();
-  const [users, setUsers] = useState<User[]>([]);
+  const { user } = useSession();
 
-  async function getUser(id: number) {
-    const { data, error } = await apiFetch<User>(`/user/${id}`);
+  const [otherUser, setOtherUser] = useState<User | null>()
+  const [tradeInventories, setTradeInventories] = useState<TradeInventory[] | null>();
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmModalTitle, setConfirmModalTitle] = useState(`Trade Offer will be deleted.${"\n"}Are you sure?`)
+  const [onConfirmFunction, setOnConfirmFunction] = useState<any>()
+
+  const handleCounterOffer = () => {
+    router.push(`/offers/create?offerId=${tradeInventories?.[0].tradeGroupId}`);
+  };
+
+  const handleTrade = (status:string) => {
+    setConfirmModalTitle(`Trade Offer will be ${status == 'active' ? 'accepted' : status}.${"\n"}Are you sure?`)
+    setOnConfirmFunction(() => ()=>handleUpdateTrade(status))
+    setShowConfirmModal(true)
+  }
+
+  async function handleUpdateTrade (status: string) {
+    const { data, error } = await apiFetch<TradeGroup>(`/tradegroup/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ status: status }),
+    });
+
     if (error) {
       console.log(error);
     } else {
-      setUsers((prevUsers) => (data ? [...prevUsers, data] : []));
       console.log(data);
     }
+    router.push("/activity");
   }
 
-  async function getTradeInventory() {
+  async function getTradeInventories() {
     const { data, error } = await apiFetch<TradeInventory[]>(`/tradeinventory/group/${id}`);
 
     if (error) {
       console.log(error);
     } else {
-      setTrade(data);
-      console.log(data);
+      setTradeInventories(data);
+      console.log('Trade Inventory:', data);
     }
   }
 
-  useEffect(() => {
-    if (trade) {
-      getUser(trade[0]?.senderId);
-      getUser(trade[0]?.receiverId);
+  async function getOtherUser(){
+    if(tradeInventories){
+      const { data, error } = await apiFetch<User>(`/user/${tradeInventories[1].receiverId == user?.id ? tradeInventories[1].senderId : tradeInventories[1].receiverId }`);
+
+      if (error) {
+        console.log(error);
+      } else {
+        setOtherUser(data);
+        console.log('Other User:', data);
+      }
     }
-  }, [trade]);
+    
+  }
 
   useEffect(() => {
-    getTradeInventory();
+    getTradeInventories();
   }, []);
 
-  const handleCounterOffer = () => {
-    router.push({
-      pathname: `/offers/create?id=${trade?.[0].inventory?.id}`,
-      params: { url: "inventory" },
-    });
-  };
+  useEffect(()=>{
+    getOtherUser();
+  }, [tradeInventories])
 
-  const handleUpdateTrade = async (status: string) => {
-    const { data, error } = await apiFetch<TradeGroup>(`/tradegroup/${id}`, {
-      method: "PUT",
-      body: JSON.stringify({ status: status }),
-    });
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data);
-    }
-
-    router.push("/activity");
-  };
-
-  const handleDeleteTrade = async () => {
-    const { data, error } = await apiFetch<TradeGroup>(`/tradegroup/${id}`, {
-      method: "DELETE",
-    });
-
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(data);
-    }
-
-    router.push("/activity");
-  };
-
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   return (
     <View style={{ flex: 1, alignItems: "center", padding: 8, justifyContent: "space-around" }}>
-      {/* MODALS */}
 
       <ConfirmModal
-        title={`Trade Offer will be deleted.${"\n"}Are you sure?`}
+        title={confirmModalTitle}
         state={showConfirmModal}
         setState={setShowConfirmModal}
-        handleOnConfirmDelete={handleDeleteTrade}
+        onConfirmFunction={onConfirmFunction}
       />
 
-      {/* END MODALS */}
 
       <Text>Pending Offer</Text>
-      {trade?.[0]?.senderId === currentUser?.id ? (
-        <Text variant="titleMedium">Your Offer To {users[0]?.firstName}</Text>
+      {tradeInventories && tradeInventories[0]?.senderId === user?.id ? (
+        <Text variant="titleMedium">Your Offer To {otherUser?.firstName}</Text>
       ) : (
-        <Text variant="titleMedium">{users[1]?.firstName}'s Offer To You</Text>
+        <Text variant="titleMedium">{otherUser?.firstName}'s Offer To You</Text>
       )}
       <Text style={{ alignSelf: "flex-start", padding: 8 }}>You will receive:</Text>
 
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
-        {trade?.[0]?.senderId === currentUser?.id ? (
-          <OfferItem item={trade ? trade[1].inventory : undefined} />
+        {tradeInventories?.[0].senderId === user?.id ? (
+          <OfferItem item={ tradeInventories?.[1].inventory} />
         ) : (
-          <OfferItem item={trade ? trade[0]?.inventory : undefined} />
+          <OfferItem item={ tradeInventories?.[0].inventory } />
         )}
       </ScrollView>
       <Text style={{ alignSelf: "flex-start", padding: 8 }}>You will send:</Text>
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
-        {trade?.[0]?.senderId === currentUser?.id ? (
-          <OfferItem item={trade ? trade[0].inventory : undefined} />
+        {tradeInventories?.[0].senderId === user?.id ? (
+          <OfferItem item={tradeInventories?.[0].inventory} />
         ) : (
-          <OfferItem item={trade ? trade[1]?.inventory : undefined} />
+          <OfferItem item={ tradeInventories?.[1].inventory} />
         )}
       </ScrollView>
       <View style={{ width: "100%", gap: 8, padding: 8 }}>
-        {trade?.[0]?.senderId === currentUser?.id ? (
-          <Button mode="contained" onPress={() => setShowConfirmModal(true)}>
+        {tradeInventories?.[0].senderId === user?.id ? (
+          <Button mode="contained" onPress={() => handleTrade('cancelled')}>
             Cancel Trade Offer
           </Button>
         ) : (
@@ -143,11 +135,11 @@ export default function PendingOffer() {
               Edit Counter Offer
             </Button>
 
-            <Button mode="contained" onPress={() => handleUpdateTrade("active")}>
+            <Button mode="contained" onPress={() => handleTrade("active")}>
               Accept
             </Button>
 
-            <Button mode="contained" onPress={() => setShowConfirmModal(true)}>
+            <Button mode="contained" onPress={()=>handleTrade('rejected')}>
               Reject
             </Button>
           </>
