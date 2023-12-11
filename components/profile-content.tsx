@@ -65,8 +65,6 @@ export default function ProfileContent({ userId }: { userId: number }) {
   }
 
   async function fetchRatings() {
-    if (!user) return;
-
     const { data, error } = await apiFetch<Rating[]>(`/rating/user/${userId}`);
     if (error || !data) {
       console.log(error || "No ratings found");
@@ -166,7 +164,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
                 <FlatList
                   contentContainerStyle={{ gap: 10, padding: 8 }}
                   data={inventory}
-                  renderItem={({ item }) => <ListingCard listing={item} />}
+                  renderItem={({ item }) => <ListingCard listing={item}  type='inventory'/>}
                   keyExtractor={(item) => item.id.toString()}
                 />
               ) : (
@@ -180,7 +178,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
                 <FlatList
                   contentContainerStyle={{ gap: 10, padding: 8 }}
                   data={wishes}
-                  renderItem={({ item }) => <ListingCard listing={item} />}
+                  renderItem={({ item }) => <ListingCard listing={item} type='wish' />}
                   keyExtractor={(item) => item.id.toString()}
                 />
               ) : (
