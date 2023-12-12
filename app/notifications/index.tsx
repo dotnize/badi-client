@@ -58,7 +58,7 @@ export default function Notifications() {
     }
   };
 
-  //for soft delete *i give up*
+  //for soft delete
   // const removeNotification = async (id: number) => {
   //   try {
   //     await apiFetch(`/notification/${id}`, {
