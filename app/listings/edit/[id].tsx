@@ -1,6 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Chip, RadioButton, Text, TextInput } from "react-native-paper";
@@ -25,9 +25,9 @@ const availableCategories = [
   { label: "Sports", value: "sports" },
 ];
 
-function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
+function EditListing({ id, listingType }: { id : number, listingType: "inventory" | "wish" }) {
   const { user } = useSession();
-  const { id, type : passedType } = useLocalSearchParams();
+  
   
 
   // TODO: support multiple images
@@ -46,7 +46,10 @@ function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
 
   async function saveChanges() {
     // need pa ni usbon
-    if (!name || !description || !category || !imageUrl || !type || !preferredOffer) return;
+    if (!name || !description || !category || !imageUrl || !type || (listingType === 'inventory' && !preferredOffer)){
+      console.log('missing fields');
+      return
+    };
     const finalKeywords = [category, ...keywords];
 
     let newListing: Partial<Inventory> = {
@@ -61,8 +64,9 @@ function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
       newListing = { ...newListing, location: location || user?.location, preferredOffer };
     }
 
-    const { data, error } = await apiFetch<Inventory | Wish>(`/${listingType}`, {
-      method: "POST",
+  
+    const { data, error } = await apiFetch<Inventory | Wish>(id ? `/${listingType}/${id}` : `/${listingType}`, {
+      method: id ? 'PUT' : "POST",
       body: JSON.stringify(newListing),
     });
 
@@ -91,20 +95,50 @@ function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
   }
 
 
+  const [listing, setListing] = useState<Inventory | Wish | null>()
+  async function fectchListing(){
+    const { data, error } = await apiFetch<Inventory | Wish >(`/${listingType}/${id}`);
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('This is lisdting', data);
+      setListing(data || null);
+    }
+  }
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-   async function deleteListing(){
-    const { data, error } = await apiFetch<Inventory | Wish>(`/${passedType}/${id}`, {
+  async function deleteListing(){
+    const { data, error } = await apiFetch<Inventory | Wish>(`/${listingType}/${id}`, {
       method: "DELETE",
     });
 
     if (error || !data) {
-      console.log(error || `Something went wrong while deleting ${passedType}`);
+      console.log(error || `Something went wrong while deleting ${listingType}`);
     } else {
-      console.log(`Successful ${passedType} delete`, data)
+      console.log(`Successful deleting ${listingType}`, data)
     }
 
     router.push('/me')
   }
+
+  useEffect(() => {
+    fectchListing();
+  }, [id])
+
+  useEffect(()=>{
+    if(listing){
+      setName(listing.name)
+      setType(listing.type)
+      setImageUrl(listing.imageUrls[0])
+      setDescription(listing.description)
+      setKeywords(listing.keywords)
+      setLocation(listing.user?.location ? listing.user.location : location)
+      if(listing && 'preferredOffer' in listing){
+        setPreferredOffer(listing?.preferredOffer ? listing.preferredOffer : preferredOffer)
+      }
+
+    }
+  }, [listing])
 
   return (
     <ScrollView
@@ -112,7 +146,7 @@ function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
       style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}
     >
       <ConfirmModal
-        title={`Are you sure you want to delete this ${passedType}?`}
+        title={`Are you sure you want to delete this ${listingType}?`}
         state={showDeleteModal}
         setState={setShowDeleteModal}
         onConfirmFunction={deleteListing}
@@ -183,7 +217,7 @@ function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
       </View>
       <View style={{ gap: 4 }}>
         <Text>Keywords:</Text>
-        <View style={{ height: "100%", gap: 2, flexDirection: "row" }}>
+        <View style={{  gap: 2, flexDirection: "row" }}>
           {keywords.map((kw, i) => (
             <Chip key={i} closeIcon="close" onClose={() => removeKeyword(i)}>
               {kw}
@@ -224,8 +258,8 @@ function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
           </View>
         </>
       )}
-
-      <Button onPress={() => {}} mode="contained">
+    
+      <Button onPress={() => {saveChanges()}} mode="contained">
         Save Changes
       </Button>
       <Button onPress={() => setShowDeleteModal(true)} mode="contained" buttonColor={COLORS.error}>
@@ -239,12 +273,16 @@ function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
 }
 
 export default function EditListingScreen() {
+  const { id, type} = useLocalSearchParams();
+  const passedId = id  ? parseInt(id.toString(), 10) : 0;
+  const passedType = type == 'inventory' ? type : 'wish'
+
   return (
     <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>
       <View style={{ justifyContent: "center", alignItems: "center", padding: 16 }}>
         <Text style={{ fontSize: 16, marginBottom: 4 }}>Edit Listing</Text>
       </View>
-      <EditListing listingType="inventory" />
+      <EditListing id={passedId} listingType={passedType} />
     </ScrollView>
   );
 }
