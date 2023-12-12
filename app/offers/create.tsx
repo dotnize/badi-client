@@ -119,7 +119,7 @@ export default function CreateOffer() {
   async function submitOffer() {
     if (!mySelectedItems.length || !theirSelectedItems.length) return;
 
-    if(id || offerId){
+    if(id){
 
       console.log("IDs");
       console.log(mySelectedItems[0].inventoryId);
@@ -140,6 +140,41 @@ export default function CreateOffer() {
         // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace("/");
       }
+    }
+
+    // swap the id in current tradegroup, make new set of tradeinventories and delete old tradeinventories
+    if(offerId){
+        updateTradeGroupUserIds();
+        deleteOldTradeInventories();
+        router.push('/activity')
+      
+    }
+  }
+
+  async function updateTradeGroupUserIds(){
+    const { data, error } = await apiFetch<TradeInventory>(`/tradegroup/swap/${offerId}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          tradeInventories: [...mySelectedItems, ...theirSelectedItems],
+        }),
+      });
+
+      if (error || !data) {
+        console.log(error || `Something went wrong while swapping user IDs in tradegroup`);
+      } else {
+        console.log(`Successful swapping user IDs in tradegroup`, data)
+      }
+  }
+
+  async function deleteOldTradeInventories(){
+    const { data, error } = await apiFetch<TradeInventory>(`/tradeinventory/group/${offerId}`, {
+      method: "DELETE",
+    });
+
+    if (error || !data) {
+      console.log(error || `Something went wrong while deleting tradegroup`);
+    } else {
+      console.log(`Successful deleting tradegroup`, data)
     }
   }
 
