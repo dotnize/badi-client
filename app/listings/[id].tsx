@@ -18,7 +18,7 @@ import { apiFetch } from "~/lib/utils";
 export default function ListingDetails() {
   const { id, type} = useLocalSearchParams();
   const { user } = useSession();
-  const [inventory, setInventory] = useState<Inventory | Wish | null>(null);
+  const [item, setItem] = useState<Inventory | Wish | null>(null);
 
   async function fetchInventory() {
     const { data, error } = await apiFetch<Inventory | Wish >(`/${type}/${id}`);
@@ -27,7 +27,7 @@ export default function ListingDetails() {
       console.log(error);
     } else {
       console.log(data);
-      setInventory(data || null);
+      setItem(data || null);
     }
   }
 
@@ -38,7 +38,7 @@ export default function ListingDetails() {
   async function findChatroom() {
     const { data, error } = await apiFetch<ChatRoom>(`/chatroom`, {
       method: "POST",
-      body: JSON.stringify({ member1Id: user?.id, member2Id: inventory?.userId }),
+      body: JSON.stringify({ member1Id: user?.id, member2Id: item?.userId }),
     });
 
     if (error || !data) {
@@ -58,14 +58,14 @@ export default function ListingDetails() {
 
         <View style={{ flex: 1, alignItems: "center", gap: 8 }}>
           <Image
-            source={{ uri: inventory?.imageUrls[0] || emptyImageUrl }}
+            source={{ uri: item?.imageUrls[0] || emptyImageUrl }}
             style={{ width: "100%", height: 300, alignSelf: "center" }}
           />
           <Text variant="headlineSmall" style={{ fontWeight: "bold" }}>
-            {inventory?.name}
+            {item?.name}
           </Text>
           <Text variant="bodyLarge" style={{ alignSelf: "flex-start", marginTop: 5 }}>
-            {inventory?.description}
+            {item?.description}
           </Text>
         </View>
         <View
@@ -78,16 +78,16 @@ export default function ListingDetails() {
           <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
             Keywords:{" "}
           </Text>
-          {inventory?.keywords.map((keyword, index) => (
+          {item?.keywords.map((keyword, index) => (
             <Chip key={index} style={{ margin: 2 }}>
               #{keyword}
             </Chip>
           ))}
         </View>
-        { inventory && 'preferredOffer' in inventory && (
+        { item && 'preferredOffer' in item && (
           <View>
             <Text variant="bodyLarge" style={{ fontWeight: "bold" }}>
-              Preferred Offer: <Text variant="titleLarge">{inventory?.preferredOffer || ''}</Text>
+              Preferred Offer: <Text variant="titleLarge">{item?.preferredOffer || ''}</Text>
             </Text>
           </View>
           )
@@ -112,18 +112,18 @@ export default function ListingDetails() {
           marginLeft: 32,
         }}
       >
-        <Link href={`/user/${inventory?.userId}`}>
+        <Link href={`/user/${item?.userId}`}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Avatar.Image
               size={62}
-              source={{ uri: inventory?.user?.avatarUrl || defaultAvatarUrl }}
+              source={{ uri: item?.user?.avatarUrl || defaultAvatarUrl }}
             />
             <View>
               <Text style={{ fontWeight: "bold" }} variant="titleLarge">
-                {inventory?.user?.firstName}
+                {item?.user?.firstName}
               </Text>
               <Text style={{ fontWeight: "bold" }} variant="titleLarge">
-                {inventory?.user?.averageRating}
+                {item?.user?.averageRating}
               </Text>
             </View>
           </View>
@@ -133,15 +133,15 @@ export default function ListingDetails() {
           <Link
             asChild
             href={{
-              pathname: inventory?.userId === user?.id ? `/listings/edit/${id}` : `/offers/create?id=${id}`,
+              pathname: item?.userId === user?.id ? `/listings/edit/${id}` : `/offers/create?id=${id}`,
               params : {'type' : type}
           }}
           >
             <Button mode="contained">
-              {inventory?.userId === user?.id ? `Edit ${type}` : "Create Offer"}
+              {item?.userId === user?.id ? `Edit ${type}` : "Create Offer"}
             </Button>
           </Link>
-          {inventory?.userId !== user?.id && (
+          {item?.userId !== user?.id && (
             <Button onPress={findChatroom} mode="elevated">
               Message
             </Button>
