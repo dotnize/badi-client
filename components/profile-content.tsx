@@ -211,14 +211,14 @@ const styles = StyleSheet.create({
   },
   profilePicContainer: {
     position: "absolute",
-    top: 110,
+    top: 60,
     left: 25,
   },
   backgroundPic: {
     // resizeMode: "cover",
     // alignSelf: "center",
     backgroundColor: COLORS.primary,
-    height: 200,
+    height: 150,
     width: "100%",
 
   },
