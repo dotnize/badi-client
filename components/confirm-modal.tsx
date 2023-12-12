@@ -6,17 +6,17 @@ type ConfirmModalType = {
   title: string;
   state: boolean;
   setState: React.Dispatch<SetStateAction<boolean>>;
-  handleOnConfirmDelete: () => any;
+  onConfirmFunction: () => Promise<void> | undefined;
 };
 
 export default function ConfirmModal({
   title,
   state,
   setState,
-  handleOnConfirmDelete,
+  onConfirmFunction,
 }: ConfirmModalType) {
   const handleOnConfirm = () => {
-    handleOnConfirmDelete();
+    onConfirmFunction();
     setState(false);
   };
 

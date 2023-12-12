@@ -4,5 +4,5 @@ import { useSession } from "~/hooks/useSession";
 export default function MyProfile() {
   const { user } = useSession();
 
-  return <ProfileContent userId={user?.id} />;
+  return <ProfileContent userId={user ? user.id : 0} />;
 }

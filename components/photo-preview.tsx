@@ -8,7 +8,7 @@ type PhotoPreviewType = {
   state: boolean;
   setState: React.Dispatch<SetStateAction<boolean>>;
 };
-export default function PhotoPreview({ photo, state, setState }: PhotoPreviewType) {
+export default function PhotoPreviewModal({ photo, state, setState }: PhotoPreviewType) {
   const requirePhoto = parseInt(photo, 10); //if photo is not string like the return value of require()
 
   return (
@@ -18,7 +18,7 @@ export default function PhotoPreview({ photo, state, setState }: PhotoPreviewTyp
         onDismiss={() => setState(false)}
         contentContainerStyle={styles.modalContainerStyle}
       >
-        <Image style={styles.photoPreview} source={requirePhoto ? requirePhoto : { uri: photo }} />
+        <Image style={styles.photoPreview} source={{ uri: photo }} />
       </Modal>
     </Portal>
   );

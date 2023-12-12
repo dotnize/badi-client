@@ -68,7 +68,7 @@ export default function EditProfile() {
         title="Are you sure you want to delete your account?"
         state={deleteModal}
         setState={setDeleteModal}
-        handleOnConfirmDelete={deleteAccount}
+        onConfirmFunction={deleteAccount}
       />
       <TextInput
         selectTextOnFocus
@@ -103,7 +103,7 @@ export default function EditProfile() {
         label="Phone number"
         mode="outlined"
         style={styles.editNameInput}
-        value={phoneNumber || ""}
+        value={phoneNumber || ''}
         onChangeText={setPhoneNumber}
       />
       <View style={styles.editProfileLabels}>

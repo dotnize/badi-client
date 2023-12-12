@@ -6,6 +6,7 @@ import { COLORS } from "~/lib/theme";
 import { Rating } from "~/lib/types";
 
 export default function RatingCard({ item }: { item: Rating }) {
+  const dateFromString = new Date(item.timestamp);
   return (
     <Card style={{ height: "auto", paddingVertical: 10 }}>
       <Card.Content>
@@ -18,10 +19,10 @@ export default function RatingCard({ item }: { item: Rating }) {
             <Text variant="titleMedium">
               {item.fromUser?.firstName} {item.fromUser?.lastName}
             </Text>
-            <Text variant="titleSmall">{item.timestamp.toDateString()}</Text>
+            <Text variant="titleSmall">{dateFromString.toDateString()}</Text>
           </View>
           <View style={{ flexDirection: "row", gap: 5 }}>
-            {Array.from({ length: item.amount }, (_, index) => (
+            {Array.from({ length: Math.min(item.amount, 5) }, (_, index) => (
               <Text key={index} variant="titleLarge" style={{ color: COLORS.primary }}>
                 &#9733;
               </Text>

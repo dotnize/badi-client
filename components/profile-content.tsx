@@ -7,11 +7,11 @@ import { Button, Text } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
 import ListingCard from "~/components/cards/listing-card";
-import PhotoPreview from "~/components/photo-preview";
+import PhotoPreviewModal from "~/components/photo-preview";
 import { useSession } from "~/hooks/useSession";
 import { defaultAvatarUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
-import type { ChatRoom, Inventory, User, Wish } from "~/lib/types";
+import type { ChatRoom, Inventory, Rating, User, Wish } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
 export default function ProfileContent({ userId }: { userId: number }) {
@@ -21,6 +21,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [inventory, setInventory] = useState<Inventory[]>([]);
   const [wishes, setWishes] = useState<Wish[]>([]);
+  const [ratings, setRatings] = useState<Rating[]>([]);
 
   async function findChatroom() {
     const { data, error } = await apiFetch<ChatRoom>(`/chatroom`, {
@@ -34,6 +35,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
       router.push(`/messages/${data?.id}`);
     }
   }
+
 
   async function fetchOtherUser() {
     const { data, error } = await apiFetch<User>(`/user/${userId}`);
@@ -62,6 +64,15 @@ export default function ProfileContent({ userId }: { userId: number }) {
     }
   }
 
+  async function fetchRatings() {
+    const { data, error } = await apiFetch<Rating[]>(`/rating/user/${userId}`);
+    if (error || !data) {
+      console.log(error || "No ratings found");
+    } else if (data) {
+      setRatings(data);
+    }
+  }
+
   useEffect(() => {
     if (session.user !== undefined) {
       if (!isLoggedUser) {
@@ -72,25 +83,31 @@ export default function ProfileContent({ userId }: { userId: number }) {
       }
       fetchInventory();
       fetchWishes();
+      fetchRatings();
     }
   }, [session.user]);
 
   const [photoPreview, setPhotoPreview] = useState(false);
+  const [photo, setPhoto] = useState("");
+
+  const handlePhotoPreview = (photo: string) => {
+    setPhoto(photo);
+    setPhotoPreview(true);
+  };
 
   return (
     <View style={{ flex: 1 }}>
-      {/* MODALS */}
-      <PhotoPreview
-        photo={user?.avatarUrl || defaultAvatarUrl}
-        state={photoPreview}
-        setState={setPhotoPreview}
-      />
-      {/*  MODALS END*/}
+      <PhotoPreviewModal photo={photo} state={photoPreview} setState={setPhotoPreview} />
 
       <ScrollView style={{ flex: 1 }}>
-        <View style={{ height: 128 }} />
+        
+        <View style={styles.backgroundPic}/>
+        
 
-        <Pressable style={styles.profilePicButton} onPress={() => setPhotoPreview(true)}>
+        <Pressable
+          style={styles.profilePicContainer}
+          onPress={() => handlePhotoPreview(defaultAvatarUrl)}
+        >
           <Image style={styles.profilePic} source={{ uri: user?.avatarUrl || defaultAvatarUrl }} />
         </Pressable>
 
@@ -111,7 +128,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
 
         <View
           style={{
-            marginHorizontal: 25,
+            marginHorizontal: 15,
             marginTop: isLoggedUser ? 0 : 80,
             marginBottom: 10,
             flexDirection: "row",
@@ -124,7 +141,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
           </Text>
           <Link href={isLoggedUser ? `/me/ratings` : `/user/${userId}/ratings`}>
             <Text variant="titleMedium">
-              &#9733; {user?.averageRating} &nbsp;
+              &#9734; &#9734; &#9734; &#9734; &#9734; ({ratings.length || 0}) &nbsp;
               <AntDesign name="infocirlceo" size={18} style={{ verticalAlign: "middle" }} />
             </Text>
           </Link>
@@ -143,23 +160,37 @@ export default function ProfileContent({ userId }: { userId: number }) {
         <TabsProvider defaultIndex={0}>
           <Tabs style={{ backgroundColor: "transparent" }}>
             <TabScreen label="Inventory">
-              <FlatList
-                contentContainerStyle={{ gap: 10, padding: 8 }}
-                data={inventory}
-                renderItem={({ item }) => <ListingCard listing={item} />}
-                keyExtractor={(item) => item.id.toString()}
-              />
+              {inventory.length > 0 ? (
+                <FlatList
+                  contentContainerStyle={{ gap: 10, padding: 8 }}
+                  data={inventory}
+                  renderItem={({ item }) => <ListingCard listing={item}  type='inventory'/>}
+                  keyExtractor={(item) => item.id.toString()}
+                />
+              ) : (
+                <View style={{ height: 400, justifyContent: "center", alignItems: "center" }}>
+                  <Text>No Inventory.</Text>
+                </View>
+              )}
             </TabScreen>
             <TabScreen label="Wishes">
-              <FlatList
-                contentContainerStyle={{ gap: 10, padding: 8 }}
-                data={wishes}
-                renderItem={({ item }) => <ListingCard listing={item} />}
-                keyExtractor={(item) => item.id.toString()}
-              />
+              {wishes.length > 0 ? (
+                <FlatList
+                  contentContainerStyle={{ gap: 10, padding: 8 }}
+                  data={wishes}
+                  renderItem={({ item }) => <ListingCard listing={item} type='wish' />}
+                  keyExtractor={(item) => item.id.toString()}
+                />
+              ) : (
+                <View style={{ height: 400, justifyContent: "center", alignItems: "center" }}>
+                  <Text>No Wishes.</Text>
+                </View>
+              )}
             </TabScreen>
             <TabScreen label="History">
-              <Text>todo</Text>
+              <View style={{ height: 400, justifyContent: "center", alignItems: "center" }}>
+                <Text>No History.</Text>
+              </View>
             </TabScreen>
           </Tabs>
         </TabsProvider>
@@ -174,16 +205,22 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     height: 150,
     width: 150,
-    // borderWidth: 6,
-    // borderColor: "white",
+    borderWidth: 4,
+    borderColor: COLORS.surface,
+    backgroundColor: COLORS.surface,
   },
-  profilePicButton: {
+  profilePicContainer: {
     position: "absolute",
-    top: 48, // if header not shown
-    // top: 170,
+    top: 60,
     left: 25,
-    // borderWidth: 5,
-    // borderColor: COLORS.surface,
+  },
+  backgroundPic: {
+    // resizeMode: "cover",
+    // alignSelf: "center",
+    backgroundColor: COLORS.primary,
+    height: 150,
+    width: "100%",
+
   },
   editProfileButtons: {
     alignSelf: "flex-end",
