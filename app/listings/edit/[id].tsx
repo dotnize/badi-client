@@ -1,9 +1,10 @@
 import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Image, ScrollView, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Chip, RadioButton, Text, TextInput } from "react-native-paper";
+import ConfirmModal from "~/components/confirm-modal";
 
 import { useSession } from "~/hooks/useSession";
 import { emptyImageUrl } from "~/lib/firebase";
@@ -26,6 +27,8 @@ const availableCategories = [
 
 function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
   const { user } = useSession();
+  const { id, type : passedType } = useLocalSearchParams();
+  
 
   // TODO: support multiple images
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -87,11 +90,34 @@ function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
     setKeywords((prev) => prev.filter((_, i) => i !== index));
   }
 
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+   async function deleteListing(){
+    const { data, error } = await apiFetch<Inventory | Wish>(`/${passedType}/${id}`, {
+      method: "DELETE",
+    });
+
+    if (error || !data) {
+      console.log(error || `Something went wrong while deleting ${passedType}`);
+    } else {
+      console.log(`Successful ${passedType} delete`, data)
+    }
+
+    router.push('/me')
+  }
+
   return (
     <ScrollView
       contentContainerStyle={{ gap: 16 }}
       style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}
     >
+      <ConfirmModal
+        title={`Are you sure you want to delete this ${passedType}?`}
+        state={showDeleteModal}
+        setState={setShowDeleteModal}
+        onConfirmFunction={deleteListing}
+      />
+
       <View style={{ gap: 4 }}>
         <Text>Name:</Text>
         <TextInput value={name} onChangeText={setName} label="Enter name" />
@@ -202,10 +228,10 @@ function EditListing({ listingType }: { listingType: "inventory" | "wish" }) {
       <Button onPress={() => {}} mode="contained">
         Save Changes
       </Button>
-      <Button onPress={() => {}} mode="contained" buttonColor={COLORS.error}>
+      <Button onPress={() => setShowDeleteModal(true)} mode="contained" buttonColor={COLORS.error}>
         Delete Listing
       </Button>
-      <Button onPress={() => {}} mode="contained" buttonColor={COLORS.secondary}>
+      <Button onPress={() => {router.back()}} mode="contained" buttonColor={COLORS.secondary}>
         Cancel Changes
       </Button>
     </ScrollView>

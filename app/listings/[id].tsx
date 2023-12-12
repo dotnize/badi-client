@@ -132,9 +132,10 @@ export default function ListingDetails() {
         <View style={{ width: "100%", gap: 8 }}>
           <Link
             asChild
-            href={
-              inventory?.userId === user?.id ? `/listings/edit/${id}` : `/offers/create?id=${id}`
-            }
+            href={{
+              pathname: inventory?.userId === user?.id ? `/listings/edit/${id}` : `/offers/create?id=${id}`,
+              params : {'type' : type}
+          }}
           >
             <Button mode="contained">
               {inventory?.userId === user?.id ? `Edit ${type}` : "Create Offer"}
