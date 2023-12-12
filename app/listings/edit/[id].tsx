@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Image, ScrollView, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Chip, RadioButton, Text, TextInput } from "react-native-paper";
-import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
 import { useSession } from "~/hooks/useSession";
 import { emptyImageUrl } from "~/lib/firebase";

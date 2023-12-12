@@ -119,7 +119,7 @@ export default function CreateOffer() {
   async function submitOffer() {
     if (!mySelectedItems.length || !theirSelectedItems.length) return;
 
-    if(id){
+    if(id || offerId){
 
       console.log("IDs");
       console.log(mySelectedItems[0].inventoryId);
@@ -139,21 +139,6 @@ export default function CreateOffer() {
         console.log(data);
         // eslint-disable-next-line no-unused-expressions
         router.canGoBack() ? router.back() : router.replace("/");
-      }
-    }
-    else if(offerId){
-      const { data, error } = await apiFetch(`/tradegroup`, {
-        method: "PUT",
-        body: JSON.stringify({
-          tradeInventories: [...mySelectedItems, ...theirSelectedItems],
-          user1Id: user?.id,
-          user2Id: theirSelectedItems[0].inventory?.userId,
-        }),
-      });
-      if (error || !data) {
-        console.log(error || "No data");
-      } else {
-        console.log(data)
       }
     }
   }
