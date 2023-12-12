@@ -18,7 +18,7 @@ export default function EditProfile() {
   const [firstName, setFirstName] = useState(user?.firstName);
   const [lastName, setLastName] = useState(user?.lastName);
   const [location, setLocation] = useState(user?.location);
-  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "Add Number");
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || null);
   const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatarUrl || "");
 
   const [deleteModal, setDeleteModal] = useState(false);
@@ -68,7 +68,7 @@ export default function EditProfile() {
         title="Are you sure you want to delete your account?"
         state={deleteModal}
         setState={setDeleteModal}
-        handleOnConfirmDelete={deleteAccount}
+        onConfirmFunction={deleteAccount}
       />
       <TextInput
         selectTextOnFocus
@@ -103,7 +103,7 @@ export default function EditProfile() {
         label="Phone number"
         mode="outlined"
         style={styles.editNameInput}
-        value={phoneNumber}
+        value={phoneNumber || ''}
         onChangeText={setPhoneNumber}
       />
       <View style={styles.editProfileLabels}>
