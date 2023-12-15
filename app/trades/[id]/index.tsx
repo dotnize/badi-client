@@ -44,6 +44,18 @@ export default function ActiveTrade() {
     }
   }
 
+  async function handleCompleteTrade() {
+    const { data, error } = await apiFetch<TradeGroup>(`/tradegroup/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ status: "completed" }),
+    });
+    if (error) {
+      console.log("Something went wrong while setting tradegroup to complete", error);
+    } else {
+      console.log("Update tradegroup to complete successful", data);
+    }
+  }
+
   useEffect(() => {
     if (user?.id) {
       getTradeInventory();
@@ -57,6 +69,9 @@ export default function ActiveTrade() {
     const totalCount = tradeInventory.length;
     const percentCompleted = totalCount > 0 ? Math.floor((completedCount / totalCount) * 100) : 0;
     setPercent(percentCompleted);
+    if (percentCompleted == 100) {
+      handleCompleteTrade();
+    }
   }, [tradeInventory]);
 
   return (
