@@ -11,8 +11,10 @@ import PhotoPreviewModal from "~/components/photo-preview";
 import { useSession } from "~/hooks/useSession";
 import { defaultAvatarUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
-import type { ChatRoom, Inventory, Rating, User, Wish } from "~/lib/types";
+import type { ChatRoom, Inventory, Rating, TradeGroup, User, Wish } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
+import ActiveTradeCard from "./cards/activitytabs/active-trade";
+import PendingTradeCard from "./cards/activitytabs/pending-trade";
 
 export default function ProfileContent({ userId }: { userId: number }) {
   const session = useSession();
@@ -21,6 +23,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [inventory, setInventory] = useState<Inventory[]>([]);
   const [wishes, setWishes] = useState<Wish[]>([]);
+  const [history, setHistory] = useState<TradeGroup[]>([]);
   const [ratings, setRatings] = useState<Rating[]>([]);
 
   async function findChatroom() {
@@ -35,7 +38,6 @@ export default function ProfileContent({ userId }: { userId: number }) {
       router.push(`/messages/${data?.id}`);
     }
   }
-
 
   async function fetchOtherUser() {
     const { data, error } = await apiFetch<User>(`/user/${userId}`);
@@ -64,6 +66,17 @@ export default function ProfileContent({ userId }: { userId: number }) {
     }
   }
 
+  async function fetchHistory() {
+    const { data, error } = await apiFetch<TradeGroup[]>(`/tradegroup/user/${userId}`);
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("tis history", data);
+      setHistory(data || []);
+    }
+  }
+
   async function fetchRatings() {
     const { data, error } = await apiFetch<Rating[]>(`/rating/user/${userId}`);
     if (error || !data) {
@@ -83,6 +96,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
       }
       fetchInventory();
       fetchWishes();
+      fetchHistory();
       fetchRatings();
     }
   }, [session.user]);
@@ -100,9 +114,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
       <PhotoPreviewModal photo={photo} state={photoPreview} setState={setPhotoPreview} />
 
       <ScrollView style={{ flex: 1 }}>
-        
-        <View style={styles.backgroundPic}/>
-        
+        <View style={styles.backgroundPic} />
 
         <Pressable
           style={styles.profilePicContainer}
@@ -164,7 +176,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
                 <FlatList
                   contentContainerStyle={{ gap: 10, padding: 8 }}
                   data={inventory}
-                  renderItem={({ item }) => <ListingCard listing={item}  type='inventory'/>}
+                  renderItem={({ item }) => <ListingCard listing={item} type="inventory" />}
                   keyExtractor={(item) => item.id.toString()}
                 />
               ) : (
@@ -178,7 +190,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
                 <FlatList
                   contentContainerStyle={{ gap: 10, padding: 8 }}
                   data={wishes}
-                  renderItem={({ item }) => <ListingCard listing={item} type='wish' />}
+                  renderItem={({ item }) => <ListingCard listing={item} type="wish" />}
                   keyExtractor={(item) => item.id.toString()}
                 />
               ) : (
@@ -188,9 +200,33 @@ export default function ProfileContent({ userId }: { userId: number }) {
               )}
             </TabScreen>
             <TabScreen label="History">
-              <View style={{ height: 400, justifyContent: "center", alignItems: "center" }}>
-                <Text>No History.</Text>
-              </View>
+              <>
+                {history.length > 0 ? (
+                  history
+                    .filter((history) => history.status !== "pending")
+                    .map((trade, index) =>
+                      trade.status === "completed" ? (
+                        <ActiveTradeCard
+                          key={index}
+                          tradeGroupId={trade.id}
+                          user1FirstName={trade.user1?.firstName || ""}
+                          user2FirstName={trade.user2?.firstName || ""}
+                          user1profileUrl={trade.user1?.avatarUrl || defaultAvatarUrl}
+                          user2profileUrl={trade.user1?.avatarUrl || defaultAvatarUrl}
+                          isHistory={true}
+                        />
+                      ) : (
+                        isLoggedUser && (
+                          <PendingTradeCard key={index} trade={trade} isHistory={true} />
+                        )
+                      )
+                    )
+                ) : (
+                  <View style={{ height: 400, justifyContent: "center", alignItems: "center" }}>
+                    <Text>No History.</Text>
+                  </View>
+                )}
+              </>
             </TabScreen>
           </Tabs>
         </TabsProvider>
@@ -220,7 +256,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     height: 150,
     width: "100%",
-
   },
   editProfileButtons: {
     alignSelf: "flex-end",

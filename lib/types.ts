@@ -48,7 +48,7 @@ export interface TradeGroup {
   user2Id: number;
   user1?: User;
   user2?: User;
-  status: "pending" | "rejected" | "active" | "cancelled";
+  status: "pending" | "rejected" | "active" | "cancelled" | "completed";
 }
 
 export interface TradeInventory {

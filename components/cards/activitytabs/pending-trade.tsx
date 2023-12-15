@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import { Image, Pressable, View } from "react-native";
-import { Card, Text } from "react-native-paper";
+import { Card, Chip, Text } from "react-native-paper";
 import { useTabIndex } from "react-native-paper-tabs";
 import { defaultAvatarUrl } from "~/lib/firebase";
 import { TradeGroup } from "~/lib/types";
@@ -21,12 +21,23 @@ import { TradeGroup } from "~/lib/types";
 //   user2profileUrl,
 // }: TradeCardProps) {
 
-export default function PendingTradeCard({ trade }: { trade: TradeGroup }) {
+export default function PendingTradeCard({
+  trade,
+  isHistory = false,
+}: {
+  trade: TradeGroup;
+  isHistory?: boolean;
+}) {
   const tabIndex = useTabIndex();
   const whatTab = tabIndex === 0 ? `/trades/${trade.id}` : `/offers/${trade.id}`;
 
   return (
-    <Link href={whatTab}>
+    <Link
+      href={{
+        pathname: whatTab,
+        params: { isHistory: isHistory ? "1" : "0" },
+      }}
+    >
       <View style={{ flex: 1, width: "100%" }}>
         <Card style={{ height: "auto", margin: 8, paddingBottom: 10 }}>
           <View
@@ -76,7 +87,23 @@ export default function PendingTradeCard({ trade }: { trade: TradeGroup }) {
                   {trade.user1?.firstName} x {trade.user2?.firstName}
                 </Text>
               </View>
-              <Text style={{ marginLeft: "auto", paddingTop: 5 }}>11/27/35</Text>
+              <Text
+                style={{
+                  marginLeft: "auto",
+                  paddingTop: 5,
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "right",
+                  gap: 5,
+                }}
+              >
+                {isHistory && (
+                  <Chip style={{ backgroundColor: trade.status == "cancelled" ? "orange" : "red" }}>
+                    {trade.status.toUpperCase()}
+                  </Chip>
+                )}{" "}
+                11/27/35
+              </Text>
             </View>
           </Card.Content>
         </Card>

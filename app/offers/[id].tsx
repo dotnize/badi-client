@@ -22,27 +22,33 @@ import { apiFetch } from "~/lib/utils";
 
 export default function PendingOffer() {
   const router = useRouter();
-  const { id } = useLocalSearchParams();
+  const { id, isHistory } = useLocalSearchParams();
+  const isNowHistory = isHistory && parseInt(isHistory?.toString(), 10) == 1 ? true : false;
+
   const { user } = useSession();
 
-  const [otherUser, setOtherUser] = useState<User | null>()
+  const [otherUser, setOtherUser] = useState<User | null>();
   const [tradeInventories, setTradeInventories] = useState<TradeInventory[] | null>();
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [confirmModalTitle, setConfirmModalTitle] = useState(`Trade Offer will be deleted.${"\n"}Are you sure?`)
-  const [onConfirmFunction, setOnConfirmFunction] = useState<any>()
+  const [confirmModalTitle, setConfirmModalTitle] = useState(
+    `Trade Offer will be deleted.${"\n"}Are you sure?`
+  );
+  const [onConfirmFunction, setOnConfirmFunction] = useState<any>();
 
   const handleCounterOffer = () => {
     router.push(`/offers/create?offerId=${tradeInventories?.[0].tradeGroupId}`);
   };
 
-  const handleTrade = (status:string) => {
-    setConfirmModalTitle(`Trade Offer will be ${status == 'active' ? 'accepted' : status}.${"\n"}Are you sure?`)
-    setOnConfirmFunction(() => ()=>handleUpdateTrade(status))
-    setShowConfirmModal(true)
-  }
+  const handleTrade = (status: string) => {
+    setConfirmModalTitle(
+      `Trade Offer will be ${status == "active" ? "accepted" : status}.${"\n"}Are you sure?`
+    );
+    setOnConfirmFunction(() => () => handleUpdateTrade(status));
+    setShowConfirmModal(true);
+  };
 
-  async function handleUpdateTrade (status: string) {
+  async function handleUpdateTrade(status: string) {
     const { data, error } = await apiFetch<TradeGroup>(`/tradegroup/${id}`, {
       method: "PUT",
       body: JSON.stringify({ status: status }),
@@ -56,6 +62,25 @@ export default function PendingOffer() {
     router.push("/activity");
   }
 
+  async function onDelete() {
+    setConfirmModalTitle(`This will be deleted from history.${"\n"}Are you sure?`);
+    setOnConfirmFunction(() => () => handleDeleteFromHistory());
+    setShowConfirmModal(true);
+  }
+
+  async function handleDeleteFromHistory() {
+    const { data, error } = await apiFetch<TradeGroup>(`/tradegroup/${id}`, {
+      method: "DELETE",
+    });
+
+    if (error || !data) {
+      console.log(error || "Something went wrong while deleting tradegroup");
+    } else {
+      console.log("Deleting tradegroup successful", data);
+      router.push("/activity");
+    }
+  }
+
   async function getTradeInventories() {
     const { data, error } = await apiFetch<TradeInventory[]>(`/tradeinventory/group/${id}`);
 
@@ -63,43 +88,45 @@ export default function PendingOffer() {
       console.log(error);
     } else {
       setTradeInventories(data);
-      console.log('Trade Inventory:', data);
+      console.log("Trade Inventory:", data);
     }
   }
 
-  async function getOtherUser(){
-    if(tradeInventories){
-      const { data, error } = await apiFetch<User>(`/user/${tradeInventories[1].receiverId == user?.id ? tradeInventories[1].senderId : tradeInventories[1].receiverId }`);
+  async function getOtherUser() {
+    if (tradeInventories) {
+      const { data, error } = await apiFetch<User>(
+        `/user/${
+          tradeInventories[1].receiverId == user?.id
+            ? tradeInventories[1].senderId
+            : tradeInventories[1].receiverId
+        }`
+      );
 
       if (error) {
         console.log(error);
       } else {
         setOtherUser(data);
-        console.log('Other User:', data); 
+        console.log("Other User:", data);
       }
     }
-    
   }
 
   useEffect(() => {
     getTradeInventories();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     getOtherUser();
-  }, [tradeInventories])
-
+  }, [tradeInventories]);
 
   return (
     <View style={{ flex: 1, alignItems: "center", padding: 8, justifyContent: "space-around" }}>
-
       <ConfirmModal
         title={confirmModalTitle}
         state={showConfirmModal}
         setState={setShowConfirmModal}
         onConfirmFunction={onConfirmFunction}
       />
-
 
       <Text>Pending Offer</Text>
       {tradeInventories && tradeInventories[0]?.senderId === user?.id ? (
@@ -111,9 +138,9 @@ export default function PendingOffer() {
 
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
         {tradeInventories?.[0].senderId === user?.id ? (
-          <OfferItem item={ tradeInventories?.[1].inventory} />
+          <OfferItem item={tradeInventories?.[1].inventory} />
         ) : (
-          <OfferItem item={ tradeInventories?.[0].inventory } />
+          <OfferItem item={tradeInventories?.[0].inventory} />
         )}
       </ScrollView>
       <Text style={{ alignSelf: "flex-start", padding: 8 }}>You will send:</Text>
@@ -121,12 +148,16 @@ export default function PendingOffer() {
         {tradeInventories?.[0].senderId === user?.id ? (
           <OfferItem item={tradeInventories?.[0].inventory} />
         ) : (
-          <OfferItem item={ tradeInventories?.[1].inventory} />
+          <OfferItem item={tradeInventories?.[1].inventory} />
         )}
       </ScrollView>
       <View style={{ width: "100%", gap: 8, padding: 8 }}>
-        {tradeInventories?.[0].senderId === user?.id ? (
-          <Button mode="contained" onPress={() => handleTrade('cancelled')}>
+        {isNowHistory ? (
+          <Button mode="contained" onPress={onDelete}>
+            Delete from History
+          </Button>
+        ) : tradeInventories?.[0].senderId === user?.id ? (
+          <Button mode="contained" onPress={() => handleTrade("cancelled")}>
             Cancel Trade Offer
           </Button>
         ) : (
@@ -139,7 +170,7 @@ export default function PendingOffer() {
               Accept
             </Button>
 
-            <Button mode="contained" onPress={()=>handleTrade('rejected')}>
+            <Button mode="contained" onPress={() => handleTrade("rejected")}>
               Reject
             </Button>
           </>
