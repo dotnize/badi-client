@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Image, ScrollView, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Chip, RadioButton, Text, TextInput } from "react-native-paper";
-import ConfirmModal from "~/components/confirm-modal";
 
+import ConfirmModal from "~/components/confirm-modal";
 import { useSession } from "~/hooks/useSession";
 import { emptyImageUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
@@ -291,7 +291,7 @@ function EditListing({ id, listingType }: { id: number; listingType: "inventory"
 export default function EditListingScreen() {
   const { id, type } = useLocalSearchParams();
   const passedId = id ? parseInt(id.toString(), 10) : 0;
-  const passedType = type == "inventory" ? type : "wish";
+  const passedType = type === "inventory" ? type : "wish";
 
   return (
     <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>

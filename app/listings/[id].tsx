@@ -128,7 +128,7 @@ export default function ListingDetails() {
             href={{
               pathname:
                 item?.userId === user?.id ? `/listings/edit/${id}` : `/offers/create?id=${id}`,
-              params: { type: type },
+              params: { type },
             }}
           >
             <Button mode="contained">
