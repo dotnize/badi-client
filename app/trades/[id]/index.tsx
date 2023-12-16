@@ -45,6 +45,7 @@ export default function ActiveTrade() {
   }
 
   async function handleCompleteTrade() {
+    // TODO: it's better to implement this directly in the backend
     const { data, error } = await apiFetch<TradeGroup>(`/tradegroup/${id}`, {
       method: "PUT",
       body: JSON.stringify({ status: "completed" }),
@@ -69,7 +70,7 @@ export default function ActiveTrade() {
     const totalCount = tradeInventory.length;
     const percentCompleted = totalCount > 0 ? Math.floor((completedCount / totalCount) * 100) : 0;
     setPercent(percentCompleted);
-    if (percentCompleted == 100) {
+    if (completedCount >= totalCount) {
       handleCompleteTrade();
     }
   }, [tradeInventory]);
