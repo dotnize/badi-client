@@ -22,7 +22,6 @@ export default function Activity() {
       console.log(error);
     } else {
       setTrades(data || []);
-      console.log("fef", data);
     }
   }
 
