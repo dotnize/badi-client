@@ -78,7 +78,7 @@ export default function Index() {
                   (items as string) && !services ? inventory.type === "item" : true
                 )}
               ListEmptyComponent={() => <ActivityIndicator animating />}
-              renderItem={({ item }) => <ListingCard listing={item} />}
+              renderItem={({ item }) => <ListingCard listing={item} type="inventory" />}
               keyExtractor={(item) => item.id.toString()}
             />
           </TabScreen>
@@ -87,7 +87,7 @@ export default function Index() {
               contentContainerStyle={{ gap: 10, padding: 8 }}
               data={wishes}
               ListEmptyComponent={() => <ActivityIndicator animating />}
-              renderItem={({ item }) => <ListingCard listing={item} />}
+              renderItem={({ item }) => <ListingCard listing={item} type="wish" />}
               keyExtractor={(item) => item.id.toString()}
             />
           </TabScreen>
