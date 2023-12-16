@@ -6,95 +6,68 @@
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Button, Card, Paragraph, Text, Title } from "react-native-paper";
+import { Card, Paragraph, Text, Title } from "react-native-paper";
 import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
+
+import { emptyImageUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
+import { Inventory, MatchContent, Notification } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
-interface Match {
-  id: number;
-  type: string;
-  content: {
-    user: string;
-    title: string;
-    description: string;
-    image: string;
-  };
-  timestamp: string;
-  is_deleted: boolean;
-  user_id: number;
+function MatchCard({ inventory }: { inventory: Inventory }) {
+  return (
+    <Card style={styles.card}>
+      <Card.Cover
+        source={{ uri: inventory.imageUrls[0] || emptyImageUrl }}
+        style={styles.cardImage}
+      />
+      <Card.Content style={styles.cardContent}>
+        <Title style={styles.cardTitle} numberOfLines={1}>
+          {inventory.name}
+        </Title>
+        <Text numberOfLines={1} style={{ color: "grey" }}>
+          {inventory.user?.firstName} &#9733;&#9733;&#9733;&#9733; 4.7 (51)
+        </Text>
+        <Paragraph style={styles.cardParagraph} numberOfLines={3}>
+          {inventory.description}
+        </Paragraph>
+      </Card.Content>
+    </Card>
+  );
 }
-
-interface CardComponentProps {
-  id: number;
-  content: {
-    user: string;
-    title: string;
-    description: string;
-    image: string;
-  };
-  timestamp: string;
-  is_deleted: boolean;
-  user_id: number;
-  onDelete: (id: number) => void;
-}
-
-const CardComponent: React.FC<CardComponentProps> = ({ id, content, timestamp, onDelete }) => (
-  <Card style={styles.card}>
-    <Card.Cover source={{ uri: content.image }} style={styles.cardImage} />
-    <Card.Content style={styles.cardContent}>
-      <Title style={styles.cardTitle} numberOfLines={1}>
-        {content.title}
-      </Title>
-      <Text numberOfLines={1} style={{ color: "grey" }}>
-        {content.user} &#9733;&#9733;&#9733;&#9733; 4.7 (51)
-      </Text>
-      <Paragraph style={styles.cardParagraph} numberOfLines={3}>
-        {content.description}
-      </Paragraph>
-    </Card.Content>
-    <Card.Actions>
-      <Button onPress={() => onDelete(id)}>Delete</Button>
-    </Card.Actions>
-  </Card>
-);
 
 export default function MatchFound() {
   const { id } = useLocalSearchParams();
-  const [matches, setMatches] = useState<Match[]>([]);
+  const [notification, setNotification] = useState<Notification>();
+  const [matchContent, setMatchContent] = useState<MatchContent>();
 
-  const deleteMatch = async (matchId: number) => {
+  async function fetchNotification() {
     try {
-      await apiFetch(`/notification/${matchId}`, { method: "DELETE" });
-      const updatedMatches = matches.filter((match) => match.id !== matchId);
-      setMatches(updatedMatches);
+      const { data, error } = await apiFetch<Notification>(`/notification/${id}`);
+      if (error || !data) {
+        console.error(error || "No data returned from server");
+      } else {
+        setNotification(data);
+      }
     } catch (error) {
       console.error(error);
     }
-  };
+  }
 
   useEffect(() => {
-    const fetchMatches = async () => {
-      try {
-        const { data, error } = await apiFetch<Match[]>(`/notification/user/${id}`);
-        if (error) {
-          console.error(error);
-        } else {
-          setMatches(data || []);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchMatches();
+    fetchNotification();
   }, [id]);
+
+  useEffect(() => {
+    if (!notification) return;
+    setMatchContent(notification.content as MatchContent);
+  }, [notification]);
 
   return (
     <TabsProvider>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Suggested Matches</Text>
+          <Text style={styles.title}>Suggested Match found</Text>
         </View>
         <Tabs>
           <TabScreen label="To send">
@@ -103,9 +76,7 @@ export default function MatchFound() {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContent}
             >
-              {matches.map((match) => (
-                <CardComponent key={match.id} {...match} onDelete={deleteMatch} />
-              ))}
+              {matchContent?.toSend?.map((inv, index) => <MatchCard key={index} inventory={inv} />)}
             </ScrollView>
           </TabScreen>
           <TabScreen label="To receive">
@@ -114,8 +85,8 @@ export default function MatchFound() {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContent}
             >
-              {matches.map((match) => (
-                <CardComponent key={match.id} {...match} onDelete={deleteMatch} />
+              {matchContent?.toReceive?.map((inv, index) => (
+                <MatchCard key={index} inventory={inv} />
               ))}
             </ScrollView>
           </TabScreen>

@@ -1,50 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Avatar, Button, Card, IconButton, Paragraph, Title } from "react-native-paper";
+import { Button, Card, IconButton, Paragraph, Title } from "react-native-paper";
+
+import { useSession } from "~/hooks/useSession";
+import { Notification } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
-interface Notification {
-  id: number;
-  type: string;
-  content: {
-    user: string;
-    title: string;
-    description: string;
-    image: string;
-  };
-  timestamp: string;
-  is_deleted: boolean;
-  user_id: number;
+function NotifCard({ notification }: { notification: Notification }) {
+  return (
+    <Card style={styles.card}>
+      <Card.Content style={styles.cardContent}>
+        {/* <Avatar.Image size={80} source={{ uri: content.image }} /> */}
+        <View style={styles.textContainer}>
+          <Title style={styles.itemTitle}>{notification.title}</Title>
+          <Paragraph>{notification.timestamp.toDateString()}</Paragraph>
+        </View>
+        <IconButton icon="close" onPress={() => {}} />
+      </Card.Content>
+    </Card>
+  );
 }
-
-interface NotificationCardProps extends Notification {
-  onRemove: (id: number) => void;
-}
-
-const NotificationCard: React.FC<NotificationCardProps> = ({
-  id,
-  content,
-  timestamp,
-  onRemove,
-}) => (
-  <Card style={styles.card}>
-    <Card.Content style={styles.cardContent}>
-      <Avatar.Image size={80} source={{ uri: content.image }} />
-      <View style={styles.textContainer}>
-        <Title style={styles.itemTitle}>{content.title}</Title>
-        <Paragraph style={styles.textUser}>Posted by: {content.user}</Paragraph>
-        <Paragraph>{content.description}</Paragraph>
-        <Paragraph>{timestamp}</Paragraph>
-      </View>
-      <IconButton icon="close" onPress={() => onRemove(id)} />
-    </Card.Content>
-  </Card>
-);
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { user } = useSession();
 
-  // function for tinuoray na delete
   const removeNotification = async (id: number) => {
     try {
       // Make a DELETE request to the server to delete the notification
@@ -58,23 +38,6 @@ export default function Notifications() {
     }
   };
 
-  //for soft delete *i give up*
-  // const removeNotification = async (id: number) => {
-  //   try {
-  //     await apiFetch(`/notification/${id}`, {
-  //       method: "PUT",
-  //       body: JSON.stringify({ is_deleted: true }),
-  //     });
-
-  //     const updatedNotifications = notifications.map((notification) =>
-  //       notification.id === id ? { ...notification, is_deleted: true } : notification
-  //     );
-  //     setNotifications(updatedNotifications);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   const clearAllNotifications = () => {
     setNotifications([]);
   };
@@ -82,7 +45,7 @@ export default function Notifications() {
   useEffect(() => {
     async function fetchNotifications() {
       try {
-        const { data, error } = await apiFetch<Notification[]>("/notification/user/1");
+        const { data, error } = await apiFetch<Notification[]>(`/notification/user/${user?.id}`);
 
         if (error) {
           console.error(error);
@@ -97,17 +60,14 @@ export default function Notifications() {
     fetchNotifications();
   }, []);
 
-  // Filter out notifications with is_deleted set to true
-  const filteredNotifications = notifications.filter((notification) => !notification.is_deleted);
-
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Title style={styles.header}>Notifications</Title>
         <Button onPress={clearAllNotifications}>Clear All</Button>
       </View>
-      {filteredNotifications.map((notification) => (
-        <NotificationCard key={notification.id} {...notification} onRemove={removeNotification} />
+      {notifications.map((notif, index) => (
+        <NotifCard key={index} notification={notif} />
       ))}
     </View>
   );
