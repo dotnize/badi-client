@@ -99,11 +99,11 @@ export interface Notification {
   type: "match" | "finishtrade";
   timestamp: Date;
   title: string;
-  content: number | NotificationMatchContent; // id of finished tradegroup if number
+  content: MatchContent | { tradeGroupId: number }; // id of finished tradegroup if number
   isRead: boolean;
 }
 
-interface NotificationMatchContent {
+export interface MatchContent {
   matchedUserId: number;
   toReceiveIds: number[];
   toSendIds: number[];
