@@ -5,7 +5,13 @@ import { Card, Text } from "react-native-paper";
 import { emptyImageUrl } from "~/lib/firebase";
 import type { Inventory, User, Wish } from "~/lib/types";
 
-export default function ListingCard({ listing, type }: { listing: Inventory | Wish, type : string }) {
+export default function ListingCard({
+  listing,
+  type,
+}: {
+  listing: Inventory | Wish;
+  type: string;
+}) {
   const { id, name, description, keywords, imageUrls } = listing;
   const user = listing.user as User;
 
@@ -13,7 +19,7 @@ export default function ListingCard({ listing, type }: { listing: Inventory | Wi
 
   return (
     // <Link href={(listing as Inventory).preferredOffer ? `/listings/${id}` : ""}>
-    <Link href={{ pathname:`/listings/${id}`, params: {'type' : type}}}>
+    <Link href={{ pathname: `/listings/${id}`, params: { type } }}>
       <Card style={{ height: "auto", width: "100%" }}>
         <View style={{ height: 200 }}>
           <Image

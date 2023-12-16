@@ -25,10 +25,8 @@ const availableCategories = [
   { label: "Sports", value: "sports" },
 ];
 
-function EditListing({ id, listingType }: { id : number, listingType: "inventory" | "wish" }) {
+function EditListing({ id, listingType }: { id: number; listingType: "inventory" | "wish" }) {
   const { user } = useSession();
-  
-  
 
   // TODO: support multiple images
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -46,10 +44,17 @@ function EditListing({ id, listingType }: { id : number, listingType: "inventory
 
   async function saveChanges() {
     // need pa ni usbon
-    if (!name || !description || !category || !imageUrl || !type || (listingType === 'inventory' && !preferredOffer)){
-      console.log('missing fields');
-      return
-    };
+    if (
+      !name ||
+      !description ||
+      !category ||
+      !imageUrl ||
+      !type ||
+      (listingType === "inventory" && !preferredOffer)
+    ) {
+      console.log("missing fields");
+      return;
+    }
     const finalKeywords = [category, ...keywords];
 
     let newListing: Partial<Inventory> = {
@@ -64,11 +69,13 @@ function EditListing({ id, listingType }: { id : number, listingType: "inventory
       newListing = { ...newListing, location: location || user?.location, preferredOffer };
     }
 
-  
-    const { data, error } = await apiFetch<Inventory | Wish>(id ? `/${listingType}/${id}` : `/${listingType}`, {
-      method: id ? 'PUT' : "POST",
-      body: JSON.stringify(newListing),
-    });
+    const { data, error } = await apiFetch<Inventory | Wish>(
+      id ? `/${listingType}/${id}` : `/${listingType}`,
+      {
+        method: id ? "PUT" : "POST",
+        body: JSON.stringify(newListing),
+      }
+    );
 
     if (error || !data) {
       console.log(error || "Something went wrong while posting listing");
@@ -94,20 +101,19 @@ function EditListing({ id, listingType }: { id : number, listingType: "inventory
     setKeywords((prev) => prev.filter((_, i) => i !== index));
   }
 
-
-  const [listing, setListing] = useState<Inventory | Wish | null>()
-  async function fectchListing(){
-    const { data, error } = await apiFetch<Inventory | Wish >(`/${listingType}/${id}`);
+  const [listing, setListing] = useState<Inventory | Wish | null>();
+  async function fectchListing() {
+    const { data, error } = await apiFetch<Inventory | Wish>(`/${listingType}/${id}`);
 
     if (error) {
       console.log(error);
     } else {
-      console.log('This is lisdting', data);
+      console.log("This is lisdting", data);
       setListing(data || null);
     }
   }
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  async function deleteListing(){
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  async function deleteListing() {
     const { data, error } = await apiFetch<Inventory | Wish>(`/${listingType}/${id}`, {
       method: "DELETE",
     });
@@ -115,30 +121,29 @@ function EditListing({ id, listingType }: { id : number, listingType: "inventory
     if (error || !data) {
       console.log(error || `Something went wrong while deleting ${listingType}`);
     } else {
-      console.log(`Successful deleting ${listingType}`, data)
+      console.log(`Successful deleting ${listingType}`, data);
     }
 
-    router.push('/me')
+    router.push("/me");
   }
 
   useEffect(() => {
     fectchListing();
-  }, [id])
+  }, [id]);
 
-  useEffect(()=>{
-    if(listing){
-      setName(listing.name)
-      setType(listing.type)
-      setImageUrl(listing.imageUrls[0])
-      setDescription(listing.description)
-      setKeywords(listing.keywords)
-      setLocation(listing.user?.location ? listing.user.location : location)
-      if(listing && 'preferredOffer' in listing){
-        setPreferredOffer(listing?.preferredOffer ? listing.preferredOffer : preferredOffer)
+  useEffect(() => {
+    if (listing) {
+      setName(listing.name);
+      setType(listing.type);
+      setImageUrl(listing.imageUrls[0]);
+      setDescription(listing.description);
+      setKeywords(listing.keywords);
+      setLocation(listing.user?.location ? listing.user.location : location);
+      if (listing && "preferredOffer" in listing) {
+        setPreferredOffer(listing?.preferredOffer ? listing.preferredOffer : preferredOffer);
       }
-
     }
-  }, [listing])
+  }, [listing]);
 
   return (
     <ScrollView
@@ -217,7 +222,7 @@ function EditListing({ id, listingType }: { id : number, listingType: "inventory
       </View>
       <View style={{ gap: 4 }}>
         <Text>Keywords:</Text>
-        <View style={{  gap: 2, flexDirection: "row" }}>
+        <View style={{ gap: 2, flexDirection: "row" }}>
           {keywords.map((kw, i) => (
             <Chip key={i} closeIcon="close" onClose={() => removeKeyword(i)}>
               {kw}
@@ -258,14 +263,25 @@ function EditListing({ id, listingType }: { id : number, listingType: "inventory
           </View>
         </>
       )}
-    
-      <Button onPress={() => {saveChanges()}} mode="contained">
+
+      <Button
+        onPress={() => {
+          saveChanges();
+        }}
+        mode="contained"
+      >
         Save Changes
       </Button>
       <Button onPress={() => setShowDeleteModal(true)} mode="contained" buttonColor={COLORS.error}>
         Delete Listing
       </Button>
-      <Button onPress={() => {router.back()}} mode="contained" buttonColor={COLORS.secondary}>
+      <Button
+        onPress={() => {
+          router.back();
+        }}
+        mode="contained"
+        buttonColor={COLORS.secondary}
+      >
         Cancel Changes
       </Button>
     </ScrollView>
@@ -273,9 +289,9 @@ function EditListing({ id, listingType }: { id : number, listingType: "inventory
 }
 
 export default function EditListingScreen() {
-  const { id, type} = useLocalSearchParams();
-  const passedId = id  ? parseInt(id.toString(), 10) : 0;
-  const passedType = type == 'inventory' ? type : 'wish'
+  const { id, type } = useLocalSearchParams();
+  const passedId = id ? parseInt(id.toString(), 10) : 0;
+  const passedType = type == "inventory" ? type : "wish";
 
   return (
     <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }}>

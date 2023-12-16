@@ -14,14 +14,13 @@ import { COLORS } from "~/lib/theme";
 import { ChatRoom, Inventory, Wish } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
-
 export default function ListingDetails() {
-  const { id, type} = useLocalSearchParams();
+  const { id, type } = useLocalSearchParams();
   const { user } = useSession();
   const [item, setItem] = useState<Inventory | Wish | null>(null);
 
   async function fetchInventory() {
-    const { data, error } = await apiFetch<Inventory | Wish >(`/${type}/${id}`);
+    const { data, error } = await apiFetch<Inventory | Wish>(`/${type}/${id}`);
 
     if (error) {
       console.log(error);
@@ -50,7 +49,6 @@ export default function ListingDetails() {
 
   return (
     <View style={{ flex: 1, height: "100%", padding: 8, gap: 8 }}>
-
       <ScrollView style={{ flex: 1, height: "100%", paddingBottom: 256 }}>
         <Text variant="titleLarge" style={{ alignSelf: "center" }}>
           Listing Details
@@ -84,15 +82,13 @@ export default function ListingDetails() {
             </Chip>
           ))}
         </View>
-        { item && 'preferredOffer' in item && (
+        {item && "preferredOffer" in item && (
           <View>
             <Text variant="bodyLarge" style={{ fontWeight: "bold" }}>
-              Preferred Offer: <Text variant="titleLarge">{item?.preferredOffer || ''}</Text>
+              Preferred Offer: <Text variant="titleLarge">{item?.preferredOffer || ""}</Text>
             </Text>
           </View>
-          )
-        }
-        
+        )}
       </ScrollView>
 
       <View
@@ -114,10 +110,7 @@ export default function ListingDetails() {
       >
         <Link href={`/user/${item?.userId}`}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Avatar.Image
-              size={62}
-              source={{ uri: item?.user?.avatarUrl || defaultAvatarUrl }}
-            />
+            <Avatar.Image size={62} source={{ uri: item?.user?.avatarUrl || defaultAvatarUrl }} />
             <View>
               <Text style={{ fontWeight: "bold" }} variant="titleLarge">
                 {item?.user?.firstName}
@@ -133,9 +126,10 @@ export default function ListingDetails() {
           <Link
             asChild
             href={{
-              pathname: item?.userId === user?.id ? `/listings/edit/${id}` : `/offers/create?id=${id}`,
-              params : {'type' : type}
-          }}
+              pathname:
+                item?.userId === user?.id ? `/listings/edit/${id}` : `/offers/create?id=${id}`,
+              params: { type: type },
+            }}
           >
             <Button mode="contained">
               {item?.userId === user?.id ? `Edit ${type}` : "Create Offer"}
