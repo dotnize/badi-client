@@ -18,7 +18,7 @@ const availableCategories = [
   { label: "Bags", value: "bags" },
   { label: "Books", value: "books" },
   { label: "Hobbies", value: "hobbies" },
-  { label: "Applicances", value: "appliances" },
+  { label: "Appliances", value: "appliances" },
   { label: "Gadgets", value: "gadgets" },
   { label: "Vehicles", value: "vehicles" },
   { label: "Shoes", value: "shoes" },
