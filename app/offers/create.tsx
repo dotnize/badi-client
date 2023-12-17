@@ -28,7 +28,7 @@ export default function CreateOffer() {
 
   // TODO: offerId for edit counter offer
 
-  const [tradeInventories, setTradeInventories] = useState<TradeInventory[]>([])
+  const [tradeInventories, setTradeInventories] = useState<TradeInventory[]>([]);
 
   const [myInventories, setMyInventories] = useState<Inventory[]>([]);
   const [theirInventories, setTheirInventories] = useState<Inventory[]>([]);
@@ -39,8 +39,6 @@ export default function CreateOffer() {
   const [modalTheirItemsVisible, setModalTheirItemsVisible] = useState(false);
   const [modalMyItemsVisible, setModalMyItemsVisible] = useState(false);
 
-  
-
   async function fetchTradeInventories() {
     const { data, error } = await apiFetch<TradeInventory[]>(`/tradeinventory/group/${offerId}`);
 
@@ -48,18 +46,20 @@ export default function CreateOffer() {
       console.log(error || "No data");
     } else {
       setTradeInventories(data);
-      console.log('TIC', data)
+      console.log("TIC", data);
     }
   }
 
-  async function fetchMySelectedItems(){
-    if(tradeInventories[1]){
-      const { data, error } = await apiFetch<Inventory>(`/inventory/${tradeInventories?.[1].inventoryId}`);
-  
+  async function fetchMySelectedItems() {
+    if (tradeInventories[1]) {
+      const { data, error } = await apiFetch<Inventory>(
+        `/inventory/${tradeInventories?.[1].inventoryId}`
+      );
+
       if (error || !data) {
         console.log(error || "No data");
       } else {
-        console.log('My selected', data)
+        console.log("My selected", data);
         setMySelectedItems([
           {
             inventory: data,
@@ -68,7 +68,7 @@ export default function CreateOffer() {
             senderId: data.userId,
             receiverId: user?.id,
           },
-        ])
+        ]);
       }
     }
   }
@@ -83,13 +83,12 @@ export default function CreateOffer() {
     }
   }
 
-
   async function fetchTheirInventories() {
-    
-    if(id || tradeInventories[0]){
+    if (id || tradeInventories[0]) {
+      const { data, error } = await apiFetch<Inventory>(
+        `/inventory/${id ? id : tradeInventories[0].inventoryId}`
+      );
 
-      const { data, error } = await apiFetch<Inventory>(`/inventory/${id ? id : tradeInventories[0].inventoryId}`);
-  
       if (error || !data) {
         console.log(error || "No data");
       } else {
@@ -103,10 +102,10 @@ export default function CreateOffer() {
           },
         ]);
         const otherUserId = data.userId;
-  
+
         // fetch all of their inventories
         const newRes = await apiFetch<Inventory[]>(`/inventory/user/${otherUserId}`);
-  
+
         if (newRes.error || !newRes.data) {
           console.log(newRes.error || "No data");
         } else {
@@ -119,12 +118,11 @@ export default function CreateOffer() {
   async function submitOffer() {
     if (!mySelectedItems.length || !theirSelectedItems.length) return;
 
-    if(id){
-
+    if (id) {
       console.log("IDs");
       console.log(mySelectedItems[0].inventoryId);
       console.log(theirSelectedItems[0].inventoryId);
-  
+
       const { data, error } = await apiFetch(`/tradegroup`, {
         method: "POST",
         body: JSON.stringify({
@@ -143,30 +141,29 @@ export default function CreateOffer() {
     }
 
     // swap the id in current tradegroup, make new set of tradeinventories and delete old tradeinventories
-    if(offerId){
-        updateTradeGroupUserIds();
-        deleteOldTradeInventories();
-        router.push('/activity')
-      
+    if (offerId) {
+      updateTradeGroupUserIds();
+      deleteOldTradeInventories();
+      router.push("/activity");
     }
   }
 
-  async function updateTradeGroupUserIds(){
+  async function updateTradeGroupUserIds() {
     const { data, error } = await apiFetch<TradeInventory>(`/tradegroup/swap/${offerId}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          tradeInventories: [...mySelectedItems, ...theirSelectedItems],
-        }),
-      });
+      method: "PUT",
+      body: JSON.stringify({
+        tradeInventories: [...mySelectedItems, ...theirSelectedItems],
+      }),
+    });
 
-      if (error || !data) {
-        console.log(error || `Something went wrong while swapping user IDs in tradegroup`);
-      } else {
-        console.log(`Successful swapping user IDs in tradegroup`, data)
-      }
+    if (error || !data) {
+      console.log(error || `Something went wrong while swapping user IDs in tradegroup`);
+    } else {
+      console.log(`Successful swapping user IDs in tradegroup`, data);
+    }
   }
 
-  async function deleteOldTradeInventories(){
+  async function deleteOldTradeInventories() {
     const { data, error } = await apiFetch<TradeInventory>(`/tradeinventory/group/${offerId}`, {
       method: "DELETE",
     });
@@ -174,24 +171,22 @@ export default function CreateOffer() {
     if (error || !data) {
       console.log(error || `Something went wrong while deleting tradegroup`);
     } else {
-      console.log(`Successful deleting tradegroup`, data)
+      console.log(`Successful deleting tradegroup`, data);
     }
   }
 
   useEffect(() => {
-    if(offerId){
-      fetchTradeInventories();    
+    if (offerId) {
+      fetchTradeInventories();
     }
     fetchMyInventories();
     fetchTheirInventories();
-
   }, []);
 
-  useEffect(()=>{
-    console.log('fffwef', tradeInventories)
-    fetchMySelectedItems();  
+  useEffect(() => {
+    fetchMySelectedItems();
     fetchTheirInventories();
-  }, [tradeInventories])
+  }, [tradeInventories]);
 
   return (
     <View style={{ flex: 1, alignItems: "center", padding: 8, justifyContent: "space-around" }}>
