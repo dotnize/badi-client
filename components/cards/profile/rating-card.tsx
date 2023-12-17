@@ -22,7 +22,7 @@ export default function RatingCard({ item }: { item: Rating }) {
             <Text variant="titleSmall">{dateFromString.toDateString()}</Text>
           </View>
           <View style={{ flexDirection: "row", gap: 5 }}>
-            {Array.from({ length: Math.min(item.amount, 5) }, (_, index) => (
+            {Array.from({ length: 5 }, (_, index) => (
               <Text key={index} variant="titleLarge" style={{ color: COLORS.primary }}>
                 &#9733;
               </Text>
