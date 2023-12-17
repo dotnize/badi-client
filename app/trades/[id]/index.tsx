@@ -70,7 +70,7 @@ export default function ActiveTrade() {
     const totalCount = tradeInventory.length;
     const percentCompleted = totalCount > 0 ? Math.floor((completedCount / totalCount) * 100) : 0;
     setPercent(percentCompleted);
-    if (completedCount >= totalCount) {
+    if (completedCount >= totalCount && tradeGroup?.status !== "completed") {
       handleCompleteTrade();
     }
   }, [tradeInventory]);
