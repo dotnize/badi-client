@@ -212,7 +212,7 @@ export default function ProfileContent({ userId }: { userId: number }) {
                           user1FirstName={trade.user1?.firstName || ""}
                           user2FirstName={trade.user2?.firstName || ""}
                           user1profileUrl={trade.user1?.avatarUrl || defaultAvatarUrl}
-                          user2profileUrl={trade.user1?.avatarUrl || defaultAvatarUrl}
+                          user2profileUrl={trade.user2?.avatarUrl || defaultAvatarUrl}
                           isHistory={true}
                         />
                       ) : (
