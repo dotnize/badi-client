@@ -14,11 +14,7 @@ function NotifCard({ notification, onRemove }: { notification: Notification; onR
         <Avatar.Icon size={80} icon={notification.type === "match" ? "tag-search" : "cart-check"} />
         <Link
           style={styles.textContainer}
-          href={
-            notification.type === "match"
-              ? `/match/${notification.id}`
-              : `/rate/${(notification.content as any).tradeGroupId}`
-          }
+          href={(notification.type === "match" ? "/match/" : "/rate/") + notification.id}
         >
           <Title style={styles.itemTitle}>
             {notification.type === "match" ? "Suggested match found!" : "Trade successful."}
