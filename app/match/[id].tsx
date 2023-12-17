@@ -3,14 +3,15 @@
 
 // Use the useLocalSearchParams hook from expo-router to get the id from the URL>
 
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Card, Paragraph, Text, Title } from "react-native-paper";
+import { Card, FAB, Paragraph, Text, Title } from "react-native-paper";
 
+import { useSession } from "~/hooks/useSession";
 import { emptyImageUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
-import { Inventory, MatchContent, Notification, User } from "~/lib/types";
+import { Inventory, MatchContent, Notification, TradeInventory, User } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
 function MatchCard({ inventory }: { inventory: Inventory }) {
@@ -36,6 +37,8 @@ export default function MatchFound() {
   const { id } = useLocalSearchParams();
   const [notification, setNotification] = useState<Notification>();
   const [matchContent, setMatchContent] = useState<MatchContent>();
+  const { user } = useSession();
+  const router = useRouter();
 
   async function fetchNotification() {
     const { data, error } = await apiFetch<Notification>(`/notification/${id}`);
@@ -64,6 +67,45 @@ export default function MatchFound() {
       toReceive: toReceiveData.data ? [toReceiveData.data] : [],
       matchedUser: matchedUserData.data || undefined,
     });
+  }
+
+  async function deleteNotif() {
+    await apiFetch(`/notification/${notification?.id}`, { method: "DELETE" });
+  }
+
+  async function sendOffer() {
+    const tradeInventories: Partial<TradeInventory>[] = [
+      ...(matchContent?.toSend?.map((inv) => {
+        return {
+          senderId: user?.id,
+          receiverId: matchContent?.matchedUserId,
+          inventoryId: inv.id,
+          totalQuantity: 1,
+        };
+      }) || []),
+      ...(matchContent?.toReceive?.map((inv) => {
+        return {
+          senderId: inv.userId,
+          receiverId: user?.id,
+          inventoryId: inv.id,
+          totalQuantity: 1,
+        };
+      }) || []),
+    ];
+
+    const offer = {
+      tradeInventories,
+      user1Id: user?.id,
+      user2Id: matchContent?.matchedUserId,
+    };
+    const { error } = await apiFetch("/tradegroup", {
+      method: "POST",
+      body: JSON.stringify(offer),
+    });
+    if (!error) {
+      await deleteNotif();
+      router.replace("/activity");
+    }
   }
 
   useEffect(() => {
@@ -107,6 +149,12 @@ export default function MatchFound() {
           </ScrollView>
         </View>
       </View>
+      <FAB
+        onPress={sendOffer}
+        icon="send"
+        label="Send Offer"
+        style={{ position: "absolute", bottom: 48, right: 48 }}
+      />
     </View>
   );
 }
