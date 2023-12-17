@@ -42,7 +42,7 @@ export default function PendingOffer() {
 
   const handleTrade = (status: string) => {
     setConfirmModalTitle(
-      `Trade Offer will be ${status == "active" ? "accepted" : status}.${"\n"}Are you sure?`
+      `Trade Offer will be ${status === "active" ? "accepted" : status}.${"\n"}Are you sure?`
     );
     setOnConfirmFunction(() => () => handleUpdateTrade(status));
     setShowConfirmModal(true);
@@ -51,7 +51,7 @@ export default function PendingOffer() {
   async function handleUpdateTrade(status: string) {
     const { data, error } = await apiFetch<TradeGroup>(`/tradegroup/${id}`, {
       method: "PUT",
-      body: JSON.stringify({ status: status }),
+      body: JSON.stringify({ status }),
     });
 
     if (error) {
@@ -96,7 +96,7 @@ export default function PendingOffer() {
     if (tradeInventories) {
       const { data, error } = await apiFetch<User>(
         `/user/${
-          tradeInventories[1].receiverId == user?.id
+          tradeInventories[1].receiverId === user?.id
             ? tradeInventories[1].senderId
             : tradeInventories[1].receiverId
         }`
@@ -138,17 +138,29 @@ export default function PendingOffer() {
 
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
         {tradeInventories?.[0].senderId === user?.id ? (
-          <OfferItem item={tradeInventories?.[1].inventory} />
+          <OfferItem
+            item={tradeInventories?.[1].inventory}
+            quantity={tradeInventories?.[1].totalQuantity as number}
+          />
         ) : (
-          <OfferItem item={tradeInventories?.[0].inventory} />
+          <OfferItem
+            item={tradeInventories?.[0].inventory}
+            quantity={tradeInventories?.[0].totalQuantity as number}
+          />
         )}
       </ScrollView>
       <Text style={{ alignSelf: "flex-start", padding: 8 }}>You will send:</Text>
       <ScrollView style={{ width: "100%", padding: 8, gap: 8, flex: 1 }}>
         {tradeInventories?.[0].senderId === user?.id ? (
-          <OfferItem item={tradeInventories?.[0].inventory} />
+          <OfferItem
+            item={tradeInventories?.[0].inventory}
+            quantity={tradeInventories?.[0].totalQuantity as number}
+          />
         ) : (
-          <OfferItem item={tradeInventories?.[1].inventory} />
+          <OfferItem
+            item={tradeInventories?.[1].inventory}
+            quantity={tradeInventories?.[1].totalQuantity as number}
+          />
         )}
       </ScrollView>
       <View style={{ width: "100%", gap: 8, padding: 8 }}>

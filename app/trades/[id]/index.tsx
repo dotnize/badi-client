@@ -66,6 +66,7 @@ export default function ActiveTrade() {
 
   //for the progress bar completed count / total count (ex. if 2 items only and 1 is completed 1 is not, 50% completed)
   useEffect(() => {
+    if (!tradeInventory.length) return;
     const completedCount = tradeInventory.filter((trade) => trade.isCompleted).length;
     const totalCount = tradeInventory.length;
     const percentCompleted = totalCount > 0 ? Math.floor((completedCount / totalCount) * 100) : 0;
