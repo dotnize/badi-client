@@ -16,7 +16,7 @@ export default function Register() {
   const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
   const [location, setLocation] = useState("");
-  const [mobileNum, setmobileNum] = useState("");
+  const [phoneNumber, setphoneNumber] = useState("");
   const [inputDate, setInputDate] = useState<Date | undefined>(undefined);
 
   const router = useRouter();
@@ -35,6 +35,7 @@ export default function Register() {
         password,
         gender,
         location,
+        phoneNumber,
       }),
     });
     if (data) {
@@ -82,6 +83,11 @@ export default function Register() {
     }
     return isValid;
   };
+
+  const isValidEmail = (email : string) => {
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    return emailRegex.test(email)
+  }
 
   return (
     <View style={{ padding: 8, flex: 1, height: "100%" }}>
@@ -194,6 +200,15 @@ export default function Register() {
                   setEmail(text);
                 }}
               />
+              {isValidEmail(email) ? (
+                <Text variant="labelMedium" style={{ padding: 8, color: "green", marginLeft: 4 }}>
+                  Email is valid.
+                </Text>
+              ) : (
+                <HelperText type="error" visible={!isValidEmail(password)}>
+                  Please input a proper email.
+                </HelperText>
+              )}
             </View>
           </View>
         ) : counter === birthScreen ? (
@@ -222,9 +237,9 @@ export default function Register() {
               <TextInput mode="outlined" style={{ width: 56 }} disabled label="+63" />
               <TextInput
                 onChangeText={(num) => {
-                  setmobileNum(num);
+                  setphoneNumber(num);
                 }}
-                value={mobileNum}
+                value={phoneNumber}
                 style={{ flex: 1 }}
                 mode="outlined"
                 label="Mobile Number"
