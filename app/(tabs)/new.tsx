@@ -158,7 +158,7 @@ function NewListing({ listingType }: { listingType: "inventory" | "wish" }) {
       </View>
       <View style={{ gap: 4 }}>
         <Text>Keywords:</Text>
-        <View style={{ height: "100%", gap: 2, flexDirection: "row" }}>
+        <View style={{  gap: 2, flexDirection: "row" }}>
           {keywords.map((kw, i) => (
             <Chip key={i} closeIcon="close" onClose={() => removeKeyword(i)}>
               {kw}
