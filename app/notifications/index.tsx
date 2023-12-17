@@ -1,21 +1,31 @@
+import { Link } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, Card, IconButton, Paragraph, Title } from "react-native-paper";
+import { Avatar, Button, Card, IconButton, Paragraph, Title } from "react-native-paper";
 
 import { useSession } from "~/hooks/useSession";
 import { Notification } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
-function NotifCard({ notification }: { notification: Notification }) {
+function NotifCard({ notification, onRemove }: { notification: Notification; onRemove: any }) {
   return (
     <Card style={styles.card}>
       <Card.Content style={styles.cardContent}>
-        {/* <Avatar.Image size={80} source={{ uri: content.image }} /> */}
-        <View style={styles.textContainer}>
-          <Title style={styles.itemTitle}>{notification.title}</Title>
-          <Paragraph>{notification.timestamp.toDateString()}</Paragraph>
-        </View>
-        <IconButton icon="close" onPress={() => {}} />
+        <Avatar.Icon size={80} icon={notification.type === "match" ? "tag-search" : "cart-check"} />
+        <Link
+          style={styles.textContainer}
+          href={
+            notification.type === "match"
+              ? `/match/${notification.id}`
+              : `/rate/${(notification.content as any).tradeGroupId}`
+          }
+        >
+          <Title style={styles.itemTitle}>
+            {notification.type === "match" ? "Suggested match found!" : "Trade successful."}
+          </Title>
+          <Paragraph>{new Date(notification.timestamp).toDateString()}</Paragraph>
+        </Link>
+        <IconButton icon="close" onPress={() => onRemove(notification.id)} />
       </Card.Content>
     </Card>
   );
@@ -44,16 +54,12 @@ export default function Notifications() {
 
   useEffect(() => {
     async function fetchNotifications() {
-      try {
-        const { data, error } = await apiFetch<Notification[]>(`/notification/user/${user?.id}`);
+      const { data, error } = await apiFetch<Notification[]>(`/notification/user/${user?.id}`);
 
-        if (error) {
-          console.error(error);
-        } else {
-          setNotifications(data || []);
-        }
-      } catch (error) {
+      if (error) {
         console.error(error);
+      } else {
+        setNotifications(data || []);
       }
     }
 
@@ -67,7 +73,7 @@ export default function Notifications() {
         <Button onPress={clearAllNotifications}>Clear All</Button>
       </View>
       {notifications.map((notif, index) => (
-        <NotifCard key={index} notification={notif} />
+        <NotifCard key={index} notification={notif} onRemove={removeNotification} />
       ))}
     </View>
   );
@@ -89,6 +95,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginVertical: 8,
+    width: "100%",
   },
   cardContent: {
     flexDirection: "row",
@@ -96,6 +103,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   textContainer: {
+    display: "flex",
+    flexDirection: "column",
     flex: 1,
     marginLeft: 16,
   },
