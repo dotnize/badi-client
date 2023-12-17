@@ -98,7 +98,6 @@ export interface Notification {
   userId: number;
   type: "match" | "finishtrade";
   timestamp: Date;
-  title: string;
   content: MatchContent | { tradeGroupId: number }; // id of finished tradegroup if number
   isRead: boolean;
 }
