@@ -7,7 +7,6 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Card, Paragraph, Text, Title } from "react-native-paper";
-import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
 import { emptyImageUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
@@ -77,36 +76,38 @@ export default function MatchFound() {
   }, [notification]);
 
   return (
-    <TabsProvider>
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Suggested Match found</Text>
-          <Text>{matchContent?.matchedUser?.firstName}</Text>
-        </View>
-        <Tabs>
-          <TabScreen label="To send">
-            <ScrollView
-              style={{ flex: 1, padding: 8 }}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollViewContent}
-            >
-              {matchContent?.toSend?.map((inv, index) => <MatchCard key={index} inventory={inv} />)}
-            </ScrollView>
-          </TabScreen>
-          <TabScreen label="To receive">
-            <ScrollView
-              style={{ flex: 1, padding: 8 }}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollViewContent}
-            >
-              {matchContent?.toReceive?.map((inv, index) => (
-                <MatchCard key={index} inventory={inv} />
-              ))}
-            </ScrollView>
-          </TabScreen>
-        </Tabs>
+    <View style={styles.container}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Suggested Match found</Text>
+        <Text>
+          with {matchContent?.matchedUser?.firstName} {matchContent?.matchedUser?.lastName}
+        </Text>
       </View>
-    </TabsProvider>
+      <View style={{ flexDirection: "row" }}>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <Text style={{ fontWeight: "600" }}>You will send:</Text>
+          <ScrollView
+            style={{ flex: 1, padding: 8 }}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollViewContent}
+          >
+            {matchContent?.toSend?.map((inv, index) => <MatchCard key={index} inventory={inv} />)}
+          </ScrollView>
+        </View>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <Text style={{ fontWeight: "600" }}>You will receive:</Text>
+          <ScrollView
+            style={{ flex: 1, padding: 8 }}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollViewContent}
+          >
+            {matchContent?.toReceive?.map((inv, index) => (
+              <MatchCard key={index} inventory={inv} />
+            ))}
+          </ScrollView>
+        </View>
+      </View>
+    </View>
   );
 }
 
@@ -116,10 +117,11 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     backgroundColor: COLORS.surface,
-    paddingBottom: 16,
+    paddingBottom: 12,
     paddingLeft: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+    marginBottom: 16,
   },
   title: {
     fontSize: 24,
@@ -136,13 +138,9 @@ const styles = StyleSheet.create({
     height: 40,
   },
   scrollViewContent: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    paddingVertical: 8,
+    gap: 8,
   },
   card: {
-    flexBasis: "48%",
     marginVertical: 8,
   },
   cardImage: {
