@@ -11,7 +11,7 @@ import { TabScreen, Tabs, TabsProvider } from "react-native-paper-tabs";
 
 import { emptyImageUrl } from "~/lib/firebase";
 import { COLORS } from "~/lib/theme";
-import { Inventory, MatchContent, Notification } from "~/lib/types";
+import { Inventory, MatchContent, Notification, User } from "~/lib/types";
 import { apiFetch } from "~/lib/utils";
 
 function MatchCard({ inventory }: { inventory: Inventory }) {
@@ -25,9 +25,6 @@ function MatchCard({ inventory }: { inventory: Inventory }) {
         <Title style={styles.cardTitle} numberOfLines={1}>
           {inventory.name}
         </Title>
-        <Text numberOfLines={1} style={{ color: "grey" }}>
-          {inventory.user?.firstName} &#9733;&#9733;&#9733;&#9733; 4.7 (51)
-        </Text>
         <Paragraph style={styles.cardParagraph} numberOfLines={3}>
           {inventory.description}
         </Paragraph>
@@ -42,16 +39,32 @@ export default function MatchFound() {
   const [matchContent, setMatchContent] = useState<MatchContent>();
 
   async function fetchNotification() {
-    try {
-      const { data, error } = await apiFetch<Notification>(`/notification/${id}`);
-      if (error || !data) {
-        console.error(error || "No data returned from server");
-      } else {
-        setNotification(data);
-      }
-    } catch (error) {
-      console.error(error);
+    const { data, error } = await apiFetch<Notification>(`/notification/${id}`);
+    if (error || !data) {
+      console.error(error || "No data returned from server");
+    } else {
+      setNotification(data);
     }
+  }
+
+  async function fetchMatchContent() {
+    const content = notification?.content as MatchContent;
+    const toSend = apiFetch<Inventory>(`/inventory/${content.toSendIds[0]}}`);
+    const toReceive = apiFetch<Inventory>(`/inventory/${content.toReceiveIds[0]}}`);
+    const matchedUser = apiFetch<User>(`/user/${content.matchedUserId}}`);
+
+    const [toSendData, toReceiveData, matchedUserData] = await Promise.all([
+      toSend,
+      toReceive,
+      matchedUser,
+    ]);
+
+    setMatchContent({
+      ...content,
+      toSend: toSendData.data ? [toSendData.data] : [],
+      toReceive: toReceiveData.data ? [toReceiveData.data] : [],
+      matchedUser: matchedUserData.data || undefined,
+    });
   }
 
   useEffect(() => {
@@ -60,7 +73,7 @@ export default function MatchFound() {
 
   useEffect(() => {
     if (!notification) return;
-    setMatchContent(notification.content as MatchContent);
+    fetchMatchContent();
   }, [notification]);
 
   return (
@@ -68,6 +81,7 @@ export default function MatchFound() {
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Suggested Match found</Text>
+          <Text>{matchContent?.matchedUser?.firstName}</Text>
         </View>
         <Tabs>
           <TabScreen label="To send">
