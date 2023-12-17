@@ -12,15 +12,6 @@ import {
 import ContextProvider from "~/context/ContextProvider";
 import { COLORS } from "~/lib/theme";
 
-// Defining routes: <<--- START HERE!
-// https://docs.expo.dev/routing/create-pages/
-
-// Linking/navigating:
-// https://docs.expo.dev/routing/navigating-pages/
-
-// Layouts:
-// https://docs.expo.dev/routing/layouts/
-
 const theme: MD3Theme = {
   ...MD3LightTheme,
   colors: COLORS,
