@@ -78,9 +78,9 @@ export default function ActiveTrade() {
 
   return (
     <View style={{ flex: 1, padding: 8 }}>
-      <Text>ActiveTrade, id: {id}</Text>
+      {/* <Text>ActiveTrade, id: {id}</Text> */}
       <View style={{ alignItems: "center", width: "100%", padding: 12, gap: 8 }}>
-        <Text variant="titleMedium">Trading with !username!</Text>
+        <Text variant="titleMedium">Trading with {tradeGroup?.user1?.firstName}</Text>
         <Text>{percent}% Completed</Text>
         <ProgressBar progress={percent / 100} />
       </View>
