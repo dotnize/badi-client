@@ -68,22 +68,40 @@ export default function Messages() {
         {loading ? (
           <ActivityIndicator animating />
         ) : (
-          conversations.map((convo) => (
-            <Link key={convo.id} href={`/messages/${convo.id}`}>
-              <ConvoListItem
-                id={convo.id}
-                avatarUrl={
-                  convo.member1Id === user?.id ? convo.member2?.avatarUrl : convo.member1?.avatarUrl
-                }
-                username={
-                  convo.member1Id === user?.id
-                    ? `${convo.member2?.firstName} ${convo.member2?.lastName}`
-                    : `${convo.member1?.firstName} ${convo.member1?.lastName}`
-                }
-                preview={convo.lastMessagePreview?.[0]?.content}
-              />
-            </Link>
-          ))
+          conversations
+            .filter((convo) => {
+              if (!searchValue) return true;
+              const otherMember = convo.member1Id === user?.id ? convo.member2 : convo.member1;
+              // convert everything to lowercase for case insensitive search
+              const messageContent = convo.lastMessagePreview?.[0]?.content.toLowerCase();
+              const otherMemberFirstName = otherMember?.firstName.toLowerCase();
+              const otherMemberLastName = otherMember?.lastName.toLowerCase();
+              const search = searchValue.toLowerCase();
+
+              return (
+                messageContent?.includes(search) ||
+                otherMemberFirstName?.includes(search) ||
+                otherMemberLastName?.includes(search)
+              );
+            })
+            .map((convo) => (
+              <Link key={convo.id} href={`/messages/${convo.id}`}>
+                <ConvoListItem
+                  id={convo.id}
+                  avatarUrl={
+                    convo.member1Id === user?.id
+                      ? convo.member2?.avatarUrl
+                      : convo.member1?.avatarUrl
+                  }
+                  username={
+                    convo.member1Id === user?.id
+                      ? `${convo.member2?.firstName} ${convo.member2?.lastName}`
+                      : `${convo.member1?.firstName} ${convo.member1?.lastName}`
+                  }
+                  preview={convo.lastMessagePreview?.[0]?.content}
+                />
+              </Link>
+            ))
         )}
       </View>
     </View>
