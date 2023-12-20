@@ -6,7 +6,7 @@ type ConfirmModalType = {
   title: string;
   state: boolean;
   setState: React.Dispatch<SetStateAction<boolean>>;
-  onConfirmFunction: () => Promise<void> | undefined;
+  onConfirmFunction: () => any;
 };
 
 export default function ConfirmModal({

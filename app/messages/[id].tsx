@@ -229,7 +229,7 @@ export default function Convo() {
           title="Are you sure you want to delete this message?"
           state={deleteModalVisible}
           setState={setDeleteModalVisible}
-          handleOnConfirmDelete={handleDeleteConfirm}
+          onConfirmFunction={handleDeleteConfirm}
         />
       </View>
 
