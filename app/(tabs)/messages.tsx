@@ -57,10 +57,12 @@ export default function Messages() {
         <Searchbar
           placeholder="Search..."
           value={searchValue}
-          onChangeText={(query) => setSearchValue(query)}
+          onChangeText={setSearchValue}
           style={{ flex: 1 }}
         />
-        <IconButton size={20} icon="bell" />
+        <Link asChild href="/notifications">
+          <IconButton size={20} icon="bell" />
+        </Link>
       </View>
       <View style={{ padding: 16 }}>
         {loading ? (
